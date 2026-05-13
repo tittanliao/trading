@@ -1,0 +1,164 @@
+//@version=6
+// ════════════════════════════════════════════════════════════════
+//  TX Short Strategies — S01–S20 Combined
+//  Instrument : TAIFEX:MXF1!  (小台指期 MTX)
+//  Updated    : 2026-05-13
+// ════════════════════════════════════════════════════════════════
+strategy("TX Short Strategies (S01–S20)",
+     overlay          = true,
+     default_qty_type = strategy.fixed,
+     default_qty_value= 1,
+     currency         = currency.TWD,
+     commission_type  = strategy.commission.cash_per_order,
+     commission_value = 100,
+     slippage         = 2,
+     max_bars_back    = 500)
+
+// ── Strategy Selection ─────────────────────────────────────────
+var GRP_S = "📊 Strategy"
+strategy_id = input.string(
+    "S01 RSI Overbought Drop", "Strategy",
+    options = [
+        "S01 RSI Overbought Drop",
+        "S02 MACD Cross Above Zero",
+        "S03 MACD Hist Reversal Short",
+        "S04 Stoch Overbought Cross",
+        "S05 Williams %R Overbought",
+        "S06 CCI Overbought Drop",
+        "S07 RSI 50 Crossdown",
+        "S08 EMA 9/21 Death Cross",
+        "S09 EMA55 Resistance",
+        "S10 Supertrend Sell",
+        "S11 Donchian 20L Break",
+        "S12 BB Squeeze Short",
+        "S13 ATR Momentum Break Short",
+        "S14 BB Upper Rejection",
+        "S15 BB High + RSI Combo",
+        "S16 Shooting Star",
+        "S17 Bearish Engulfing",
+        "S18 RSI Bearish Divergence",
+        "S19 Day Open Range Short",
+        "S20 Night Momentum Short"
+    ], group = GRP_S)
+enable = input.bool(true, "✅ Enable Signals", group = GRP_S,
+    tooltip = "關閉後策略不進場，但仍顯示信號箭頭（灰色）供參考")
+
+// ── Risk Management ────────────────────────────────────────────
+var GRP_R = "⚙️ Risk  |  小台每點 NT$50"
+sl_pts = input.int(30, "Stop Loss (pts)", minval = 5, step = 5,
+    group = GRP_R, tooltip = "SL=30pts → 每口風險 NT$1,500")
+rr     = input.float(2.0, "R:R Ratio", minval = 0.5, maxval = 10.0, step = 0.5,
+    group = GRP_R, tooltip = "TP = SL × R:R。預設 2.0 → TP=60pts，每口獲利 NT$3,000")
+tp_pts = math.round(sl_pts * rr)
+
+// ── Session Filter ─────────────────────────────────────────────
+var GRP_T = "🕐 Session"
+use_day   = input.bool(true,  "日盤 (08:45–13:45)", group = GRP_T)
+use_night = input.bool(true,  "夜盤 (15:00–05:00)", group = GRP_T)
+t_day   = time("30", "0845-1345", "Asia/Taipei")
+t_night = time("30", "1500-0500", "Asia/Taipei")
+in_session = (use_day and not na(t_day)) or (use_night and not na(t_night))
+
+// ── Indicators ─────────────────────────────────────────────────
+rsi               = ta.rsi(close, 14)
+rsi_s3            = rsi - rsi[3]
+[macd, m_sig, m_hist] = ta.macd(close, 12, 26, 9)
+[bb_u, bb_m, bb_l]    = ta.bb(close, 20, 2)
+bb_pct        = (close - bb_l) / math.max(bb_u - bb_l, 0.0001)
+bb_width      = (bb_u - bb_l) / math.max(bb_m, 0.0001)
+ema9          = ta.ema(close, 9)
+ema21         = ta.ema(close, 21)
+ema55         = ta.ema(close, 55)
+atr           = ta.atr(14)
+stoch_k       = ta.sma(ta.stoch(close, high, low, 14), 3)
+stoch_d       = ta.sma(stoch_k, 3)
+don_l20       = ta.lowest(low[1], 20)
+cci           = ta.cci(close, 20)
+willr         = ta.wpr(14)
+[st_line, st_dir] = ta.supertrend(3.0, 10)
+
+bb_sq_th  = ta.percentile_linear_interpolation(bb_width, 100, 20)
+lo20_cls  = ta.lowest(close[1], 20)
+body      = math.abs(close - open)
+lo_wick   = math.min(open, close) - low
+up_wick   = high - math.max(open, close)
+pivot_hi  = ta.pivothigh(high, 5, 5)
+
+is_first_day = hour == 8 and minute == 45 and not na(t_day)
+var float orb_low = na
+if is_first_day
+    orb_low := low
+
+// ── Entry Signal (per strategy) ────────────────────────────────
+entry_sig = switch strategy_id
+    "S01 RSI Overbought Drop"      => ta.crossunder(rsi, 70) and rsi > 45
+    "S02 MACD Cross Above Zero"    => ta.crossunder(macd, m_sig) and macd > 0
+    "S03 MACD Hist Reversal Short" => m_hist[2] > m_hist[1] and m_hist[1] > m_hist and m_hist[2] > 0
+    "S04 Stoch Overbought Cross"   => ta.crossunder(stoch_k, stoch_d) and stoch_k > 75
+    "S05 Williams %R Overbought"   => ta.crossover(willr, -20)
+    "S06 CCI Overbought Drop"      => ta.crossunder(cci, 100)
+    "S07 RSI 50 Crossdown"         => ta.crossunder(rsi, 50) and ema21 < ema55
+    "S08 EMA 9/21 Death Cross"     => ta.crossunder(ema9, ema21) and close < ema55
+    "S09 EMA55 Resistance"         => math.abs(close - ema55) < atr * 0.4 and ema21 < ema55 and rsi >= 35 and rsi <= 60
+    "S10 Supertrend Sell"          => ta.crossunder(st_dir, 0)
+    "S11 Donchian 20L Break"       => close < don_l20 and rsi < 50
+    "S12 BB Squeeze Short"         => bb_width[1] <= bb_sq_th[1] and ta.crossunder(close, bb_l)
+    "S13 ATR Momentum Break Short" => close < lo20_cls - atr * 0.3 and rsi < 50
+    "S14 BB Upper Rejection"       => bb_pct >= 0.95 and rsi > 55 and rsi_s3 < 0
+    "S15 BB High + RSI Combo"      => bb_pct > 0.80 and ta.crossunder(rsi, 70)
+    "S16 Shooting Star"            => up_wick > body * 2 and lo_wick < body * 0.5 and body > 0 and rsi > 45
+    "S17 Bearish Engulfing"        => close < open and close[1] > open[1] and open >= close[1] and close <= open[1] and rsi > 40
+    "S18 RSI Bearish Divergence"   => not na(pivot_hi) and high[5] > high[10] and rsi[5] < rsi[10]
+    "S19 Day Open Range Short"     => not na(t_day) and not na(orb_low) and close < orb_low and rsi < 50 and not is_first_day
+    "S20 Night Momentum Short"     => not na(t_night) and rsi_s3 < -2 and close < ema21 and m_hist < 0 and rsi > 35 and rsi < 55
+    => false
+
+final_sig = enable and entry_sig and in_session
+
+// ── Entry & Exit ───────────────────────────────────────────────
+if final_sig
+    strategy.entry("Short", strategy.short,
+        comment = str.substring(strategy_id, 0, 3))
+
+if strategy.position_size < 0
+    strategy.exit("Short_X", from_entry = "Short",
+        loss    = sl_pts,
+        profit  = tp_pts,
+        comment = "x")
+
+// ── Visuals ────────────────────────────────────────────────────
+plotshape(final_sig,
+    title    = "Short Signal",
+    style    = shape.triangledown,
+    location = location.abovebar,
+    color    = color.new(color.red, 0),
+    size     = size.normal)
+
+plotshape(not enable and entry_sig and in_session,
+    title    = "Signal (ref, disabled)",
+    style    = shape.triangledown,
+    location = location.abovebar,
+    color    = color.new(color.gray, 50),
+    size     = size.small)
+
+plot(strategy.position_size < 0 ? strategy.position_avg_price            : na,
+    "Entry", color = color.blue,  style = plot.style_linebr, linewidth = 1)
+plot(strategy.position_size < 0 ? strategy.position_avg_price + sl_pts   : na,
+    "SL",    color = color.red,   style = plot.style_linebr, linewidth = 2)
+plot(strategy.position_size < 0 ? strategy.position_avg_price - tp_pts   : na,
+    "TP",    color = color.green, style = plot.style_linebr, linewidth = 2)
+
+bgcolor(in_session ? color.new(color.purple, 97) : na, title = "Session BG")
+
+if barstate.islast
+    label.new(bar_index + 2, low,
+        strategy_id + "\n" +
+        "SL " + str.tostring(sl_pts) + " pts  →  TP " + str.tostring(tp_pts) + " pts\n" +
+        "R:R 1:" + str.tostring(rr, "#.#") + "  |  Risk NT$" + str.tostring(sl_pts * 50),
+        style = label.style_label_left, textcolor = color.white,
+        color = color.new(color.maroon, 20), size = size.normal)
+
+// ── Alert ──────────────────────────────────────────────────────
+alertcondition(final_sig,
+    title   = "TX Short Entry",
+    message = "台指期空單 ▼ | " + strategy_id + " | SL " + str.tostring(sl_pts) + "pts TP " + str.tostring(tp_pts) + "pts")

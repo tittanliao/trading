@@ -1,0 +1,167 @@
+//@version=6
+// ════════════════════════════════════════════════════════════════
+//  TX Long Strategies — E01–E20 Combined
+//  Instrument : TAIFEX:MXF1!  (小台指期 MTX)
+//  Updated    : 2026-05-13
+// ════════════════════════════════════════════════════════════════
+strategy("TX Long Strategies (E01–E20)",
+     overlay          = true,
+     default_qty_type = strategy.fixed,
+     default_qty_value= 1,
+     currency         = currency.TWD,
+     commission_type  = strategy.commission.cash_per_order,
+     commission_value = 100,
+     slippage         = 2,
+     max_bars_back    = 500)
+
+// ── Strategy Selection ─────────────────────────────────────────
+var GRP_S = "📊 Strategy"
+strategy_id = input.string(
+    "E01 RSI Oversold Bounce", "Strategy",
+    options = [
+        "E01 RSI Oversold Bounce",
+        "E02 MACD Cross Below Zero",
+        "E03 MACD Hist Reversal",
+        "E04 Stoch Oversold Cross",
+        "E05 Williams %R Oversold",
+        "E06 CCI Oversold Bounce",
+        "E07 RSI 50 Crossover",
+        "E08 EMA 9/21 Golden Cross",
+        "E09 EMA55 Pullback",
+        "E10 Supertrend Buy",
+        "E11 Donchian 20H Break",
+        "E12 BB Squeeze Break",
+        "E13 ATR Momentum Break",
+        "E14 BB Lower Bounce",
+        "E15 BB Low + RSI Combo",
+        "E16 Hammer Candle",
+        "E17 Bullish Engulfing",
+        "E18 RSI Divergence",
+        "E19 Day Open Range Break",
+        "E20 Night Momentum"
+    ], group = GRP_S)
+enable = input.bool(true, "✅ Enable Signals", group = GRP_S,
+    tooltip = "關閉後策略不進場，但仍顯示信號箭頭（灰色）供參考")
+
+// ── Risk Management ────────────────────────────────────────────
+var GRP_R = "⚙️ Risk  |  小台每點 NT$50"
+sl_pts = input.int(30, "Stop Loss (pts)", minval = 5, step = 5,
+    group = GRP_R, tooltip = "SL=30pts → 每口風險 NT$1,500")
+rr     = input.float(2.0, "R:R Ratio", minval = 0.5, maxval = 10.0, step = 0.5,
+    group = GRP_R, tooltip = "TP = SL × R:R。預設 2.0 → TP=60pts，每口獲利 NT$3,000")
+tp_pts = math.round(sl_pts * rr)
+
+// ── Session Filter ─────────────────────────────────────────────
+var GRP_T = "🕐 Session"
+use_day   = input.bool(true,  "日盤 (08:45–13:45)", group = GRP_T)
+use_night = input.bool(true,  "夜盤 (15:00–05:00)", group = GRP_T)
+t_day   = time("30", "0845-1345", "Asia/Taipei")
+t_night = time("30", "1500-0500", "Asia/Taipei")
+in_session = (use_day and not na(t_day)) or (use_night and not na(t_night))
+
+// ── Indicators ─────────────────────────────────────────────────
+rsi               = ta.rsi(close, 14)
+rsi_s3            = rsi - rsi[3]
+[macd, m_sig, m_hist] = ta.macd(close, 12, 26, 9)
+[bb_u, bb_m, bb_l]    = ta.bb(close, 20, 2)
+bb_pct        = (close - bb_l) / math.max(bb_u - bb_l, 0.0001)
+bb_width      = (bb_u - bb_l) / math.max(bb_m, 0.0001)
+ema9          = ta.ema(close, 9)
+ema21         = ta.ema(close, 21)
+ema55         = ta.ema(close, 55)
+atr           = ta.atr(14)
+stoch_k       = ta.sma(ta.stoch(close, high, low, 14), 3)
+stoch_d       = ta.sma(stoch_k, 3)
+don_h20       = ta.highest(high[1], 20)
+cci           = ta.cci(close, 20)
+willr         = ta.wpr(14)
+[st_line, st_dir] = ta.supertrend(3.0, 10)
+
+// Pre-computed (needed by specific strategies)
+bb_sq_th  = ta.percentile_linear_interpolation(bb_width, 100, 20)
+hi20_cls  = ta.highest(close[1], 20)
+body      = math.abs(close - open)
+lo_wick   = math.min(open, close) - low
+up_wick   = high - math.max(open, close)
+pivot_lo  = ta.pivotlow(low, 5, 5)
+
+is_first_day = hour == 8 and minute == 45 and not na(t_day)
+var float orb_high = na
+if is_first_day
+    orb_high := high
+
+// ── Entry Signal (per strategy) ────────────────────────────────
+entry_sig = switch strategy_id
+    "E01 RSI Oversold Bounce"   => ta.crossover(rsi, 30) and rsi < 55
+    "E02 MACD Cross Below Zero" => ta.crossover(macd, m_sig) and macd < 0
+    "E03 MACD Hist Reversal"    => m_hist[2] < m_hist[1] and m_hist[1] < m_hist and m_hist[2] < 0
+    "E04 Stoch Oversold Cross"  => ta.crossover(stoch_k, stoch_d) and stoch_k < 25
+    "E05 Williams %R Oversold"  => ta.crossunder(willr, -80)
+    "E06 CCI Oversold Bounce"   => ta.crossover(cci, -100)
+    "E07 RSI 50 Crossover"      => ta.crossover(rsi, 50) and ema21 > ema55
+    "E08 EMA 9/21 Golden Cross" => ta.crossover(ema9, ema21) and close > ema55
+    "E09 EMA55 Pullback"        => math.abs(close - ema55) < atr * 0.4 and ema21 > ema55 and rsi >= 40 and rsi <= 65
+    "E10 Supertrend Buy"        => ta.crossover(st_dir, 0)
+    "E11 Donchian 20H Break"    => close > don_h20 and rsi > 50
+    "E12 BB Squeeze Break"      => bb_width[1] <= bb_sq_th[1] and ta.crossover(close, bb_u)
+    "E13 ATR Momentum Break"    => close > hi20_cls + atr * 0.3 and rsi > 50
+    "E14 BB Lower Bounce"       => bb_pct <= 0.05 and rsi < 45 and rsi_s3 > 0
+    "E15 BB Low + RSI Combo"    => bb_pct < 0.20 and ta.crossover(rsi, 30)
+    "E16 Hammer Candle"         => lo_wick > body * 2 and up_wick < body * 0.5 and body > 0 and rsi < 55
+    "E17 Bullish Engulfing"     => close > open and close[1] < open[1] and open <= close[1] and close >= open[1] and rsi < 60
+    "E18 RSI Divergence"        => not na(pivot_lo) and low[5] < low[10] and rsi[5] > rsi[10]
+    "E19 Day Open Range Break"  => not na(t_day) and not na(orb_high) and close > orb_high and rsi > 50 and not is_first_day
+    "E20 Night Momentum"        => not na(t_night) and rsi_s3 > 2 and close > ema21 and m_hist > 0 and rsi > 45 and rsi < 65
+    => false
+
+final_sig = enable and entry_sig and in_session
+
+// ── Entry & Exit ───────────────────────────────────────────────
+if final_sig
+    strategy.entry("Long", strategy.long,
+        comment = str.substring(strategy_id, 0, 3))
+
+if strategy.position_size > 0
+    strategy.exit("Long_X", from_entry = "Long",
+        loss    = sl_pts,
+        profit  = tp_pts,
+        comment = "x")
+
+// ── Visuals ────────────────────────────────────────────────────
+plotshape(final_sig,
+    title    = "Long Signal",
+    style    = shape.triangleup,
+    location = location.belowbar,
+    color    = color.new(color.lime, 0),
+    size     = size.normal)
+
+// Disabled-mode reference arrows
+plotshape(not enable and entry_sig and in_session,
+    title    = "Signal (ref, disabled)",
+    style    = shape.triangleup,
+    location = location.belowbar,
+    color    = color.new(color.gray, 50),
+    size     = size.small)
+
+// SL / TP lines on open position
+plot(strategy.position_size > 0 ? strategy.position_avg_price            : na,
+    "Entry", color = color.blue,  style = plot.style_linebr, linewidth = 1)
+plot(strategy.position_size > 0 ? strategy.position_avg_price - sl_pts   : na,
+    "SL",    color = color.red,   style = plot.style_linebr, linewidth = 2)
+plot(strategy.position_size > 0 ? strategy.position_avg_price + tp_pts   : na,
+    "TP",    color = color.green, style = plot.style_linebr, linewidth = 2)
+
+bgcolor(in_session ? color.new(color.blue, 97) : na, title = "Session BG")
+
+if barstate.islast
+    label.new(bar_index + 2, high,
+        strategy_id + "\n" +
+        "SL " + str.tostring(sl_pts) + " pts  →  TP " + str.tostring(tp_pts) + " pts\n" +
+        "R:R 1:" + str.tostring(rr, "#.#") + "  |  Risk NT$" + str.tostring(sl_pts * 50),
+        style = label.style_label_left, textcolor = color.white,
+        color = color.new(color.navy, 20), size = size.normal)
+
+// ── Alert ──────────────────────────────────────────────────────
+alertcondition(final_sig,
+    title   = "TX Long Entry",
+    message = "台指期多單 ▲ | " + strategy_id + " | SL " + str.tostring(sl_pts) + "pts TP " + str.tostring(tp_pts) + "pts")
