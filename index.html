@@ -589,9 +589,9 @@ tbody tr:hover td{background:#f8fafc}
             <div class="tbl-wrap">
               <table>
                 <thead><tr><th>代碼</th><th>策略</th><th>勝率</th><th>PF</th><th>淨盈虧</th><th>分數</th></tr></thead>
-                <tbody><tr><td style='color:#1565c0;font-weight:bold'>1. E12</td><td>BB Squeeze Break</td><td>36.1%</td><td>1.132</td><td style='color:#2e7d32'>NT$21,000</td><td>0.311</td></tr>
-<tr><td style='color:#1565c0;font-weight:bold'>2. E19</td><td>Day Open Range Break</td><td>31.9%</td><td>0.939</td><td style='color:#c62828'>NT$-43,500</td><td>0.174</td></tr>
-<tr><td style='color:#1565c0;font-weight:bold'>3. E07</td><td>RSI 50 Crossover</td><td>31.2%</td><td>0.907</td><td style='color:#c62828'>NT$-22,500</td><td>0.169</td></tr></tbody>
+                <tbody><tr><td style='color:#1565c0;font-weight:bold'>1. E09</td><td>EMA55 Pullback</td><td>50.8%</td><td>1.801</td><td style='color:#2e7d32'>NT$1,120,800</td><td>0.721</td></tr>
+<tr><td style='color:#1565c0;font-weight:bold'>2. E07</td><td>RSI 50 Crossover</td><td>52.1%</td><td>2.041</td><td style='color:#2e7d32'>NT$693,900</td><td>0.718</td></tr>
+<tr><td style='color:#1565c0;font-weight:bold'>3. E12</td><td>BB Squeeze Break</td><td>51.8%</td><td>2.002</td><td style='color:#2e7d32'>NT$474,100</td><td>0.679</td></tr></tbody>
               </table>
             </div>
             <a href='tx/TX-Long-Experiments/report.html' class='btn btn-long'>多單報告 →</a>
@@ -602,9 +602,9 @@ tbody tr:hover td{background:#f8fafc}
             <div class="tbl-wrap">
               <table>
                 <thead><tr><th>代碼</th><th>策略</th><th>勝率</th><th>PF</th><th>淨盈虧</th><th>分數</th></tr></thead>
-                <tbody><tr><td style='color:#880e4f;font-weight:bold'>1. S09</td><td>EMA55 Resistance</td><td>30.8%</td><td>0.889</td><td style='color:#c62828'>NT$-46,500</td><td>0.144</td></tr>
-<tr><td style='color:#880e4f;font-weight:bold'>2. S02</td><td>MACD Cross Above Zero</td><td>29.2%</td><td>0.826</td><td style='color:#c62828'>NT$-43,500</td><td>0.107</td></tr>
-<tr><td style='color:#880e4f;font-weight:bold'>3. S17</td><td>Bearish Engulfing</td><td>29.9%</td><td>0.853</td><td style='color:#c62828'>NT$-72,000</td><td>0.106</td></tr></tbody>
+                <tbody><tr><td style='color:#880e4f;font-weight:bold'>1. S19</td><td>Day Open Range Short</td><td>33.8%</td><td>0.925</td><td style='color:#c62828'>NT$-134,150</td><td>0.189</td></tr>
+<tr><td style='color:#880e4f;font-weight:bold'>2. S13</td><td>ATR Momentum Break Short</td><td>31.9%</td><td>0.900</td><td style='color:#c62828'>NT$-183,350</td><td>0.159</td></tr>
+<tr><td style='color:#880e4f;font-weight:bold'>3. S08</td><td>EMA 9/21 Death Cross</td><td>30.1%</td><td>0.854</td><td style='color:#c62828'>NT$-67,750</td><td>0.144</td></tr></tbody>
               </table>
             </div>
             <a href='tx/TX-Short-Experiments/report.html' class='btn btn-short'>空單報告 →</a>
@@ -637,7 +637,8 @@ tbody tr:hover td{background:#f8fafc}
   <div id="tx-main-log" class="main-section">
     <div class="tab-panel active">
       <div class="part-label"><span class="part-badge">LOG</span>對話記錄 · Session Log</div>
-      <div class="card"><div class='log-entry'><div class='log-date'>2026-05-13</div><div><div class='log-title'>宏觀分析 — 月度方向 + 週內結構</div><ul class='log-items'><li>新增 macro_analysis.py：以週線資料（2012–2026，723 根）統計月度勝率與季節性</li><li>整體月勝率 63.9%，平均月漲跌 +199 pts（月初買、月底賣）</li><li>九月是唯一偏空月（42.9%）；十二月最穩（78.6%）；四月期望值最大（平均 +518 pts）</li><li>週內結構：第1、4、5週勝率較高（58–61%）；第3週最弱（55.4%）</li><li>建立操作框架：先看月度季節性偏向 → 再用週線 RSI/BB 判斷當週進場時機</li></ul></div></div>
+      <div class="card"><div class='log-entry'><div class='log-date'>2026-05-13</div><div><div class='log-title'>SL 敏感度分析 — 確認 30pts 過緊</div><ul class='log-items'><li>問題：SL=30pts（≈0.15%）被雜訊掃出後才噴上，導致 19/20 多單虧損</li><li>系統性測試 SL = 30 / 50 / 60 / 80 / 100 / 120 / 150（R:R 固定 2:1）</li><li>SL=30：只有 E12 獲利（PF=1.132, WR=36.1%）</li><li>SL=60：3 策略獲利，E12 PF=1.648, WR=45.2%</li><li>SL=120：甜蜜點 — E09/E07/E12 均 PF>2.0、WR突破50%；E03 淨盈虧 NT$184萬</li><li>SL=120 確認為新基準，更新 Pine Script 預設值</li><li><b>結論：30pts 根本原因是台指期 ATR 平均遠大於 30pts，止損設計需重新校準</b></li></ul></div></div>
+<div class='log-entry'><div class='log-date'>2026-05-13</div><div><div class='log-title'>宏觀分析 — 月度方向 + 週內結構</div><ul class='log-items'><li>新增 macro_analysis.py：以週線資料（2012–2026，723 根）統計月度勝率與季節性</li><li>整體月勝率 63.9%，平均月漲跌 +199 pts（月初買、月底賣）</li><li>九月是唯一偏空月（42.9%）；十二月最穩（78.6%）；四月期望值最大（平均 +518 pts）</li><li>週內結構：第1、4、5週勝率較高（58–61%）；第3週最弱（55.4%）</li><li>建立操作框架：先看月度季節性偏向 → 再用週線 RSI/BB 判斷當週進場時機</li></ul></div></div>
 <div class='log-entry'><div class='log-date'>2026-05-13</div><div><div class='log-title'>第一版回測引擎完成 + Pine Script 生成</div><ul class='log-items'><li>完成 experiments/ 模組：loader、indicators、engine、runner、report</li><li>20 多單策略 E01–E20（Oscillator / Trend / Breakout / Pattern / Session 五大類）</li><li>20 空單策略 S01–S20（對應多單鏡像邏輯）</li><li>真實資料回測（TAIFEX_DLY_MXF1!, 30.csv，2025-06 起 8585 bars）</li><li>多單 E12 BB Squeeze Break 唯一獲利（PF=1.132, WR=36.1%）</li><li>空單全部虧損 — 資料期間為大多頭，做空困難，為預期結果</li><li>Pine Script v6 多空各一檔：下拉選單選策略、Enable 開關、R:R 可設定</li></ul></div></div>
 <div class='log-entry'><div class='log-date'>2026-05-12</div><div><div class='log-title'>架構設計 — 從 XAUUSD 擴展到台指期</div><ul class='log-items'><li>決定標的：MTX 小台指期（每點 NT$50）</li><li>相關性指標：NQ 納斯達克期貨（同向，可切換 SOX/SPX/VIX）</li><li>SL/TP 改為固定點數（30pts/60pts，R:R 1:2）</li><li>時段：日盤（08:45–13:45）+ 夜盤（15:00–05:00）皆納入</li></ul></div></div></div>
     </div>

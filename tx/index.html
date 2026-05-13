@@ -32,30 +32,6 @@
   .spec .value{font-size:1.1em;font-weight:600;color:#333}
   .notice{background:#fff8e1;border:1px solid #ffcc02;border-radius:6px;
            padding:12px 16px;font-size:.85em;color:#5d4037;margin-top:16px}
-  /* Macro section */
-  .macro-hero{background:linear-gradient(135deg,#1b5e20 0%,#0d47a1 100%);
-               color:white;border-radius:10px;padding:20px 24px;margin-bottom:20px}
-  .macro-hero h2{font-size:1.1em;margin-bottom:4px;font-weight:700}
-  .macro-hero p{opacity:.85;font-size:.88em}
-  .macro-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
-  .macro-card{background:white;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.1);overflow:hidden}
-  .macro-card-header{padding:12px 18px;font-weight:600;font-size:.95em;background:#263238;color:#eceff1}
-  .macro-card-body{padding:14px 18px}
-  .macro-stat-row{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
-  .macro-stat{background:#f5f5f5;border-radius:6px;padding:10px 14px;min-width:120px}
-  .macro-stat .mv{font-size:1.25em;font-weight:700;color:#1a237e}
-  .macro-stat .ml{font-size:.75em;color:#777;margin-top:2px}
-  .bias-long{display:inline-block;background:#2e7d32;color:#fff;padding:1px 8px;border-radius:4px;font-weight:700;font-size:.82em}
-  .bias-short{display:inline-block;background:#b71c1c;color:#fff;padding:1px 8px;border-radius:4px;font-weight:700;font-size:.82em}
-  .bias-neutral{display:inline-block;background:#555;color:#fff;padding:1px 8px;border-radius:4px;font-weight:700;font-size:.82em}
-  .sea-table{width:100%;border-collapse:collapse;font-size:.83em}
-  .sea-table th{background:#eceff1;padding:6px 8px;text-align:left;color:#455;font-weight:600}
-  .sea-table td{padding:5px 8px;border-bottom:1px solid #f0f0f0}
-  .sea-table tr:hover{background:#fafafa}
-  .bar-pos{display:inline-block;height:8px;background:#43a047;vertical-align:middle;margin-left:4px;border-radius:2px}
-  .bar-neg{display:inline-block;height:8px;background:#e53935;vertical-align:middle;margin-left:4px;border-radius:2px}
-  .recent-up{color:#2e7d32;font-weight:600}
-  .recent-dn{color:#c62828;font-weight:600}
   /* Session log */
   .log-entry{display:flex;gap:20px;padding:16px 0;border-bottom:1px solid #eee}
   .log-entry:last-child{border-bottom:none}
@@ -92,114 +68,15 @@
     </div>
   </div>
 
-  <!-- ══ 宏觀分析區塊 ══ -->
-  <div class="macro-hero">
-    <h2>🌐 宏觀分析 — 月度方向 + 週內結構</h2>
-    <p>以週線資料（2012–2026，169 個月）統計月初買入、月底賣出的歷史勝率，建立宏觀偏向基準後，再用週線信號挑選進場時機。</p>
-  </div>
-
-  <!-- 整體統計 + 當月偏向 -->
-  <div class="macro-card" style="margin-bottom:20px">
-    <div class="macro-card-header">📊 整體月度統計 &amp; 當月偏向（2026/05）</div>
-    <div class="macro-card-body">
-      <div class="macro-stat-row">
-        <div class="macro-stat"><div class="mv">63.9%</div><div class="ml">整體月勝率（169 個月）</div></div>
-        <div class="macro-stat"><div class="mv" style="color:#2e7d32">+199 pts</div><div class="ml">平均月漲跌</div></div>
-        <div class="macro-stat"><div class="mv">169</div><div class="ml">總樣本月數（2012–2026）</div></div>
-        <div class="macro-stat"><div class="mv">723</div><div class="ml">週線 K 棒數</div></div>
-      </div>
-      <p style="font-size:.88em;margin-bottom:8px">
-        <b>當月（五月）季節性偏向：</b>
-        <span class="bias-long">偏多</span>
-        &nbsp; 歷史勝率 <b>66.7%</b>，平均 <b>+286 pts</b>，中位數 <b>+312 pts</b>
-      </p>
-      <p style="font-size:.82em;color:#666">
-        操作思路：先確認<b>月度方向偏多</b>作為宏觀基準，再用週線 RSI / BB 位置判斷進場時機（順月度方向）。
-        &nbsp;<a href="macro_report.html" style="color:#1565c0">→ 完整宏觀報告</a>
-      </p>
-    </div>
-  </div>
-
-  <div class="macro-grid">
-    <!-- 季節性表格 -->
-    <div class="macro-card">
-      <div class="macro-card-header">🗓 季節性偏向 — 每月歷史統計（勝率 ≥55% 偏多，≤45% 偏空）</div>
-      <div class="macro-card-body">
-        <table class="sea-table">
-          <thead><tr><th>月份</th><th>樣本</th><th>月勝率</th><th>平均漲跌（pts）</th><th>偏向</th></tr></thead>
-          <tbody>
-            <tr><td>一月</td><td>14</td><td style="color:#2e7d32;font-weight:700">71.4%</td><td>+377 <span class="bar-pos" style="width:38px"></span></td><td><span class="bias-long">偏多</span></td></tr>
-            <tr><td>二月</td><td>14</td><td style="color:#2e7d32;font-weight:700">64.3%</td><td>+396 <span class="bar-pos" style="width:40px"></span></td><td><span class="bias-long">偏多</span></td></tr>
-            <tr><td>三月</td><td>14</td><td>57.1%</td><td>-257 <span class="bar-neg" style="width:26px"></span></td><td><span class="bias-long">偏多</span></td></tr>
-            <tr><td>四月</td><td>14</td><td style="color:#2e7d32;font-weight:700">64.3%</td><td style="color:#2e7d32;font-weight:700">+518 <span class="bar-pos" style="width:52px"></span></td><td><span class="bias-long">偏多★</span></td></tr>
-            <tr><td>五月</td><td>14</td><td style="color:#2e7d32;font-weight:700">66.7%</td><td>+286 <span class="bar-pos" style="width:29px"></span></td><td><span class="bias-long">偏多</span></td></tr>
-            <tr><td>六月</td><td>14</td><td style="color:#2e7d32;font-weight:700">71.4%</td><td>+133 <span class="bar-pos" style="width:13px"></span></td><td><span class="bias-long">偏多</span></td></tr>
-            <tr><td>七月</td><td>14</td><td style="color:#2e7d32;font-weight:700">64.3%</td><td>+36 <span class="bar-pos" style="width:4px"></span></td><td><span class="bias-long">偏多</span></td></tr>
-            <tr><td>八月</td><td>14</td><td style="color:#2e7d32;font-weight:700">64.3%</td><td>+108 <span class="bar-pos" style="width:11px"></span></td><td><span class="bias-long">偏多</span></td></tr>
-            <tr><td>九月</td><td>14</td><td style="color:#c62828;font-weight:700">42.9%</td><td>+57 <span class="bar-pos" style="width:6px"></span></td><td><span class="bias-short">偏空★</span></td></tr>
-            <tr><td>十月</td><td>14</td><td>57.1%</td><td>+113 <span class="bar-pos" style="width:11px"></span></td><td><span class="bias-long">偏多</span></td></tr>
-            <tr><td>十一月</td><td>14</td><td style="color:#2e7d32;font-weight:700">64.3%</td><td>+325 <span class="bar-pos" style="width:33px"></span></td><td><span class="bias-long">偏多</span></td></tr>
-            <tr><td>十二月</td><td>14</td><td style="color:#2e7d32;font-weight:700">78.6%</td><td>+285 <span class="bar-pos" style="width:29px"></span></td><td><span class="bias-long">偏多★</span></td></tr>
-          </tbody>
-        </table>
-        <p style="font-size:.78em;color:#888;margin-top:8px">★ = 特別強勢。九月唯一偏空月；三月勝率雖偏多但期望值為負（含 2020/3 大跌）。</p>
-      </div>
-    </div>
-
-    <!-- 週內結構 + 近12個月 -->
-    <div style="display:flex;flex-direction:column;gap:20px">
-      <div class="macro-card">
-        <div class="macro-card-header">📅 週內結構 — 月中哪週最強（全樣本合併）</div>
-        <div class="macro-card-body">
-          <table class="sea-table">
-            <thead><tr><th>週次</th><th>樣本</th><th>週勝率</th><th>平均漲跌</th></tr></thead>
-            <tbody>
-              <tr><td><b>第1週（月初）</b></td><td>169</td><td style="color:#2e7d32;font-weight:700">58.6%</td><td>+71 pts</td></tr>
-              <tr><td>第2週</td><td>168</td><td>53.8%</td><td>+50 pts</td></tr>
-              <tr><td>第3週</td><td>168</td><td>55.4%</td><td>+10 pts</td></tr>
-              <tr><td><b>第4週</b></td><td>165</td><td style="color:#2e7d32;font-weight:700">61.0%</td><td>+57 pts</td></tr>
-              <tr><td><b>第5週（月底）</b></td><td>73</td><td style="color:#2e7d32;font-weight:700">60.3%</td><td>+55 pts</td></tr>
-            </tbody>
-          </table>
-          <p style="font-size:.78em;color:#888;margin-top:8px">第1、4、5週勝率較高；第3週（月中）最弱。建議在月初或月末偏強週進場。</p>
-        </div>
-      </div>
-
-      <div class="macro-card">
-        <div class="macro-card-header">📈 近 12 個月回顧</div>
-        <div class="macro-card-body">
-          <table class="sea-table">
-            <thead><tr><th>年/月</th><th>月漲跌（pts）</th></tr></thead>
-            <tbody>
-              <tr><td>2025/06</td><td class="recent-up">▲ +1,146</td></tr>
-              <tr><td>2025/07</td><td class="recent-up">▲ +922</td></tr>
-              <tr><td>2025/08</td><td class="recent-up">▲ +978</td></tr>
-              <tr><td>2025/09</td><td class="recent-up">▲ +2,486（季節性偏空卻大漲）</td></tr>
-              <tr><td>2025/10</td><td class="recent-up">▲ +1,653</td></tr>
-              <tr><td>2025/11</td><td class="recent-dn">▼ −693</td></tr>
-              <tr><td>2025/12</td><td class="recent-up">▲ +1,739</td></tr>
-              <tr><td>2026/01</td><td class="recent-up">▲ +2,752</td></tr>
-              <tr><td>2026/02</td><td class="recent-up">▲ +3,504</td></tr>
-              <tr><td>2026/03</td><td class="recent-dn">▼ −3,135</td></tr>
-              <tr><td>2026/04</td><td class="recent-up">▲ +6,744</td></tr>
-              <tr><td>2026/05</td><td class="recent-up">▲ +1,641（進行中）</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- ══ 宏觀分析區塊結束 ══ -->
-
   <div class="grid">
     <div class="card">
       <div class="card-header card-long">多單實驗 Top 3 (E01–E20)</div>
       <div class="card-body">
         <table>
           <thead><tr><th>代碼</th><th>策略</th><th>勝率</th><th>PF</th><th>淨盈虧</th><th>分數</th></tr></thead>
-          <tbody><tr><td style='color:#1565c0;font-weight:bold'>1. E12</td><td>BB Squeeze Break</td><td>36.1%</td><td>1.132</td><td style='color:#2e7d32'>NT$21,000</td><td>0.311</td></tr>
-<tr><td style='color:#1565c0;font-weight:bold'>2. E19</td><td>Day Open Range Break</td><td>31.9%</td><td>0.939</td><td style='color:#c62828'>NT$-43,500</td><td>0.174</td></tr>
-<tr><td style='color:#1565c0;font-weight:bold'>3. E07</td><td>RSI 50 Crossover</td><td>31.2%</td><td>0.907</td><td style='color:#c62828'>NT$-22,500</td><td>0.169</td></tr></tbody>
+          <tbody><tr><td style='color:#1565c0;font-weight:bold'>1. E09</td><td>EMA55 Pullback</td><td>50.8%</td><td>1.801</td><td style='color:#2e7d32'>NT$1,120,800</td><td>0.721</td></tr>
+<tr><td style='color:#1565c0;font-weight:bold'>2. E07</td><td>RSI 50 Crossover</td><td>52.1%</td><td>2.041</td><td style='color:#2e7d32'>NT$693,900</td><td>0.718</td></tr>
+<tr><td style='color:#1565c0;font-weight:bold'>3. E12</td><td>BB Squeeze Break</td><td>51.8%</td><td>2.002</td><td style='color:#2e7d32'>NT$474,100</td><td>0.679</td></tr></tbody>
         </table>
         <a href='TX-Long-Experiments/report.html' class='btn btn-long'>多單報告 →</a>
         <a href="TX-Long-Experiments/pine/ALL_Long_Strategies.pine" class="btn btn-pine" download>Pine Script ↓</a>
@@ -211,9 +88,9 @@
       <div class="card-body">
         <table>
           <thead><tr><th>代碼</th><th>策略</th><th>勝率</th><th>PF</th><th>淨盈虧</th><th>分數</th></tr></thead>
-          <tbody><tr><td style='color:#880e4f;font-weight:bold'>1. S09</td><td>EMA55 Resistance</td><td>30.8%</td><td>0.889</td><td style='color:#c62828'>NT$-46,500</td><td>0.144</td></tr>
-<tr><td style='color:#880e4f;font-weight:bold'>2. S02</td><td>MACD Cross Above Zero</td><td>29.2%</td><td>0.826</td><td style='color:#c62828'>NT$-43,500</td><td>0.107</td></tr>
-<tr><td style='color:#880e4f;font-weight:bold'>3. S17</td><td>Bearish Engulfing</td><td>29.9%</td><td>0.853</td><td style='color:#c62828'>NT$-72,000</td><td>0.106</td></tr></tbody>
+          <tbody><tr><td style='color:#880e4f;font-weight:bold'>1. S19</td><td>Day Open Range Short</td><td>33.8%</td><td>0.925</td><td style='color:#c62828'>NT$-134,150</td><td>0.189</td></tr>
+<tr><td style='color:#880e4f;font-weight:bold'>2. S13</td><td>ATR Momentum Break Short</td><td>31.9%</td><td>0.900</td><td style='color:#c62828'>NT$-183,350</td><td>0.159</td></tr>
+<tr><td style='color:#880e4f;font-weight:bold'>3. S08</td><td>EMA 9/21 Death Cross</td><td>30.1%</td><td>0.854</td><td style='color:#c62828'>NT$-67,750</td><td>0.144</td></tr></tbody>
         </table>
         <a href='TX-Short-Experiments/report.html' class='btn btn-short'>空單報告 →</a>
         <a href="TX-Short-Experiments/pine/ALL_Short_Strategies.pine" class="btn btn-pine" download>Pine Script ↓</a>
@@ -235,9 +112,8 @@
 
   <div class="info-card">
     <h2>對話記錄 / Session Log</h2>
-    <div class='log-entry'><div class='log-date'>2026-05-13</div><div class='log-title'>宏觀分析 — 月度方向 + 週內結構（macro_analysis.py）</div><ul class='log-items'><li>新增 <code>macro_analysis.py</code>：以週線資料（2012–2026，723 根）統計月度勝率與季節性</li><li>整體月勝率 63.9%，平均月漲跌 +199 pts（月初買、月底賣）</li><li>九月是唯一偏空月（42.9%）；十二月最穩（78.6%）；四月期望值最大（平均 +518 pts）</li><li>週內結構：第1、4、5週勝率較高（58–61%）；第3週最弱（55.4%）</li><li>新增 <code>macro_report.html</code>（獨立暗色主題，含熱力圖 + 近12月回顧）</li><li>整合宏觀分析區塊到 <code>index.html</code>（季節性表格、週內結構、近12月）</li><li>建立操作框架：先看月度季節性偏向 → 再用週線 RSI/BB 判斷當週進場時機</li></ul></div>
+    <div class='log-entry'><div class='log-date'>2026-05-12</div><div class='log-title'>架構設計 — 從 XAUUSD 擴展到台指期</div><ul class='log-items'><li>決定標的：MTX 小台指期（每點 NT$50）</li><li>確認資料來源：TradingView CSV（同 xauusd 格式）</li><li>相關性指標：NQ 納斯達克期貨（同向，可切換 SOX/SPX/VIX）</li><li>SL/TP 改為固定點數（30pts/60pts，R:R 1:2）</li><li>時段：日盤（08:45–13:45）+ 夜盤（15:00–05:00）皆納入</li><li>建立 CLAUDE.md、.claude/memory/（記憶 git 同步架構）</li></ul></div>
 <div class='log-entry'><div class='log-date'>2026-05-13</div><div class='log-title'>第一版回測引擎完成 + Pine Script 生成</div><ul class='log-items'><li>完成 experiments/ 模組：loader、indicators、engine、runner、report</li><li>20 多單策略 E01–E20（Oscillator / Trend / Breakout / Pattern / Session 五大類）</li><li>20 空單策略 S01–S20（對應多單鏡像邏輯）</li><li>真實資料回測（TAIFEX_DLY_MXF1!, 30.csv，2025-06 起 8585 bars）</li><li>多單 E12 BB Squeeze Break 唯一獲利（PF=1.132, WR=36.1%）</li><li>空單全部虧損 — 資料期間為大多頭，做空困難，為預期結果</li><li>Pine Script v6 多空各一檔：下拉選單選策略、Enable 開關、R:R 可設定</li><li>下一步：加入 NQ 相關性過濾 + MTF 過濾提升勝率</li></ul></div>
-<div class='log-entry'><div class='log-date'>2026-05-12</div><div class='log-title'>架構設計 — 從 XAUUSD 擴展到台指期</div><ul class='log-items'><li>決定標的：MTX 小台指期（每點 NT$50）</li><li>確認資料來源：TradingView CSV（同 xauusd 格式）</li><li>相關性指標：NQ 納斯達克期貨（同向，可切換 SOX/SPX/VIX）</li><li>SL/TP 改為固定點數（30pts/60pts，R:R 1:2）</li><li>時段：日盤（08:45–13:45）+ 夜盤（15:00–05:00）皆納入</li><li>建立 CLAUDE.md、.claude/memory/（記憶 git 同步架構）</li></ul></div>
   </div>
 
   <div class="info-card">
