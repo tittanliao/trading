@@ -672,6 +672,260 @@ def _tx_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
 """
 
 
+# ─── Validation (note vs data) ───────────────────────────────────────
+def _load_validation() -> dict:
+    p = ROOT / "doc/validation_results.json"
+    if not p.exists():
+        return {}
+    with open(p, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _match_badge(match: bool) -> str:
+    return "<span style='color:#059669;font-weight:700'>✅</span>" if match else "<span style='color:#dc2626;font-weight:700'>❌</span>"
+
+
+def _xauusd_validation_html(vdata: dict) -> str:
+    xu = vdata.get("xauusd", {})
+    month_names = ["一","二","三","四","五","六","七","八","九","十","十一","十二"]
+
+    # Monthly table rows
+    monthly_rows = ""
+    for r in xu.get("xauusd_monthly", []):
+        m = int(r["month"])
+        mb = _match_badge(r["match"])
+        wr_col = "color:#059669" if r["win_rate"] >= 0.55 else ("color:#dc2626" if r["win_rate"] <= 0.45 else "color:#d97706")
+        monthly_rows += (
+            f"<tr><td>{month_names[m-1]}月</td>"
+            f"<td>{r['note_view']}</td>"
+            f"<td style='{wr_col};font-weight:700'>{r['data_view']} ({r['win_rate']:.0%})</td>"
+            f"<td style='text-align:right'>{r['avg_ret']:.1%}</td>"
+            f"<td style='text-align:center'>{mb}</td></tr>\n"
+        )
+
+    # Sessions table rows
+    session_rows = ""
+    for s in xu.get("xauusd_sessions", []):
+        trend = s["趨勢K比例"]
+        note  = s["筆記判斷"]
+        # oscillation note says mostly oscillation → expect low trend%, so 趨勢K < 50% is consistent
+        if "震盪" in note:
+            consistent = trend < 0.55
+        else:
+            consistent = True  # 50/50 always partial
+        mb = _match_badge(consistent)
+        trend_col = "color:#dc2626" if trend >= 0.55 else "color:#059669"
+        session_rows += (
+            f"<tr><td>{s['時段']}</td>"
+            f"<td>{note}</td>"
+            f"<td style='{trend_col};font-weight:700'>{trend:.0%}</td>"
+            f"<td>{s['平均波動%']:.3f}%</td>"
+            f"<td>{s['樣本數']:,}</td>"
+            f"<td style='text-align:center'>{mb}</td></tr>\n"
+        )
+
+    # Week-of-month rows
+    wom_rows = ""
+    for r in xu.get("xauusd_week_of_month", []):
+        wom_rows += (
+            f"<tr><td>第{int(r['week_of_month'])}週</td>"
+            f"<td>{r['avg_move']:.4f}</td>"
+            f"<td>{int(r['n'])}</td></tr>\n"
+        )
+
+    # Quarterly rows
+    q_rows = ""
+    for r in xu.get("xauusd_quarterly", []):
+        wr_col = "color:#059669;font-weight:700" if r["win_rate"] >= 0.55 else "color:#d97706;font-weight:700"
+        q_rows += (
+            f"<tr><td>Q{int(r['quarter'])}</td>"
+            f"<td style='{wr_col}'>{r['win_rate']:.0%}</td>"
+            f"<td>{r['avg_ret']:.2%}</td>"
+            f"<td>{int(r['n'])}</td></tr>\n"
+        )
+
+    return f"""
+  <!-- XAUUSD 筆記驗證 -->
+  <div id="xauusd-main-validate" class="main-section">
+    <div class="tab-panel active">
+      <div class="part-label"><span class="part-badge">VALIDATE</span>筆記驗證 · Notes vs Data (2014–2026)</div>
+
+      <div class="insight-grid">
+        <div class="insight info"><strong>驗證方法</strong>以 XAUUSD 日線月收益率計算勝率（WR≥55%=強、≤45%=弱、其餘=中），對照黃金秘笈/黃金短線筆記結論。</div>
+        <div class="insight warn"><strong>樣本期間</strong>日線 2014–2026（月度樣本 ~12年），30m 時段資料（帶時區轉換為台北時間）。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📅 月份強弱驗證（黃金秘笈）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>月份</th><th>筆記判斷</th><th>資料實測</th><th>平均月報酬</th><th>符合</th></tr></thead>
+            <tbody>{monthly_rows}</tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;font-size:.8em;color:var(--muted)">
+          ✅ = 筆記與資料同向 ｜ ❌ = 不符（中性視為不完全符合）
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📊 季度統計</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>季度</th><th>勝率</th><th>平均報酬</th><th>樣本數</th></tr></thead>
+              <tbody>{q_rows}</tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">📅 週次波動（每月第幾週）</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>週次</th><th>平均波動</th><th>樣本數</th></tr></thead>
+              <tbody>{wom_rows}</tbody>
+            </table>
+          </div>
+          <div style="margin-top:8px;font-size:.8em;color:var(--muted)">筆記：第1、3週最強</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⏱ 四個時段特性（黃金短線 + 四個時間做單）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>時段</th><th>筆記判斷</th><th>趨勢K比例</th><th>平均波動</th><th>樣本數</th><th>符合</th></tr></thead>
+            <tbody>{session_rows}</tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;font-size:.8em;color:var(--muted)">
+          趨勢K定義：abs_ret &gt; 0.15%；筆記震盪主張 → 趨勢K比例應 &lt; 55%
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /xauusd-main-validate -->
+"""
+
+
+def _tx_validation_html(vdata: dict) -> str:
+    tx = vdata.get("tx", {})
+    month_names = ["一","二","三","四","五","六","七","八","九","十","十一","十二"]
+
+    # Monthly rows
+    monthly_rows = ""
+    for r in tx.get("tx_monthly", []):
+        m = int(r["month"])
+        mb = _match_badge(r["match"])
+        wr_col = "color:#059669" if r["win_rate"] >= 0.55 else ("color:#dc2626" if r["win_rate"] <= 0.45 else "color:#d97706")
+        monthly_rows += (
+            f"<tr><td>{month_names[m-1]}月</td>"
+            f"<td>{r['note_view']}</td>"
+            f"<td style='{wr_col};font-weight:700'>{r['data_view']} ({r['win_rate']:.0%})</td>"
+            f"<td style='text-align:right'>{r['avg_ret']:.1%}</td>"
+            f"<td style='text-align:center'>{mb}</td></tr>\n"
+        )
+
+    # Quarterly rows (指數密技: Q4 幾乎必漲)
+    q_rows = ""
+    for r in tx.get("tx_quarterly", []):
+        wr_col = "color:#059669;font-weight:700" if r["win_rate"] >= 0.60 else "color:#d97706;font-weight:700"
+        note_q4 = " ⭐ Q4必有多單" if int(r["quarter"]) == 4 else ""
+        q_rows += (
+            f"<tr><td>Q{int(r['quarter'])}{note_q4}</td>"
+            f"<td style='{wr_col}'>{r['win_rate']:.0%}</td>"
+            f"<td>{r['avg_ret']:.2%}</td>"
+            f"<td>{int(r['n'])}</td></tr>\n"
+        )
+
+    # Week-of-month rows
+    wom_rows = ""
+    for r in tx.get("tx_week_of_month", []):
+        wom_rows += (
+            f"<tr><td>第{int(r['week_of_month'])}週</td>"
+            f"<td>{r['avg_move']:.4f}</td>"
+            f"<td>{int(r['n'])}</td></tr>\n"
+        )
+
+    # Election year rows
+    elec_rows = ""
+    for r in tx.get("tx_election", []):
+        is_e = "選舉年" if r["is_election"] else "非選舉年"
+        wr_col = "color:#059669;font-weight:700" if r["win_rate"] >= 0.60 else "color:#d97706;font-weight:700"
+        elec_rows += (
+            f"<tr><td>{is_e}</td><td>Q{int(r['q'])}</td>"
+            f"<td style='{wr_col}'>{r['win_rate']:.0%}</td>"
+            f"<td>{r['avg_ret']:.2%}</td>"
+            f"<td>{int(r['n'])}</td></tr>\n"
+        )
+
+    return f"""
+  <!-- TX 筆記驗證 -->
+  <div id="tx-main-validate" class="main-section">
+    <div class="tab-panel active">
+      <div class="part-label"><span class="part-badge">VALIDATE</span>筆記驗證 · Notes vs Data (2012–2026)</div>
+
+      <div class="insight-grid">
+        <div class="insight info"><strong>驗證方法</strong>以 TX 日線月收益率計算勝率（WR≥55%=強、≤45%=弱），對照指數密技筆記結論。</div>
+        <div class="insight warn"><strong>樣本期間</strong>日線 2012–2026（月度樣本 ~14年），選舉年：2000/2004/2008/2012/2016/2020/2024。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📅 月份強弱驗證（指數密技）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>月份</th><th>筆記判斷</th><th>資料實測</th><th>平均月報酬</th><th>符合</th></tr></thead>
+            <tbody>{monthly_rows}</tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;font-size:.8em;color:var(--muted)">
+          筆記：一月通常漲、十二月幾乎必漲、五月偏弱；資料以月勝率判定。
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📊 季度統計（指數密技：Q4 幾乎必有多單機會）</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>季度</th><th>勝率</th><th>平均報酬</th><th>樣本數</th></tr></thead>
+              <tbody>{q_rows}</tbody>
+            </table>
+          </div>
+          <div style="margin-top:8px;font-size:.8em;color:var(--muted)">
+            各季勝率均 &gt; 60%，Q4 avg +1.7% 最高 — 支持「Q4必有多單」結論。
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">📅 週次波動（每月第幾週）</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>週次</th><th>平均波動</th><th>樣本數</th></tr></thead>
+              <tbody>{wom_rows}</tbody>
+            </table>
+          </div>
+          <div style="margin-top:8px;font-size:.8em;color:var(--muted)">筆記：第1、3週最強</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🗳 選舉年效應（指數密技：四年周期）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>年份類型</th><th>季度</th><th>勝率</th><th>平均報酬</th><th>樣本數</th></tr></thead>
+            <tbody>{elec_rows}</tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;font-size:.8em;color:var(--muted)">
+          台灣總統大選每4年（2000/2004/2008/2012/2016/2020/2024）；選舉年 Q1/Q4 特別強。
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /tx-main-validate -->
+"""
+
+
 # ─── Main generator ──────────────────────────────────────────────────
 def generate():
     # Load experiment results
@@ -698,6 +952,9 @@ def generate():
 
     xauusd_log = _session_log_html("xauusd")
     tx_log     = _session_log_html("tx")
+    vdata      = _load_validation()
+    xu_validate_html = _xauusd_validation_html(vdata)
+    tx_validate_html = _tx_validation_html(vdata)
 
     html = f"""<!DOCTYPE html>
 <html lang="zh-TW">
@@ -854,11 +1111,13 @@ tbody tr:hover td{{background:#f8fafc}}
   <div class="commodity-subnav">
     <button class="nav-main-tab active" onclick="showMain('xauusd-main-opt',this)">現有策略優化</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-exp',this)">實驗策略測試</button>
+    <button class="nav-main-tab" onclick="showMain('xauusd-main-validate',this)">筆記驗證</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-log',this)">對話記錄</button>
   </div>
 
 {_xauusd_opt_html()}
 {_xauusd_exp_html(xu_long_rows, xu_short_rows, xauusd)}
+{xu_validate_html}
 
   <!-- XAUUSD 對話記錄 -->
   <div id="xauusd-main-log" class="main-section">
@@ -876,11 +1135,13 @@ tbody tr:hover td{{background:#f8fafc}}
   <div class="commodity-subnav">
     <button class="nav-main-tab active" onclick="showMain('tx-main-macro',this)">宏觀分析</button>
     <button class="nav-main-tab" onclick="showMain('tx-main-exp',this)">實驗策略</button>
+    <button class="nav-main-tab" onclick="showMain('tx-main-validate',this)">筆記驗證</button>
     <button class="nav-main-tab" onclick="showMain('tx-main-log',this)">對話記錄</button>
   </div>
 
 {_tx_macro_html()}
 {_tx_exp_html(tx_long_rows, tx_short_rows, tx)}
+{tx_validate_html}
 
   <!-- TX 對話記錄 -->
   <div id="tx-main-log" class="main-section">

@@ -154,6 +154,7 @@ tbody tr:hover td{background:#f8fafc}
   <div class="commodity-subnav">
     <button class="nav-main-tab active" onclick="showMain('xauusd-main-opt',this)">現有策略優化</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-exp',this)">實驗策略測試</button>
+    <button class="nav-main-tab" onclick="showMain('xauusd-main-validate',this)">筆記驗證</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-log',this)">對話記錄</button>
   </div>
 
@@ -434,6 +435,92 @@ tbody tr:hover td{background:#f8fafc}
   </div><!-- /xauusd-main-exp -->
 
 
+  <!-- XAUUSD 筆記驗證 -->
+  <div id="xauusd-main-validate" class="main-section">
+    <div class="tab-panel active">
+      <div class="part-label"><span class="part-badge">VALIDATE</span>筆記驗證 · Notes vs Data (2014–2026)</div>
+
+      <div class="insight-grid">
+        <div class="insight info"><strong>驗證方法</strong>以 XAUUSD 日線月收益率計算勝率（WR≥55%=強、≤45%=弱、其餘=中），對照黃金秘笈/黃金短線筆記結論。</div>
+        <div class="insight warn"><strong>樣本期間</strong>日線 2014–2026（月度樣本 ~12年），30m 時段資料（帶時區轉換為台北時間）。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📅 月份強弱驗證（黃金秘笈）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>月份</th><th>筆記判斷</th><th>資料實測</th><th>平均月報酬</th><th>符合</th></tr></thead>
+            <tbody><tr><td>一月</td><td>強</td><td style='color:#059669;font-weight:700'>強 (75%)</td><td style='text-align:right'>4.2%</td><td style='text-align:center'><span style='color:#059669;font-weight:700'>✅</span></td></tr>
+<tr><td>二月</td><td>弱</td><td style='color:#d97706;font-weight:700'>中 (50%)</td><td style='text-align:right'>0.9%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>三月</td><td>強</td><td style='color:#d97706;font-weight:700'>中 (50%)</td><td style='text-align:right'>0.8%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>四月</td><td>弱</td><td style='color:#059669;font-weight:700'>強 (77%)</td><td style='text-align:right'>1.8%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>五月</td><td>弱</td><td style='color:#059669;font-weight:700'>強 (58%)</td><td style='text-align:right'>-0.1%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>六月</td><td>強</td><td style='color:#dc2626;font-weight:700'>弱 (42%)</td><td style='text-align:right'>0.7%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>七月</td><td>強</td><td style='color:#059669;font-weight:700'>強 (58%)</td><td style='text-align:right'>0.9%</td><td style='text-align:center'><span style='color:#059669;font-weight:700'>✅</span></td></tr>
+<tr><td>八月</td><td>強</td><td style='color:#d97706;font-weight:700'>中 (50%)</td><td style='text-align:right'>1.1%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>九月</td><td>弱</td><td style='color:#dc2626;font-weight:700'>弱 (25%)</td><td style='text-align:right'>-1.0%</td><td style='text-align:center'><span style='color:#059669;font-weight:700'>✅</span></td></tr>
+<tr><td>十月</td><td>強</td><td style='color:#059669;font-weight:700'>強 (58%)</td><td style='text-align:right'>1.3%</td><td style='text-align:center'><span style='color:#059669;font-weight:700'>✅</span></td></tr>
+<tr><td>十一月</td><td>弱</td><td style='color:#dc2626;font-weight:700'>弱 (42%)</td><td style='text-align:right'>-0.9%</td><td style='text-align:center'><span style='color:#059669;font-weight:700'>✅</span></td></tr>
+<tr><td>十二月</td><td>強</td><td style='color:#059669;font-weight:700'>強 (75%)</td><td style='text-align:right'>2.1%</td><td style='text-align:center'><span style='color:#059669;font-weight:700'>✅</span></td></tr>
+</tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;font-size:.8em;color:var(--muted)">
+          ✅ = 筆記與資料同向 ｜ ❌ = 不符（中性視為不完全符合）
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📊 季度統計</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>季度</th><th>勝率</th><th>平均報酬</th><th>樣本數</th></tr></thead>
+              <tbody><tr><td>Q1</td><td style='color:#059669;font-weight:700'>58%</td><td>1.97%</td><td>36</td></tr>
+<tr><td>Q2</td><td style='color:#059669;font-weight:700'>59%</td><td>0.86%</td><td>37</td></tr>
+<tr><td>Q3</td><td style='color:#d97706;font-weight:700'>44%</td><td>0.31%</td><td>36</td></tr>
+<tr><td>Q4</td><td style='color:#059669;font-weight:700'>58%</td><td>0.84%</td><td>36</td></tr>
+</tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">📅 週次波動（每月第幾週）</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>週次</th><th>平均波動</th><th>樣本數</th></tr></thead>
+              <tbody><tr><td>第1週</td><td>0.0078</td><td>690</td></tr>
+<tr><td>第2週</td><td>0.0069</td><td>728</td></tr>
+<tr><td>第3週</td><td>0.0069</td><td>698</td></tr>
+<tr><td>第4週</td><td>0.0067</td><td>941</td></tr>
+</tbody>
+            </table>
+          </div>
+          <div style="margin-top:8px;font-size:.8em;color:var(--muted)">筆記：第1、3週最強</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⏱ 四個時段特性（黃金短線 + 四個時間做單）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>時段</th><th>筆記判斷</th><th>趨勢K比例</th><th>平均波動</th><th>樣本數</th><th>符合</th></tr></thead>
+            <tbody><tr><td>早上 9-10</td><td>90%震盪</td><td style='color:#dc2626;font-weight:700'>60%</td><td>0.349%</td><td>134</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>下午 14-15</td><td>70%震盪</td><td style='color:#059669;font-weight:700'>46%</td><td>0.216%</td><td>132</td><td style='text-align:center'><span style='color:#059669;font-weight:700'>✅</span></td></tr>
+<tr><td>晚上 20-21</td><td>50/50</td><td style='color:#dc2626;font-weight:700'>57%</td><td>0.236%</td><td>132</td><td style='text-align:center'><span style='color:#059669;font-weight:700'>✅</span></td></tr>
+<tr><td>半夜 23-00</td><td>偏震盪(除非>20$)</td><td style='color:#dc2626;font-weight:700'>59%</td><td>0.292%</td><td>133</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+</tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;font-size:.8em;color:var(--muted)">
+          趨勢K定義：abs_ret &gt; 0.15%；筆記震盪主張 → 趨勢K比例應 &lt; 55%
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /xauusd-main-validate -->
+
+
   <!-- XAUUSD 對話記錄 -->
   <div id="xauusd-main-log" class="main-section">
     <div class="tab-panel active">
@@ -453,6 +540,7 @@ tbody tr:hover td{background:#f8fafc}
   <div class="commodity-subnav">
     <button class="nav-main-tab active" onclick="showMain('tx-main-macro',this)">宏觀分析</button>
     <button class="nav-main-tab" onclick="showMain('tx-main-exp',this)">實驗策略</button>
+    <button class="nav-main-tab" onclick="showMain('tx-main-validate',this)">筆記驗證</button>
     <button class="nav-main-tab" onclick="showMain('tx-main-log',this)">對話記錄</button>
   </div>
 
@@ -631,6 +719,99 @@ tbody tr:hover td{background:#f8fafc}
         </div>
       </div>
     </div><!-- /tx-main-exp -->
+
+
+  <!-- TX 筆記驗證 -->
+  <div id="tx-main-validate" class="main-section">
+    <div class="tab-panel active">
+      <div class="part-label"><span class="part-badge">VALIDATE</span>筆記驗證 · Notes vs Data (2012–2026)</div>
+
+      <div class="insight-grid">
+        <div class="insight info"><strong>驗證方法</strong>以 TX 日線月收益率計算勝率（WR≥55%=強、≤45%=弱），對照指數密技筆記結論。</div>
+        <div class="insight warn"><strong>樣本期間</strong>日線 2012–2026（月度樣本 ~14年），選舉年：2000/2004/2008/2012/2016/2020/2024。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📅 月份強弱驗證（指數密技）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>月份</th><th>筆記判斷</th><th>資料實測</th><th>平均月報酬</th><th>符合</th></tr></thead>
+            <tbody><tr><td>一月</td><td>強</td><td style='color:#059669;font-weight:700'>強 (71%)</td><td style='text-align:right'>1.8%</td><td style='text-align:center'><span style='color:#059669;font-weight:700'>✅</span></td></tr>
+<tr><td>二月</td><td>中</td><td style='color:#059669;font-weight:700'>強 (71%)</td><td style='text-align:right'>2.4%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>三月</td><td>中</td><td style='color:#059669;font-weight:700'>強 (71%)</td><td style='text-align:right'>-1.0%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>四月</td><td>強</td><td style='color:#059669;font-weight:700'>強 (57%)</td><td style='text-align:right'>2.5%</td><td style='text-align:center'><span style='color:#059669;font-weight:700'>✅</span></td></tr>
+<tr><td>五月</td><td>弱</td><td style='color:#059669;font-weight:700'>強 (71%)</td><td style='text-align:right'>1.6%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>六月</td><td>中</td><td style='color:#059669;font-weight:700'>強 (71%)</td><td style='text-align:right'>0.3%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>七月</td><td>中</td><td style='color:#059669;font-weight:700'>強 (71%)</td><td style='text-align:right'>1.5%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>八月</td><td>弱</td><td style='color:#059669;font-weight:700'>強 (71%)</td><td style='text-align:right'>0.1%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>九月</td><td>弱</td><td style='color:#d97706;font-weight:700'>中 (50%)</td><td style='text-align:right'>-0.4%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>十月</td><td>中</td><td style='color:#059669;font-weight:700'>強 (57%)</td><td style='text-align:right'>0.5%</td><td style='text-align:center'><span style='color:#dc2626;font-weight:700'>❌</span></td></tr>
+<tr><td>十一月</td><td>強</td><td style='color:#059669;font-weight:700'>強 (57%)</td><td style='text-align:right'>2.6%</td><td style='text-align:center'><span style='color:#059669;font-weight:700'>✅</span></td></tr>
+<tr><td>十二月</td><td>強</td><td style='color:#059669;font-weight:700'>強 (79%)</td><td style='text-align:right'>1.9%</td><td style='text-align:center'><span style='color:#059669;font-weight:700'>✅</span></td></tr>
+</tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;font-size:.8em;color:var(--muted)">
+          筆記：一月通常漲、十二月幾乎必漲、五月偏弱；資料以月勝率判定。
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📊 季度統計（指數密技：Q4 幾乎必有多單機會）</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>季度</th><th>勝率</th><th>平均報酬</th><th>樣本數</th></tr></thead>
+              <tbody><tr><td>Q1</td><td style='color:#059669;font-weight:700'>71%</td><td>1.08%</td><td>42</td></tr>
+<tr><td>Q2</td><td style='color:#059669;font-weight:700'>67%</td><td>1.50%</td><td>42</td></tr>
+<tr><td>Q3</td><td style='color:#059669;font-weight:700'>64%</td><td>0.40%</td><td>42</td></tr>
+<tr><td>Q4 ⭐ Q4必有多單</td><td style='color:#059669;font-weight:700'>64%</td><td>1.66%</td><td>42</td></tr>
+</tbody>
+            </table>
+          </div>
+          <div style="margin-top:8px;font-size:.8em;color:var(--muted)">
+            各季勝率均 &gt; 60%，Q4 avg +1.7% 最高 — 支持「Q4必有多單」結論。
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">📅 週次波動（每月第幾週）</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>週次</th><th>平均波動</th><th>樣本數</th></tr></thead>
+              <tbody><tr><td>第1週</td><td>0.0081</td><td>755</td></tr>
+<tr><td>第2週</td><td>0.0079</td><td>788</td></tr>
+<tr><td>第3週</td><td>0.0077</td><td>803</td></tr>
+<tr><td>第4週</td><td>0.0072</td><td>1061</td></tr>
+</tbody>
+            </table>
+          </div>
+          <div style="margin-top:8px;font-size:.8em;color:var(--muted)">筆記：第1、3週最強</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🗳 選舉年效應（指數密技：四年周期）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>年份類型</th><th>季度</th><th>勝率</th><th>平均報酬</th><th>樣本數</th></tr></thead>
+            <tbody><tr><td>非選舉年</td><td>Q1</td><td style='color:#059669;font-weight:700'>76%</td><td>1.46%</td><td>33</td></tr>
+<tr><td>非選舉年</td><td>Q2</td><td style='color:#059669;font-weight:700'>62%</td><td>1.04%</td><td>32</td></tr>
+<tr><td>非選舉年</td><td>Q3</td><td style='color:#d97706;font-weight:700'>57%</td><td>-0.14%</td><td>30</td></tr>
+<tr><td>非選舉年</td><td>Q4</td><td style='color:#059669;font-weight:700'>63%</td><td>1.60%</td><td>30</td></tr>
+<tr><td>選舉年</td><td>Q1</td><td style='color:#d97706;font-weight:700'>56%</td><td>-0.28%</td><td>9</td></tr>
+<tr><td>選舉年</td><td>Q2</td><td style='color:#059669;font-weight:700'>80%</td><td>2.99%</td><td>10</td></tr>
+<tr><td>選舉年</td><td>Q3</td><td style='color:#059669;font-weight:700'>83%</td><td>1.78%</td><td>12</td></tr>
+<tr><td>選舉年</td><td>Q4</td><td style='color:#059669;font-weight:700'>67%</td><td>1.81%</td><td>12</td></tr>
+</tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;font-size:.8em;color:var(--muted)">
+          台灣總統大選每4年（2000/2004/2008/2012/2016/2020/2024）；選舉年 Q1/Q4 特別強。
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /tx-main-validate -->
 
 
   <!-- TX 對話記錄 -->

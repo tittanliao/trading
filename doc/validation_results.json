@@ -1,0 +1,456 @@
+{
+  "xauusd": {
+    "xauusd_monthly": [
+      {
+        "month": 1,
+        "n": 12,
+        "win_rate": 0.75,
+        "avg_ret": 0.0418,
+        "median_ret": 0.0499,
+        "note_view": "強",
+        "data_view": "強",
+        "match": true
+      },
+      {
+        "month": 2,
+        "n": 12,
+        "win_rate": 0.5,
+        "avg_ret": 0.0088,
+        "median_ret": -0.0001,
+        "note_view": "弱",
+        "data_view": "中",
+        "match": false
+      },
+      {
+        "month": 3,
+        "n": 12,
+        "win_rate": 0.5,
+        "avg_ret": 0.0084,
+        "median_ret": -0.0023,
+        "note_view": "強",
+        "data_view": "中",
+        "match": false
+      },
+      {
+        "month": 4,
+        "n": 13,
+        "win_rate": 0.7692,
+        "avg_ret": 0.0185,
+        "median_ret": 0.0107,
+        "note_view": "弱",
+        "data_view": "強",
+        "match": false
+      },
+      {
+        "month": 5,
+        "n": 12,
+        "win_rate": 0.5833,
+        "avg_ret": -0.0006,
+        "median_ret": 0.0003,
+        "note_view": "弱",
+        "data_view": "強",
+        "match": false
+      },
+      {
+        "month": 6,
+        "n": 12,
+        "win_rate": 0.4167,
+        "avg_ret": 0.007,
+        "median_ret": -0.0074,
+        "note_view": "強",
+        "data_view": "弱",
+        "match": false
+      },
+      {
+        "month": 7,
+        "n": 12,
+        "win_rate": 0.5833,
+        "avg_ret": 0.0088,
+        "median_ret": 0.0121,
+        "note_view": "強",
+        "data_view": "強",
+        "match": true
+      },
+      {
+        "month": 8,
+        "n": 12,
+        "win_rate": 0.5,
+        "avg_ret": 0.0109,
+        "median_ret": 0.0018,
+        "note_view": "強",
+        "data_view": "中",
+        "match": false
+      },
+      {
+        "month": 9,
+        "n": 12,
+        "win_rate": 0.25,
+        "avg_ret": -0.0103,
+        "median_ret": -0.0302,
+        "note_view": "弱",
+        "data_view": "弱",
+        "match": true
+      },
+      {
+        "month": 10,
+        "n": 12,
+        "win_rate": 0.5833,
+        "avg_ret": 0.0127,
+        "median_ret": 0.0178,
+        "note_view": "強",
+        "data_view": "強",
+        "match": true
+      },
+      {
+        "month": 11,
+        "n": 12,
+        "win_rate": 0.4167,
+        "avg_ret": -0.0089,
+        "median_ret": -0.0047,
+        "note_view": "弱",
+        "data_view": "弱",
+        "match": true
+      },
+      {
+        "month": 12,
+        "n": 12,
+        "win_rate": 0.75,
+        "avg_ret": 0.0214,
+        "median_ret": 0.0228,
+        "note_view": "強",
+        "data_view": "強",
+        "match": true
+      }
+    ],
+    "xauusd_quarterly": [
+      {
+        "quarter": 1,
+        "n": 36,
+        "win_rate": 0.5833,
+        "avg_ret": 0.0197
+      },
+      {
+        "quarter": 2,
+        "n": 37,
+        "win_rate": 0.5946,
+        "avg_ret": 0.0086
+      },
+      {
+        "quarter": 3,
+        "n": 36,
+        "win_rate": 0.4444,
+        "avg_ret": 0.0031
+      },
+      {
+        "quarter": 4,
+        "n": 36,
+        "win_rate": 0.5833,
+        "avg_ret": 0.0084
+      }
+    ],
+    "xauusd_sessions": [
+      {
+        "時段": "早上 9-10",
+        "樣本數": 134,
+        "平均波動%": 0.349,
+        "趨勢K比例": 0.604,
+        "漲K勝率": 0.582,
+        "筆記判斷": "90%震盪"
+      },
+      {
+        "時段": "下午 14-15",
+        "樣本數": 132,
+        "平均波動%": 0.216,
+        "趨勢K比例": 0.455,
+        "漲K勝率": 0.492,
+        "筆記判斷": "70%震盪"
+      },
+      {
+        "時段": "晚上 20-21",
+        "樣本數": 132,
+        "平均波動%": 0.236,
+        "趨勢K比例": 0.568,
+        "漲K勝率": 0.515,
+        "筆記判斷": "50/50"
+      },
+      {
+        "時段": "半夜 23-00",
+        "樣本數": 133,
+        "平均波動%": 0.292,
+        "趨勢K比例": 0.586,
+        "漲K勝率": 0.481,
+        "筆記判斷": "偏震盪(除非>20$)"
+      }
+    ],
+    "xauusd_week_of_month": [
+      {
+        "week_of_month": 1,
+        "n": 690,
+        "avg_move": 0.0078
+      },
+      {
+        "week_of_month": 2,
+        "n": 728,
+        "avg_move": 0.0069
+      },
+      {
+        "week_of_month": 3,
+        "n": 698,
+        "avg_move": 0.0069
+      },
+      {
+        "week_of_month": 4,
+        "n": 941,
+        "avg_move": 0.0067
+      }
+    ]
+  },
+  "tx": {
+    "tx_monthly": [
+      {
+        "month": 1,
+        "n": 14,
+        "win_rate": 0.7143,
+        "avg_ret": 0.0178,
+        "median_ret": 0.0207,
+        "note_view": "強",
+        "data_view": "強",
+        "match": true
+      },
+      {
+        "month": 2,
+        "n": 14,
+        "win_rate": 0.7143,
+        "avg_ret": 0.0244,
+        "median_ret": 0.0237,
+        "note_view": "中",
+        "data_view": "強",
+        "match": false
+      },
+      {
+        "month": 3,
+        "n": 14,
+        "win_rate": 0.7143,
+        "avg_ret": -0.0097,
+        "median_ret": 0.0091,
+        "note_view": "中",
+        "data_view": "強",
+        "match": false
+      },
+      {
+        "month": 4,
+        "n": 14,
+        "win_rate": 0.5714,
+        "avg_ret": 0.0254,
+        "median_ret": 0.0051,
+        "note_view": "強",
+        "data_view": "強",
+        "match": true
+      },
+      {
+        "month": 5,
+        "n": 14,
+        "win_rate": 0.7143,
+        "avg_ret": 0.0163,
+        "median_ret": 0.0188,
+        "note_view": "弱",
+        "data_view": "強",
+        "match": false
+      },
+      {
+        "month": 6,
+        "n": 14,
+        "win_rate": 0.7143,
+        "avg_ret": 0.0033,
+        "median_ret": 0.0149,
+        "note_view": "中",
+        "data_view": "強",
+        "match": false
+      },
+      {
+        "month": 7,
+        "n": 14,
+        "win_rate": 0.7143,
+        "avg_ret": 0.0146,
+        "median_ret": 0.0169,
+        "note_view": "中",
+        "data_view": "強",
+        "match": false
+      },
+      {
+        "month": 8,
+        "n": 14,
+        "win_rate": 0.7143,
+        "avg_ret": 0.001,
+        "median_ret": 0.0049,
+        "note_view": "弱",
+        "data_view": "強",
+        "match": false
+      },
+      {
+        "month": 9,
+        "n": 14,
+        "win_rate": 0.5,
+        "avg_ret": -0.0035,
+        "median_ret": -0.0029,
+        "note_view": "弱",
+        "data_view": "中",
+        "match": false
+      },
+      {
+        "month": 10,
+        "n": 14,
+        "win_rate": 0.5714,
+        "avg_ret": 0.0053,
+        "median_ret": 0.0092,
+        "note_view": "中",
+        "data_view": "強",
+        "match": false
+      },
+      {
+        "month": 11,
+        "n": 14,
+        "win_rate": 0.5714,
+        "avg_ret": 0.0258,
+        "median_ret": 0.0119,
+        "note_view": "強",
+        "data_view": "強",
+        "match": true
+      },
+      {
+        "month": 12,
+        "n": 14,
+        "win_rate": 0.7857,
+        "avg_ret": 0.0188,
+        "median_ret": 0.0179,
+        "note_view": "強",
+        "data_view": "強",
+        "match": true
+      }
+    ],
+    "tx_quarterly": [
+      {
+        "quarter": 1,
+        "n": 42,
+        "win_rate": 0.7143,
+        "avg_ret": 0.0108,
+        "pos_years": 30
+      },
+      {
+        "quarter": 2,
+        "n": 42,
+        "win_rate": 0.6667,
+        "avg_ret": 0.015,
+        "pos_years": 28
+      },
+      {
+        "quarter": 3,
+        "n": 42,
+        "win_rate": 0.6429,
+        "avg_ret": 0.004,
+        "pos_years": 27
+      },
+      {
+        "quarter": 4,
+        "n": 42,
+        "win_rate": 0.6429,
+        "avg_ret": 0.0166,
+        "pos_years": 27
+      }
+    ],
+    "tx_week_of_month": [
+      {
+        "week_of_month": 1,
+        "n": 755,
+        "avg_move": 0.0081
+      },
+      {
+        "week_of_month": 2,
+        "n": 788,
+        "avg_move": 0.0079
+      },
+      {
+        "week_of_month": 3,
+        "n": 803,
+        "avg_move": 0.0077
+      },
+      {
+        "week_of_month": 4,
+        "n": 1061,
+        "avg_move": 0.0072
+      }
+    ],
+    "tx_sessions": [
+      {
+        "session": "夜盤",
+        "n": 6294,
+        "avg_move": 0.1157,
+        "trend_pct": 0.156
+      },
+      {
+        "session": "日盤",
+        "n": 2066,
+        "avg_move": 0.1628,
+        "trend_pct": 0.2817
+      }
+    ],
+    "tx_election": [
+      {
+        "is_election": false,
+        "q": 1,
+        "win_rate": 0.7576,
+        "avg_ret": 0.0146,
+        "n": 33
+      },
+      {
+        "is_election": false,
+        "q": 2,
+        "win_rate": 0.625,
+        "avg_ret": 0.0104,
+        "n": 32
+      },
+      {
+        "is_election": false,
+        "q": 3,
+        "win_rate": 0.5667,
+        "avg_ret": -0.0014,
+        "n": 30
+      },
+      {
+        "is_election": false,
+        "q": 4,
+        "win_rate": 0.6333,
+        "avg_ret": 0.016,
+        "n": 30
+      },
+      {
+        "is_election": true,
+        "q": 1,
+        "win_rate": 0.5556,
+        "avg_ret": -0.0028,
+        "n": 9
+      },
+      {
+        "is_election": true,
+        "q": 2,
+        "win_rate": 0.8,
+        "avg_ret": 0.0299,
+        "n": 10
+      },
+      {
+        "is_election": true,
+        "q": 3,
+        "win_rate": 0.8333,
+        "avg_ret": 0.0178,
+        "n": 12
+      },
+      {
+        "is_election": true,
+        "q": 4,
+        "win_rate": 0.6667,
+        "avg_ret": 0.0181,
+        "n": 12
+      }
+    ]
+  }
+}
