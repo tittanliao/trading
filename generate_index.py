@@ -7,7 +7,11 @@ Usage:
     python generate_index.py
 """
 import json
+import re
 from pathlib import Path
+
+import pandas as pd
+import numpy as np
 
 ROOT = Path(__file__).parent
 
@@ -189,6 +193,155 @@ def _session_log_html(commodity_id: str) -> str:
             f"</div>"
         )
     return "\n".join(blocks)
+
+
+# ─── XAUUSD 宏觀分析（動態讀 CSV）─────────────────────────────────
+def _xauusd_macro_html() -> str:
+    csv_path = ROOT / "xauusd/csv/FX_IDC_XAUUSD, 1W.csv"
+    if not csv_path.exists():
+        return '<div id="xauusd-main-macro" class="main-section"><div class="tab-panel active"><p style="padding:24px;color:var(--muted)">週線 CSV 未找到</p></div></div>'
+
+    df = pd.read_csv(csv_path)
+    df.columns = [c.strip() for c in df.columns]
+    df['time'] = df['time'].apply(lambda t: pd.to_datetime(re.sub(r'[+-]\d{2}:\d{2}$', '', str(t).strip())))
+    df = df.sort_values('time').reset_index(drop=True)
+    df['close'] = pd.to_numeric(df['close'], errors='coerce')
+    df['open']  = pd.to_numeric(df['open'],  errors='coerce')
+    df['RSI']   = pd.to_numeric(df['RSI'],   errors='coerce')
+    df['year']  = df['time'].dt.year
+    df['month'] = df['time'].dt.month
+    df['week_of_month'] = df.groupby(['year', 'month']).cumcount() + 1
+    df = df[df['year'] >= 1980].copy()
+
+    # Monthly aggregation
+    grp = df.groupby(['year', 'month'])
+    mon = grp.agg(m_open=('open','first'), m_close=('close','last'), rsi_end=('RSI','last')).reset_index()
+    mon['chg_pct']  = (mon['m_close'] - mon['m_open']) / mon['m_open'] * 100
+    mon['chg_usd']  = mon['m_close'] - mon['m_open']
+    mon['bullish']  = mon['chg_pct'] > 0
+    mon['date']     = pd.to_datetime(mon[['year','month']].assign(day=1))
+
+    total_months = len(mon)
+    overall_wr   = mon['bullish'].mean() * 100
+    avg_pct      = mon['chg_pct'].mean()
+    latest       = mon.iloc[-1]
+    cur_month    = int(latest['month'])
+    cur_year     = int(latest['year'])
+    month_names  = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月']
+
+    # Seasonality per month
+    sea_rows = ""
+    cur_note = ""
+    for m in range(1, 13):
+        sub = mon[mon['month'] == m]
+        if len(sub) == 0:
+            continue
+        wr      = sub['bullish'].mean() * 100
+        avg_p   = sub['chg_pct'].mean()
+        avg_u   = sub['chg_usd'].mean()
+        bias    = 'LONG' if wr >= 55 else ('SHORT' if wr <= 45 else 'NEUTRAL')
+        bc      = 'var(--green)' if bias == 'LONG' else ('var(--red)' if bias == 'SHORT' else 'var(--muted)')
+        bl      = '偏多' if bias == 'LONG' else ('偏空' if bias == 'SHORT' else '中性')
+        wc      = 'var(--green)' if wr >= 55 else ('var(--red)' if wr <= 45 else 'var(--muted)')
+        badge_cls = 'badge-green' if bias == 'LONG' else ('badge-red' if bias == 'SHORT' else 'badge-blue')
+        sea_rows += (f"<tr><td>{month_names[m-1]}</td><td>{len(sub)}</td>"
+                     f"<td style='color:{wc};font-weight:700'>{wr:.1f}%</td>"
+                     f"<td>{'▲' if avg_p>=0 else '▼'} {abs(avg_p):.2f}% (${avg_u:+.0f})</td>"
+                     f"<td><span class='badge {badge_cls}'>{bl}</span></td></tr>\n")
+        if m == cur_month:
+            cur_note = f"當月（{month_names[m-1]}）：歷史勝率 {wr:.1f}%，平均 {avg_p:+.2f}%（${avg_u:+.0f}）"
+
+    # Week-of-month structure
+    df['wk_chg'] = (df['close'] - df['open']) / df['open'] * 100
+    df['wk_bull'] = df['wk_chg'] > 0
+    wim = df[df['week_of_month'] <= 5].groupby('week_of_month').agg(
+        n=('wk_chg','count'), wr=('wk_bull','mean'), avg=('wk_chg','mean')).reset_index()
+    wim['wr'] = wim['wr'] * 100
+    wlabel = {1:'第1週（月初）',2:'第2週',3:'第3週',4:'第4週',5:'第5週（月底）'}
+    wim_rows = ""
+    for _, r in wim.iterrows():
+        wk = int(r['week_of_month'])
+        wc = 'var(--green)' if r['wr'] >= 55 else ('var(--red)' if r['wr'] <= 45 else 'var(--muted)')
+        wim_rows += (f"<tr><td><strong>{wlabel[wk]}</strong></td><td>{int(r['n'])}</td>"
+                     f"<td style='color:{wc};font-weight:700'>{r['wr']:.1f}%</td>"
+                     f"<td>{r['avg']:+.2f}%</td></tr>\n")
+
+    # Recent 12 months
+    rec = mon.sort_values('date').tail(12)
+    rec_rows = ""
+    for _, r in rec.iterrows():
+        color = 'var(--green)' if r['bullish'] else 'var(--red)'
+        sign  = '▲' if r['bullish'] else '▼'
+        rec_rows += (f"<tr><td>{int(r['year'])}/{int(r['month']):02d}</td>"
+                     f"<td>${r['m_open']:.0f}</td><td>${r['m_close']:.0f}</td>"
+                     f"<td style='color:{color};font-weight:700'>{sign} {r['chg_pct']:+.2f}% (${r['chg_usd']:+.0f})</td></tr>\n")
+
+    wr_color = 'var(--green)' if overall_wr >= 55 else 'var(--red)'
+
+    return f"""
+  <!-- XAUUSD 宏觀分析 -->
+  <div id="xauusd-main-macro" class="main-section">
+    <div class="subnav">
+      <button class="sub-tab active" onclick="showTab('xauusd-macro','overview',this)">月度統計 &amp; 季節性</button>
+      <button class="sub-tab" onclick="showTab('xauusd-macro','weekly',this)">週內結構</button>
+      <button class="sub-tab" onclick="showTab('xauusd-macro','recent',this)">近 12 個月</button>
+    </div>
+
+    <div id="xauusd-macro-overview" class="tab-panel active">
+      <div class="part-label"><span class="part-badge">MACRO</span>整體月度統計（1980–{int(latest['year'])}）</div>
+      <div class="grid-4">
+        <div class="metric-card card"><div class="metric-label">整體月勝率</div><div class="metric-val" style="color:{wr_color}">{overall_wr:.1f}%</div><div class="metric-sub">{total_months} 個月（1980–{int(latest['year'])}）</div></div>
+        <div class="metric-card card"><div class="metric-label">平均月漲跌</div><div class="metric-val {'green' if avg_pct>=0 else 'red'}">{avg_pct:+.2f}%</div><div class="metric-sub">月初買、月底賣</div></div>
+        <div class="metric-card card"><div class="metric-label">當月（{month_names[cur_month-1]}）</div><div class="metric-val">{cur_year}/{cur_month:02d}</div><div class="metric-sub" style="font-size:.8em">{cur_note}</div></div>
+        <div class="metric-card card"><div class="metric-label">週線 K 棒數</div><div class="metric-val">{len(df)}</div><div class="metric-sub">1980–{int(latest['year'])}</div></div>
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight good"><strong>✅ 強勢月份</strong>一月（63.8%）、七月（56.5%）、十二月（56.5%）歷史偏多。</div>
+        <div class="insight bad"><strong>❌ 弱勢月份</strong>二月（31.9%）、六月（39.1%）、三月（42.6%）歷史偏空。</div>
+        <div class="insight info"><strong>📊 操作框架</strong>先確認月度季節性偏向，再用週線 RSI / BB 判斷進場時機。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🗓 季節性偏向 — 每月歷史統計（1980–{int(latest['year'])}）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>月份</th><th>樣本</th><th>月勝率</th><th>平均漲跌</th><th>偏向</th></tr></thead>
+            <tbody>{sea_rows}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="report-links">
+        <a class="report-link" href="xauusd/macro_report.html">📄 完整宏觀報告（暗色主題 + 熱力圖）</a>
+      </div>
+    </div>
+
+    <div id="xauusd-macro-weekly" class="tab-panel">
+      <div class="part-label"><span class="part-badge">MACRO</span>週內結構 — 每月第幾週最強</div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>週次</th><th>樣本</th><th>週勝率</th><th>平均漲跌%</th></tr></thead>
+            <tbody>{wim_rows}</tbody>
+          </table>
+        </div>
+        <div style="margin-top:8px;font-size:.82em;color:var(--muted)">第3週（56.6%）和第5週（55.6%）勝率最高；第4週最低（48.0%）。</div>
+      </div>
+    </div>
+
+    <div id="xauusd-macro-recent" class="tab-panel">
+      <div class="part-label"><span class="part-badge">MACRO</span>近 12 個月回顧</div>
+      <div class="card" style="max-width:620px">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>年/月</th><th>月初開盤</th><th>月底收盤</th><th>月漲跌</th></tr></thead>
+            <tbody>{rec_rows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!-- /xauusd-main-macro -->
+"""
 
 
 # ─── XAUUSD static 現有策略優化 HTML ────────────────────────────────
@@ -955,6 +1108,7 @@ def generate():
     vdata      = _load_validation()
     xu_validate_html = _xauusd_validation_html(vdata)
     tx_validate_html = _tx_validation_html(vdata)
+    xu_macro_html    = _xauusd_macro_html()
 
     html = f"""<!DOCTYPE html>
 <html lang="zh-TW">
@@ -1111,12 +1265,14 @@ tbody tr:hover td{{background:#f8fafc}}
   <div class="commodity-subnav">
     <button class="nav-main-tab active" onclick="showMain('xauusd-main-opt',this)">現有策略優化</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-exp',this)">實驗策略測試</button>
+    <button class="nav-main-tab" onclick="showMain('xauusd-main-macro',this)">宏觀分析</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-validate',this)">筆記驗證</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-log',this)">對話記錄</button>
   </div>
 
 {_xauusd_opt_html()}
 {_xauusd_exp_html(xu_long_rows, xu_short_rows, xauusd)}
+{xu_macro_html}
 {xu_validate_html}
 
   <!-- XAUUSD 對話記錄 -->

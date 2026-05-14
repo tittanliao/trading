@@ -154,6 +154,7 @@ tbody tr:hover td{background:#f8fafc}
   <div class="commodity-subnav">
     <button class="nav-main-tab active" onclick="showMain('xauusd-main-opt',this)">現有策略優化</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-exp',this)">實驗策略測試</button>
+    <button class="nav-main-tab" onclick="showMain('xauusd-main-macro',this)">宏觀分析</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-validate',this)">筆記驗證</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-log',this)">對話記錄</button>
   </div>
@@ -362,7 +363,9 @@ tbody tr:hover td{background:#f8fafc}
           <div class="tbl-wrap">
             <table>
               <thead><tr><th>#</th><th>策略</th><th>勝率</th><th>PF</th><th>淨盈虧%</th></tr></thead>
-              <tbody><tr><td colspan='5' style='color:#999'>尚無資料（請執行 run_experiments.py）</td></tr></tbody>
+              <tbody><tr><td><b style='color:#1e3a5f'>1. E03_MACD_Signal</b></td><td>MACD histogram turns positive</td><td class='pos'>45.1%</td><td>1.643</td><td style='color:var(--green)'>+900.0%</td></tr>
+<tr><td><b style='color:#1e3a5f'>2. E12_BB_Squeeze_Break</b></td><td>BB squeeze followed by upward expansion</td><td class='neutral'>39.8%</td><td>1.337</td><td style='color:var(--green)'>+882.3%</td></tr>
+<tr><td><b style='color:#1e3a5f'>3. E16_ATR_Vol_Break</b></td><td>ATR-sized move up + EMA21 trending</td><td class='neutral'>36.4%</td><td>1.124</td><td style='color:var(--green)'>+390.4%</td></tr></tbody>
             </table>
           </div>
           <div class="report-links">
@@ -375,7 +378,9 @@ tbody tr:hover td{background:#f8fafc}
           <div class="tbl-wrap">
             <table>
               <thead><tr><th>#</th><th>策略</th><th>勝率</th><th>PF</th><th>淨盈虧%</th></tr></thead>
-              <tbody><tr><td colspan='5' style='color:#999'>尚無資料</td></tr></tbody>
+              <tbody><tr><td><b style='color:#7c3aed'>1. S19_Bearish_Engulf</b></td><td>Bearish engulfing candle confirmation</td><td class='neutral'>42.5%</td><td>1.507</td><td style='color:var(--green)'>+1244.4%</td></tr>
+<tr><td><b style='color:#7c3aed'>2. S13_BB_Basis_Reject</b></td><td>Rejection at BB basis in downtrend</td><td class='neutral'>42.0%</td><td>1.450</td><td style='color:var(--green)'>+900.0%</td></tr>
+<tr><td><b style='color:#7c3aed'>3. S12_BB_Squeeze_Break</b></td><td>BB squeeze followed by downward expansion</td><td class='neutral'>39.0%</td><td>1.252</td><td style='color:var(--green)'>+798.3%</td></tr></tbody>
             </table>
           </div>
           <div class="report-links">
@@ -433,6 +438,99 @@ tbody tr:hover td{background:#f8fafc}
       </div>
     </div>
   </div><!-- /xauusd-main-exp -->
+
+
+  <!-- XAUUSD 宏觀分析 -->
+  <div id="xauusd-main-macro" class="main-section">
+    <div class="subnav">
+      <button class="sub-tab active" onclick="showTab('xauusd-macro','overview',this)">月度統計 &amp; 季節性</button>
+      <button class="sub-tab" onclick="showTab('xauusd-macro','weekly',this)">週內結構</button>
+      <button class="sub-tab" onclick="showTab('xauusd-macro','recent',this)">近 12 個月</button>
+    </div>
+
+    <div id="xauusd-macro-overview" class="tab-panel active">
+      <div class="part-label"><span class="part-badge">MACRO</span>整體月度統計（1980–2026）</div>
+      <div class="grid-4">
+        <div class="metric-card card"><div class="metric-label">整體月勝率</div><div class="metric-val" style="color:var(--red)">49.6%</div><div class="metric-sub">556 個月（1980–2026）</div></div>
+        <div class="metric-card card"><div class="metric-label">平均月漲跌</div><div class="metric-val green">+0.49%</div><div class="metric-sub">月初買、月底賣</div></div>
+        <div class="metric-card card"><div class="metric-label">當月（四月）</div><div class="metric-val">2026/04</div><div class="metric-sub" style="font-size:.8em">當月（四月）：歷史勝率 53.2%，平均 +0.64%（$+11）</div></div>
+        <div class="metric-card card"><div class="metric-label">週線 K 棒數</div><div class="metric-val">2391</div><div class="metric-sub">1980–2026</div></div>
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight good"><strong>✅ 強勢月份</strong>一月（63.8%）、七月（56.5%）、十二月（56.5%）歷史偏多。</div>
+        <div class="insight bad"><strong>❌ 弱勢月份</strong>二月（31.9%）、六月（39.1%）、三月（42.6%）歷史偏空。</div>
+        <div class="insight info"><strong>📊 操作框架</strong>先確認月度季節性偏向，再用週線 RSI / BB 判斷進場時機。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🗓 季節性偏向 — 每月歷史統計（1980–2026）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>月份</th><th>樣本</th><th>月勝率</th><th>平均漲跌</th><th>偏向</th></tr></thead>
+            <tbody><tr><td>一月</td><td>47</td><td style='color:var(--green);font-weight:700'>63.8%</td><td>▲ 1.84% ($+27)</td><td><span class='badge badge-green'>偏多</span></td></tr>
+<tr><td>二月</td><td>47</td><td style='color:var(--red);font-weight:700'>31.9%</td><td>▼ 0.44% ($+10)</td><td><span class='badge badge-red'>偏空</span></td></tr>
+<tr><td>三月</td><td>47</td><td style='color:var(--red);font-weight:700'>42.6%</td><td>▼ 0.23% ($-9)</td><td><span class='badge badge-red'>偏空</span></td></tr>
+<tr><td>四月</td><td>47</td><td style='color:var(--muted);font-weight:700'>53.2%</td><td>▲ 0.64% ($+11)</td><td><span class='badge badge-blue'>中性</span></td></tr>
+<tr><td>五月</td><td>46</td><td style='color:var(--muted);font-weight:700'>52.2%</td><td>▲ 0.47% ($+3)</td><td><span class='badge badge-blue'>中性</span></td></tr>
+<tr><td>六月</td><td>46</td><td style='color:var(--red);font-weight:700'>39.1%</td><td>▼ 0.71% ($-6)</td><td><span class='badge badge-red'>偏空</span></td></tr>
+<tr><td>七月</td><td>46</td><td style='color:var(--green);font-weight:700'>56.5%</td><td>▲ 1.32% ($+13)</td><td><span class='badge badge-green'>偏多</span></td></tr>
+<tr><td>八月</td><td>46</td><td style='color:var(--muted);font-weight:700'>50.0%</td><td>▲ 1.54% ($+16)</td><td><span class='badge badge-blue'>中性</span></td></tr>
+<tr><td>九月</td><td>46</td><td style='color:var(--muted);font-weight:700'>50.0%</td><td>▲ 0.36% ($+1)</td><td><span class='badge badge-blue'>中性</span></td></tr>
+<tr><td>十月</td><td>46</td><td style='color:var(--muted);font-weight:700'>45.7%</td><td>▼ 0.05% ($+8)</td><td><span class='badge badge-blue'>中性</span></td></tr>
+<tr><td>十一月</td><td>46</td><td style='color:var(--muted);font-weight:700'>54.3%</td><td>▲ 1.17% ($+10)</td><td><span class='badge badge-blue'>中性</span></td></tr>
+<tr><td>十二月</td><td>46</td><td style='color:var(--green);font-weight:700'>56.5%</td><td>▼ 0.03% ($+2)</td><td><span class='badge badge-green'>偏多</span></td></tr>
+</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="report-links">
+        <a class="report-link" href="xauusd/macro_report.html">📄 完整宏觀報告（暗色主題 + 熱力圖）</a>
+      </div>
+    </div>
+
+    <div id="xauusd-macro-weekly" class="tab-panel">
+      <div class="part-label"><span class="part-badge">MACRO</span>週內結構 — 每月第幾週最強</div>
+      <div class="card">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>週次</th><th>樣本</th><th>週勝率</th><th>平均漲跌%</th></tr></thead>
+            <tbody><tr><td><strong>第1週（月初）</strong></td><td>556</td><td style='color:var(--muted);font-weight:700'>54.0%</td><td>+0.12%</td></tr>
+<tr><td><strong>第2週</strong></td><td>554</td><td style='color:var(--muted);font-weight:700'>51.8%</td><td>+0.02%</td></tr>
+<tr><td><strong>第3週</strong></td><td>548</td><td style='color:var(--green);font-weight:700'>56.6%</td><td>+0.17%</td></tr>
+<tr><td><strong>第4週</strong></td><td>544</td><td style='color:var(--muted);font-weight:700'>48.0%</td><td>+0.15%</td></tr>
+<tr><td><strong>第5週（月底）</strong></td><td>189</td><td style='color:var(--green);font-weight:700'>55.6%</td><td>+0.29%</td></tr>
+</tbody>
+          </table>
+        </div>
+        <div style="margin-top:8px;font-size:.82em;color:var(--muted)">第3週（56.6%）和第5週（55.6%）勝率最高；第4週最低（48.0%）。</div>
+      </div>
+    </div>
+
+    <div id="xauusd-macro-recent" class="tab-panel">
+      <div class="part-label"><span class="part-badge">MACRO</span>近 12 個月回顧</div>
+      <div class="card" style="max-width:620px">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>年/月</th><th>月初開盤</th><th>月底收盤</th><th>月漲跌</th></tr></thead>
+            <tbody><tr><td>2025/05</td><td>$3241</td><td>$3289</td><td style='color:var(--green);font-weight:700'>▲ +1.48% ($+48)</td></tr>
+<tr><td>2025/06</td><td>$3289</td><td>$3325</td><td style='color:var(--green);font-weight:700'>▲ +1.10% ($+36)</td></tr>
+<tr><td>2025/07</td><td>$3337</td><td>$3363</td><td style='color:var(--green);font-weight:700'>▲ +0.77% ($+26)</td></tr>
+<tr><td>2025/08</td><td>$3362</td><td>$3447</td><td style='color:var(--green);font-weight:700'>▲ +2.52% ($+85)</td></tr>
+<tr><td>2025/09</td><td>$3477</td><td>$3886</td><td style='color:var(--green);font-weight:700'>▲ +11.74% ($+408)</td></tr>
+<tr><td>2025/10</td><td>$3886</td><td>$4003</td><td style='color:var(--green);font-weight:700'>▲ +3.01% ($+117)</td></tr>
+<tr><td>2025/11</td><td>$4003</td><td>$4219</td><td style='color:var(--green);font-weight:700'>▲ +5.39% ($+216)</td></tr>
+<tr><td>2025/12</td><td>$4223</td><td>$4332</td><td style='color:var(--green);font-weight:700'>▲ +2.57% ($+108)</td></tr>
+<tr><td>2026/01</td><td>$4332</td><td>$4895</td><td style='color:var(--green);font-weight:700'>▲ +13.01% ($+564)</td></tr>
+<tr><td>2026/02</td><td>$4895</td><td>$5279</td><td style='color:var(--green);font-weight:700'>▲ +7.83% ($+383)</td></tr>
+<tr><td>2026/03</td><td>$5282</td><td>$4677</td><td style='color:var(--red);font-weight:700'>▼ -11.45% ($-605)</td></tr>
+<tr><td>2026/04</td><td>$4648</td><td>$4719</td><td style='color:var(--green);font-weight:700'>▲ +1.51% ($+70)</td></tr>
+</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!-- /xauusd-main-macro -->
 
 
   <!-- XAUUSD 筆記驗證 -->

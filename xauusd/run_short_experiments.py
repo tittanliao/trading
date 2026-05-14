@@ -11,6 +11,7 @@ Steps:
 Usage:
     python3.12 run_short_experiments.py
 """
+import json
 import sys
 from pathlib import Path
 
@@ -112,6 +113,24 @@ def main() -> None:
         price_1d=xau_1d,
         direction="short",
     )
+
+    # ── Save results.json ─────────────────────────────────────────
+    results_list = []
+    for rank_i, (sid, row) in enumerate(scored.iterrows(), start=1):
+        results_list.append({
+            "rank":           rank_i,
+            "code":           sid,
+            "name":           str(row.get("description", sid)),
+            "group":          str(row.get("group", "")),
+            "n_trades":       int(row.get("total", 0)),
+            "win_rate":       round(float(row.get("win_rate", 0)) * 100, 1),
+            "profit_factor":  round(float(row.get("profit_factor", 0)), 3),
+            "net_pnl_pct":    round(float(row.get("net_pnl_pct", 0)) * 100, 2),
+            "score":          round(float(row.get("score", 0)), 3),
+        })
+    with open(OUT_DIR / "results.json", "w", encoding="utf-8") as f:
+        json.dump({"direction": "short", "results": results_list}, f,
+                  ensure_ascii=False, indent=2)
 
     # ── Pine Script files ─────────────────────────────────────────
     print("\n[5/5] Generating Pine Script files...")
