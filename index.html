@@ -66,6 +66,23 @@ a:hover{text-decoration:underline}
 @media(max-width:900px){.grid-3,.grid-4{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}}
 @media(max-width:600px){.grid-3,.grid-4,.grid-2{grid-template-columns:1fr}}
 
+/* ── Mobile Navigation ───────────────────────────────── */
+@media(max-width:640px){
+  .topnav{flex-wrap:wrap;padding:0 12px}
+  .nav-brand{flex:1;border-right:none;margin-right:0;padding:10px 0;font-size:.9em}
+  .nav-brand span{display:none}
+  .nav-meta{display:none}
+  .commodity-tabs{width:100%;border-top:1px solid rgba(255,255,255,.15);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:0;padding-bottom:2px}
+  .commodity-tabs::-webkit-scrollbar{display:none}
+  .commodity-tab{padding:10px 16px;font-size:.84em;flex-shrink:0}
+  .commodity-subnav{padding:0 8px}
+  .nav-main-tab{padding:9px 14px;font-size:.82em}
+  .subnav{padding:0 8px}
+  .sub-tab{padding:8px 12px;font-size:.82em}
+  .tab-panel{padding:16px 12px}
+  .card{padding:16px}
+}
+
 /* ── Metric Cards ───────────────────────────────────────── */
 .metric-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
 .metric-label{font-size:.75em;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
