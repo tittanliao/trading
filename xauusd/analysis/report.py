@@ -356,6 +356,7 @@ def generate(
   {CSS}
 </head>
 <body>
+<div style="padding:10px 20px 0"><a href="../../index.html" style="color:#2563eb;font-size:13px;text-decoration:none;background:#dbeafe;padding:4px 12px;border-radius:6px;font-weight:600">← 返回 Trading Hub</a></div>
 <div class="wrap">
   <h1>{strategy_id} <small style="color:#7f8c8d">v{version}</small></h1>
   <div class="meta">Generated {generated_at} &nbsp;|&nbsp;

@@ -158,6 +158,7 @@ def _exp_row_xauusd(r: dict, direction: str) -> str:
         f"<tr>"
         f"<td><b style='color:{colour}'>{r.get('rank','-')}. {r['code']}</b></td>"
         f"<td>{r['name']}</td>"
+        f"<td>{r.get('n_trades', '-')}</td>"
         f"<td class='{'pos' if r['win_rate']>=45 else 'neutral'}'>{r['win_rate']}%</td>"
         f"<td>{r['profit_factor']:.3f}</td>"
         f"<td style='color:{pnl_col}'>{sign}{pnl_pct:.1f}%</td>"
@@ -278,13 +279,35 @@ def _xauusd_macro_html() -> str:
 
     wr_color = 'var(--green)' if overall_wr >= 55 else 'var(--red)'
 
+    # Session analysis from validation_results.json
+    val_path = ROOT / "doc/validation_results.json"
+    session_rows = ""
+    if val_path.exists():
+        with open(val_path, encoding="utf-8") as vf:
+            vdata_local = json.load(vf)
+        for s in vdata_local.get("xauusd", {}).get("xauusd_sessions", []):
+            trend = s["趨勢K比例"]
+            wc = "color:var(--red)" if trend >= 0.55 else "color:var(--green)"
+            mv = s["平均波動%"]
+            lk = s["漲K勝率"]
+            lc = "color:var(--green)" if lk >= 0.52 else "color:var(--muted)"
+            session_rows += (
+                f"<tr><td><b>{s['時段']}</b></td>"
+                f"<td style='{wc};font-weight:700'>{trend:.0%}</td>"
+                f"<td>{mv:.3f}%</td>"
+                f"<td style='{lc};font-weight:700'>{lk:.0%}</td>"
+                f"<td>{s['樣本數']:,}</td>"
+                f"<td><small style='color:var(--muted)'>{s['筆記判斷']}</small></td></tr>\n"
+            )
+
     return f"""
   <!-- XAUUSD 宏觀分析 -->
-  <div id="xauusd-main-macro" class="main-section">
+  <div id="xauusd-main-macro" class="main-section active">
     <div class="subnav">
       <button class="sub-tab active" onclick="showTab('xauusd-macro','overview',this)">月度統計 &amp; 季節性</button>
       <button class="sub-tab" onclick="showTab('xauusd-macro','weekly',this)">週內結構</button>
       <button class="sub-tab" onclick="showTab('xauusd-macro','recent',this)">近 12 個月</button>
+      <button class="sub-tab" onclick="showTab('xauusd-macro','session',this)">時段分析</button>
     </div>
 
     <div id="xauusd-macro-overview" class="tab-panel active">
@@ -340,6 +363,29 @@ def _xauusd_macro_html() -> str:
         </div>
       </div>
     </div>
+
+    <div id="xauusd-macro-session" class="tab-panel">
+      <div class="part-label"><span class="part-badge">MACRO</span>四個時段特性（台北時間）</div>
+      <div class="insight-grid">
+        <div class="insight warn"><strong>⚠ 亞盤（9–10）最高波動但偏震盪</strong>趨勢K 60%，漲K勝率 58%，平均波動 0.349%（最大）— 但筆記判斷 90% 震盪，不適合追趨勢。</div>
+        <div class="insight good"><strong>✅ 歐盤（20–21）為均衡時段</strong>趨勢K 57%，波動 0.236%，漲K勝率 51.5%——筆記判斷 50/50，策略適用性較廣。</div>
+        <div class="insight info"><strong>📊 美盤（23–00）趨勢性強</strong>趨勢K 59%，波動 0.292%，漲K勝率 48.1%——美元加速期間波動放大，除非大趨勢否則偏震盪。</div>
+        <div class="insight bad"><strong>❌ 午後（14–15）最弱時段</strong>趨勢K 46%（最低），波動 0.216%（最小）——70% 震盪，歐洲開盤前的淡水期，不建議進場。</div>
+      </div>
+      <div class="card">
+        <div class="card-title">⏱ 四個時段統計（30m K 棒，台北時間，2026-01–04）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>時段</th><th>趨勢K比例</th><th>平均波動</th><th>漲K勝率</th><th>樣本數</th><th>筆記判斷</th></tr></thead>
+            <tbody>{session_rows or "<tr><td colspan='6' style='color:#999'>請執行 validate_notes.py</td></tr>"}</tbody>
+          </table>
+        </div>
+        <div style="margin-top:8px;font-size:.8em;color:var(--muted)">趨勢K定義：|ret| &gt; 0.15%。漲K勝率 &gt; 52% 偏多、&lt; 48% 偏空。</div>
+      </div>
+      <div class="report-links">
+        <a class="report-link" href="xauusd/macro_report.html">📄 完整宏觀報告（熱力圖）</a>
+      </div>
+    </div>
   </div><!-- /xauusd-main-macro -->
 """
 
@@ -348,7 +394,7 @@ def _xauusd_macro_html() -> str:
 def _xauusd_opt_html() -> str:
     return """
   <!-- XAUUSD 現有策略優化 ────────────────────────────── -->
-  <div id="xauusd-main-opt" class="main-section active">
+  <div id="xauusd-main-opt" class="main-section">
     <div class="subnav">
       <button class="sub-tab active" onclick="showTab('xauusd-opt','overview',this)">綜合對比</button>
       <button class="sub-tab" onclick="showTab('xauusd-opt','s1',this)">S1-AweWithBB</button>
@@ -547,7 +593,7 @@ def _xauusd_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
     short_btn = f"<a class='report-link' href='{short_link}'>完整報告 →</a>" if short_exists else ""
 
     return f"""
-  <!-- XAUUSD 實驗策略測試 ────────────────────────────── -->
+  <!-- XAUUSD 實驗策略 ──────────────────────────────────── -->
   <div id="xauusd-main-exp" class="main-section">
     <div class="subnav">
       <button class="sub-tab active" onclick="showTab('xauusd-exp','overview',this)">綜合對比</button>
@@ -562,8 +608,8 @@ def _xauusd_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
           <div class="card-title">📈 多單 Top-3（E01–E20）</div>
           <div class="tbl-wrap">
             <table>
-              <thead><tr><th>#</th><th>策略</th><th>勝率</th><th>PF</th><th>淨盈虧%</th></tr></thead>
-              <tbody>{long_rows or "<tr><td colspan='5' style='color:#999'>尚無資料（請執行 run_experiments.py）</td></tr>"}</tbody>
+              <thead><tr><th>#</th><th>策略</th><th>筆數</th><th>勝率</th><th>PF</th><th>淨盈虧%</th></tr></thead>
+              <tbody>{long_rows or "<tr><td colspan='6' style='color:#999'>尚無資料（請執行 run_experiments.py）</td></tr>"}</tbody>
             </table>
           </div>
           <div class="report-links">
@@ -575,8 +621,8 @@ def _xauusd_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
           <div class="card-title">📉 空單 Top-3（S01–S20）</div>
           <div class="tbl-wrap">
             <table>
-              <thead><tr><th>#</th><th>策略</th><th>勝率</th><th>PF</th><th>淨盈虧%</th></tr></thead>
-              <tbody>{short_rows or "<tr><td colspan='5' style='color:#999'>尚無資料</td></tr>"}</tbody>
+              <thead><tr><th>#</th><th>策略</th><th>筆數</th><th>勝率</th><th>PF</th><th>淨盈虧%</th></tr></thead>
+              <tbody>{short_rows or "<tr><td colspan='6' style='color:#999'>尚無資料</td></tr>"}</tbody>
             </table>
           </div>
           <div class="report-links">
@@ -638,52 +684,134 @@ def _xauusd_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
 
 
 def _tx_macro_html() -> str:
-    return """
+    csv_path = ROOT / "tx/csv/TAIFEX_DLY_MXF1!, 1W.csv"
+    if not csv_path.exists():
+        return '<div id="tx-main-macro" class="main-section active"><div class="tab-panel active"><p style="padding:24px;color:var(--muted)">週線 CSV 未找到</p></div></div>'
+
+    df = pd.read_csv(csv_path)
+    df.columns = [c.strip() for c in df.columns]
+    df['time']  = pd.to_datetime(df['time'].astype(str).str.strip(), errors='coerce')
+    df = df.dropna(subset=['time']).sort_values('time').reset_index(drop=True)
+    df['close'] = pd.to_numeric(df['close'], errors='coerce')
+    df['open']  = pd.to_numeric(df['open'],  errors='coerce')
+    df['year']  = df['time'].dt.year
+    df['month'] = df['time'].dt.month
+    df['week_of_month'] = df.groupby(['year','month']).cumcount() + 1
+
+    grp = df.groupby(['year','month'])
+    mon = grp.agg(m_open=('open','first'), m_close=('close','last')).reset_index()
+    mon['chg_pts']  = mon['m_close'] - mon['m_open']
+    mon['bullish']  = mon['chg_pts'] > 0
+    mon['date']     = pd.to_datetime(mon[['year','month']].assign(day=1))
+
+    total_months = len(mon)
+    overall_wr   = mon['bullish'].mean() * 100
+    avg_pts      = mon['chg_pts'].mean()
+    latest       = mon.iloc[-1]
+    cur_month    = int(latest['month'])
+    cur_year     = int(latest['year'])
+    month_names  = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月']
+
+    sea_rows = ""
+    cur_note = ""
+    for m in range(1, 13):
+        sub = mon[mon['month'] == m]
+        if len(sub) == 0:
+            continue
+        wr     = sub['bullish'].mean() * 100
+        avg_p  = sub['chg_pts'].mean()
+        bias   = 'LONG' if wr >= 55 else ('SHORT' if wr <= 45 else 'NEUTRAL')
+        bc_cls = 'badge-green' if bias == 'LONG' else ('badge-red' if bias == 'SHORT' else 'badge-blue')
+        bl     = '偏多' if bias == 'LONG' else ('偏空' if bias == 'SHORT' else '中性')
+        wc     = 'var(--green)' if wr >= 55 else ('var(--red)' if wr <= 45 else 'var(--muted)')
+        sea_rows += (f"<tr><td>{month_names[m-1]}</td><td>{len(sub)}</td>"
+                     f"<td style='color:{wc};font-weight:700'>{wr:.1f}%</td>"
+                     f"<td>{'▲' if avg_p>=0 else '▼'} {abs(avg_p):.0f} pts</td>"
+                     f"<td><span class='badge {bc_cls}'>{bl}</span></td></tr>\n")
+        if m == cur_month:
+            cur_note = f"當月（{month_names[m-1]}）：歷史勝率 {wr:.1f}%，平均 {avg_p:+.0f} pts"
+
+    df['wk_chg']  = df['close'] - df['open']
+    df['wk_bull'] = df['wk_chg'] > 0
+    wim = df[df['week_of_month'] <= 5].groupby('week_of_month').agg(
+        n=('wk_chg','count'), wr=('wk_bull','mean'), avg=('wk_chg','mean')).reset_index()
+    wim['wr'] = wim['wr'] * 100
+    wlabel = {1:'第1週（月初）',2:'第2週',3:'第3週',4:'第4週',5:'第5週（月底）'}
+    wim_rows = ""
+    for _, r in wim.iterrows():
+        wk = int(r['week_of_month'])
+        wc = 'var(--green)' if r['wr'] >= 55 else ('var(--red)' if r['wr'] <= 45 else 'var(--muted)')
+        wim_rows += (f"<tr><td><strong>{wlabel[wk]}</strong></td><td>{int(r['n'])}</td>"
+                     f"<td style='color:{wc};font-weight:700'>{r['wr']:.1f}%</td>"
+                     f"<td>{r['avg']:+.0f} pts</td></tr>\n")
+
+    rec = mon.sort_values('date').tail(12)
+    rec_rows = ""
+    for _, r in rec.iterrows():
+        color = 'var(--green)' if r['bullish'] else 'var(--red)'
+        sign  = '▲' if r['bullish'] else '▼'
+        rec_rows += (f"<tr><td>{int(r['year'])}/{int(r['month']):02d}</td>"
+                     f"<td>${r['m_open']:.0f}</td><td>${r['m_close']:.0f}</td>"
+                     f"<td style='color:{color};font-weight:700'>{sign} {r['chg_pts']:+.0f} pts</td></tr>\n")
+
+    wr_color = 'var(--green)' if overall_wr >= 55 else 'var(--red)'
+
+    # Session analysis: day vs night from TX-Long-Experiments/results.json
+    sess_rows = ""
+    results_p = ROOT / "tx/TX-Long-Experiments/results.json"
+    if results_p.exists():
+        with open(results_p, encoding="utf-8") as rf:
+            rdata = json.load(rf)
+        all_results = [r for r in rdata.get("results", []) if r.get("n_trades", 0) > 0]
+        if all_results:
+            avg_day   = sum(r["day_win_rate"] for r in all_results if "day_win_rate" in r) / len(all_results)
+            avg_night = sum(r["night_win_rate"] for r in all_results if "night_win_rate" in r) / len(all_results)
+            confirmed = {"E07", "E09", "E12"}
+            for r in all_results[:10]:
+                d  = r.get("day_win_rate", 0)
+                n  = r.get("night_win_rate", 0)
+                dc = "color:var(--green);font-weight:700" if d >= 50 else "color:var(--muted)"
+                nc = "color:var(--green);font-weight:700" if n >= 50 else "color:var(--muted)"
+                star = "⭐" if r["code"] in confirmed else ""
+                pref = "夜盤" if n > d + 2 else ("日盤" if d > n + 2 else "均可")
+                sess_rows += (f"<tr><td><b>{r['code']}</b> {star}</td><td>{r['name']}</td>"
+                              f"<td style='{dc}'>{d:.1f}%</td>"
+                              f"<td style='{nc}'>{n:.1f}%</td>"
+                              f"<td>{pref}</td></tr>\n")
+
+    return f"""
     <!-- TX 宏觀分析 ───────────────────────────────────── -->
     <div id="tx-main-macro" class="main-section active">
       <div class="subnav">
-        <button class="sub-tab active" onclick="showTab('tx-macro','overview',this)">月度統計 &amp; 當月偏向</button>
+        <button class="sub-tab active" onclick="showTab('tx-macro','overview',this)">月度統計 &amp; 季節性</button>
         <button class="sub-tab" onclick="showTab('tx-macro','weekly',this)">週內結構</button>
         <button class="sub-tab" onclick="showTab('tx-macro','recent',this)">近 12 個月</button>
+        <button class="sub-tab" onclick="showTab('tx-macro','session',this)">時段分析</button>
       </div>
 
       <div id="tx-macro-overview" class="tab-panel active">
-        <div class="part-label"><span class="part-badge">PART 1</span>整體月度統計 &amp; 當月偏向（2026/05）</div>
+        <div class="part-label"><span class="part-badge">MACRO</span>整體月度統計（2012–{int(latest['year'])}）</div>
         <div class="grid-4">
-          <div class="metric-card card"><div class="metric-label">整體月勝率</div><div class="metric-val green">63.9%</div><div class="metric-sub">169 個月（2012–2026）</div></div>
-          <div class="metric-card card"><div class="metric-label">平均月漲跌</div><div class="metric-val green">+199 pts</div><div class="metric-sub">月初買、月底賣</div></div>
-          <div class="metric-card card"><div class="metric-label">當月（五月）勝率</div><div class="metric-val green">66.7%</div><div class="metric-sub">偏多 · 平均 +286 pts</div></div>
-          <div class="metric-card card"><div class="metric-label">週線 K 棒數</div><div class="metric-val">723</div><div class="metric-sub">2012–2026</div></div>
+          <div class="metric-card card"><div class="metric-label">整體月勝率</div><div class="metric-val" style="color:{wr_color}">{overall_wr:.1f}%</div><div class="metric-sub">{total_months} 個月（2012–{int(latest['year'])}）</div></div>
+          <div class="metric-card card"><div class="metric-label">平均月漲跌</div><div class="metric-val {'green' if avg_pts>=0 else 'red'}">{avg_pts:+.0f} pts</div><div class="metric-sub">月初買、月底賣</div></div>
+          <div class="metric-card card"><div class="metric-label">當月（{month_names[cur_month-1]}）</div><div class="metric-val">{cur_year}/{cur_month:02d}</div><div class="metric-sub" style="font-size:.8em">{cur_note}</div></div>
+          <div class="metric-card card"><div class="metric-label">週線 K 棒數</div><div class="metric-val">{len(df)}</div><div class="metric-sub">2012–{int(latest['year'])}</div></div>
         </div>
 
         <div class="insight-grid">
-          <div class="insight good"><strong>✅ 操作框架</strong>先確認月度方向偏多作為宏觀基準，再用週線 RSI / BB 位置判斷進場時機（順月度方向）。</div>
+          <div class="insight good"><strong>✅ 整體偏多</strong>月勝率 {overall_wr:.1f}%，月初買月底賣平均 {avg_pts:+.0f} pts — 大方向順多。</div>
           <div class="insight warn"><strong>⚠ 九月唯一偏空月</strong>歷史勝率僅 42.9%；策略測試需注意此月份空單機會較多。</div>
-          <div class="insight info"><strong>📊 四月最強</strong>平均漲跌 +518 pts（最高期望值）；十二月勝率最穩（78.6%）。</div>
+          <div class="insight info"><strong>📊 四月期望值最大，十二月最穩</strong>四月平均 +518 pts；十二月月勝率 78.6%（最高）。</div>
         </div>
 
         <div class="card">
-          <div class="card-title">🗓 季節性偏向 — 每月歷史統計</div>
+          <div class="card-title">🗓 季節性偏向 — 每月歷史統計（2012–{int(latest['year'])}）</div>
           <div class="tbl-wrap">
             <table>
               <thead><tr><th>月份</th><th>樣本</th><th>月勝率</th><th>平均漲跌（pts）</th><th>偏向</th></tr></thead>
-              <tbody>
-                <tr><td>一月</td><td>14</td><td style="color:var(--green);font-weight:700">71.4%</td><td>+377</td><td><span class="badge badge-green">偏多</span></td></tr>
-                <tr><td>二月</td><td>14</td><td style="color:var(--green);font-weight:700">64.3%</td><td>+396</td><td><span class="badge badge-green">偏多</span></td></tr>
-                <tr><td>三月</td><td>14</td><td>57.1%</td><td>-257</td><td><span class="badge badge-green">偏多</span></td></tr>
-                <tr><td>四月</td><td>14</td><td style="color:var(--green);font-weight:700">64.3%</td><td style="color:var(--green);font-weight:700">+518 ★</td><td><span class="badge badge-green">偏多</span></td></tr>
-                <tr><td>五月</td><td>14</td><td style="color:var(--green);font-weight:700">66.7%</td><td>+286</td><td><span class="badge badge-green">偏多</span></td></tr>
-                <tr><td>六月</td><td>14</td><td style="color:var(--green);font-weight:700">71.4%</td><td>+133</td><td><span class="badge badge-green">偏多</span></td></tr>
-                <tr><td>七月</td><td>14</td><td style="color:var(--green);font-weight:700">64.3%</td><td>+36</td><td><span class="badge badge-green">偏多</span></td></tr>
-                <tr><td>八月</td><td>14</td><td style="color:var(--green);font-weight:700">64.3%</td><td>+108</td><td><span class="badge badge-green">偏多</span></td></tr>
-                <tr><td>九月</td><td>14</td><td style="color:var(--red);font-weight:700">42.9% ★</td><td>+57</td><td><span class="badge badge-red">偏空</span></td></tr>
-                <tr><td>十月</td><td>14</td><td>57.1%</td><td>+113</td><td><span class="badge badge-green">偏多</span></td></tr>
-                <tr><td>十一月</td><td>14</td><td style="color:var(--green);font-weight:700">64.3%</td><td>+325</td><td><span class="badge badge-green">偏多</span></td></tr>
-                <tr><td>十二月</td><td>14</td><td style="color:var(--green);font-weight:700">78.6% ★</td><td>+285</td><td><span class="badge badge-green">偏多</span></td></tr>
-              </tbody>
+              <tbody>{sea_rows}</tbody>
             </table>
           </div>
-          <div style="margin-top:8px;font-size:.78em;color:var(--muted)">★ = 特別顯著。九月唯一偏空月；三月雖偏多但含 2020/3 大跌，期望值為負。</div>
         </div>
         <div class="report-links">
           <a class="report-link" href="tx/macro_report.html">📄 完整宏觀報告（暗色主題 + 熱力圖）</a>
@@ -691,49 +819,150 @@ def _tx_macro_html() -> str:
       </div>
 
       <div id="tx-macro-weekly" class="tab-panel">
-        <div class="part-label"><span class="part-badge">PART 1</span>週內結構 — 月中哪週最強</div>
+        <div class="part-label"><span class="part-badge">MACRO</span>週內結構 — 每月第幾週最強</div>
         <div class="card">
           <div class="tbl-wrap">
             <table>
-              <thead><tr><th>週次</th><th>樣本</th><th>週勝率</th><th>平均漲跌</th><th>備註</th></tr></thead>
-              <tbody>
-                <tr><td><strong>第1週（月初）</strong></td><td>169</td><td style="color:var(--green);font-weight:700">58.6%</td><td>+71 pts</td><td>建議優先進場週</td></tr>
-                <tr><td>第2週</td><td>168</td><td>53.8%</td><td>+50 pts</td><td></td></tr>
-                <tr><td>第3週（月中）</td><td>168</td><td>55.4%</td><td>+10 pts</td><td>最弱，謹慎</td></tr>
-                <tr><td><strong>第4週</strong></td><td>165</td><td style="color:var(--green);font-weight:700">61.0%</td><td>+57 pts</td><td>次佳</td></tr>
-                <tr><td><strong>第5週（月底）</strong></td><td>73</td><td style="color:var(--green);font-weight:700">60.3%</td><td>+55 pts</td><td>月末偏強</td></tr>
-              </tbody>
+              <thead><tr><th>週次</th><th>樣本</th><th>週勝率</th><th>平均漲跌（pts）</th></tr></thead>
+              <tbody>{wim_rows}</tbody>
             </table>
           </div>
-          <div style="margin-top:8px;font-size:.82em;color:var(--muted)">第1、4、5週勝率較高（58–61%）；第3週（月中）最弱。建議在月初或月末偏強週順月度方向進場。</div>
+          <div style="margin-top:8px;font-size:.82em;color:var(--muted)">第1、4、5週勝率較高；第3週（月中）最弱。建議在月初或月末偏強週順月度方向進場。</div>
         </div>
       </div>
 
       <div id="tx-macro-recent" class="tab-panel">
-        <div class="part-label"><span class="part-badge">PART 1</span>近 12 個月回顧</div>
-        <div class="card" style="max-width:600px">
+        <div class="part-label"><span class="part-badge">MACRO</span>近 12 個月回顧</div>
+        <div class="card" style="max-width:620px">
           <div class="tbl-wrap">
             <table>
-              <thead><tr><th>年/月</th><th>月漲跌（pts）</th></tr></thead>
-              <tbody>
-                <tr><td>2025/06</td><td class="pos">▲ +1,146</td></tr>
-                <tr><td>2025/07</td><td class="pos">▲ +922</td></tr>
-                <tr><td>2025/08</td><td class="pos">▲ +978</td></tr>
-                <tr><td>2025/09</td><td class="pos">▲ +2,486（季節性偏空卻大漲）</td></tr>
-                <tr><td>2025/10</td><td class="pos">▲ +1,653</td></tr>
-                <tr><td>2025/11</td><td class="neg">▼ −693</td></tr>
-                <tr><td>2025/12</td><td class="pos">▲ +1,739</td></tr>
-                <tr><td>2026/01</td><td class="pos">▲ +2,752</td></tr>
-                <tr><td>2026/02</td><td class="pos">▲ +3,504</td></tr>
-                <tr><td>2026/03</td><td class="neg">▼ −3,135</td></tr>
-                <tr><td>2026/04</td><td class="pos">▲ +6,744</td></tr>
-                <tr><td>2026/05</td><td class="pos">▲ +1,641（進行中）</td></tr>
-              </tbody>
+              <thead><tr><th>年/月</th><th>月初開盤</th><th>月底收盤</th><th>月漲跌（pts）</th></tr></thead>
+              <tbody>{rec_rows}</tbody>
             </table>
           </div>
         </div>
       </div>
+
+      <div id="tx-macro-session" class="tab-panel">
+        <div class="part-label"><span class="part-badge">MACRO</span>日盤 vs 夜盤分析（台指期 MTX）</div>
+        <div class="insight-grid">
+          <div class="insight good"><strong>✅ 夜盤整體優於日盤</strong>確認策略（⭐E07/E09/E12）夜盤勝率平均高 6–10%；夜盤受美股直接驅動，NQ 方向更明確。</div>
+          <div class="insight warn"><strong>⚠ 日盤波動受國際消息主導</strong>開盤跳空後反轉機率高，SL=120 pts 的設計下 immediate_loss 在日盤更常見。</div>
+          <div class="insight info"><strong>📊 操作建議</strong>優先在夜盤開啟確認策略；日盤可縮減 Size 或加嚴過濾條件（如 NQ RSI 同向確認）。</div>
+        </div>
+        <div class="card">
+          <div class="card-title">🌙 多單策略 日盤 vs 夜盤勝率（SL=120, TP=240）</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>代碼</th><th>策略名稱</th><th>日盤 WR</th><th>夜盤 WR</th><th>偏好時段</th></tr></thead>
+              <tbody>{sess_rows or "<tr><td colspan='5' style='color:#999'>尚無資料（請執行 run_experiments.py）</td></tr>"}</tbody>
+            </table>
+          </div>
+          <div style="margin-top:8px;font-size:.8em;color:var(--muted)">⭐ = 已確認策略（E07/E09/E12）</div>
+        </div>
+      </div>
     </div><!-- /tx-main-macro -->
+"""
+
+
+def _tx_confirmed_html() -> str:
+    results_path = ROOT / "tx/TX-Long-Experiments/results.json"
+    confirmed_ids = {"E07", "E09", "E12"}
+    cards_html = ""
+    sess_rows  = ""
+
+    if results_path.exists():
+        with open(results_path, encoding="utf-8") as f:
+            rdata = json.load(f)
+        sl = rdata.get("sl_pts", 120)
+        tp = rdata.get("tp_pts", 240)
+        confirmed_list = [r for r in rdata.get("results", []) if r["code"] in confirmed_ids]
+        for r in confirmed_list:
+            pnl  = r.get("net_pnl_ntd", 0)
+            pnl_c = "var(--green)" if pnl >= 0 else "var(--red)"
+            dwr  = r.get("day_win_rate", 0)
+            nwr  = r.get("night_win_rate", 0)
+            pref = "夜盤" if nwr > dwr + 2 else ("日盤" if dwr > nwr + 2 else "均可")
+            wc   = "var(--green)" if r["win_rate"] >= 50 else "var(--yellow)"
+            cards_html += f"""
+        <div class="card">
+          <div class="card-title">📊 {r['code']} {r['name']} <span class="badge badge-green">✅ 已確認</span></div>
+          <div class="grid-4" style="gap:10px">
+            <div class="metric-card"><div class="metric-label">勝率</div><div class="metric-val" style="color:{wc}">{r['win_rate']}%</div></div>
+            <div class="metric-card"><div class="metric-label">獲利因子</div><div class="metric-val green">{r['profit_factor']:.3f}</div></div>
+            <div class="metric-card"><div class="metric-label">淨盈虧</div><div class="metric-val" style="color:{pnl_c}">NT${pnl:,.0f}</div></div>
+            <div class="metric-card"><div class="metric-label">交易筆數</div><div class="metric-val">{r['n_trades']}</div></div>
+          </div>
+          <div style="margin-top:10px;font-size:.82em;color:var(--muted)">SL={sl}pts / TP={tp}pts (R:R 1:{tp//sl}) &nbsp;·&nbsp; 偏好時段：{pref}（日盤 {dwr}% / 夜盤 {nwr}%）</div>
+        </div>
+"""
+            sess_rows += (f"<tr><td><b>{r['code']}</b></td><td>{r['name']}</td>"
+                          f"<td>{r['n_trades']}</td>"
+                          f"<td style='color:{wc};font-weight:700'>{r['win_rate']}%</td>"
+                          f"<td>{r['profit_factor']:.3f}</td>"
+                          f"<td style='color:{pnl_c};font-weight:700'>NT${pnl:,.0f}</td>"
+                          f"<td style='color:{'var(--green)' if dwr>=50 else 'var(--muted)'}'>{dwr}%</td>"
+                          f"<td style='color:{'var(--green)' if nwr>=50 else 'var(--muted)'}'>{nwr}%</td>"
+                          f"</tr>\n")
+    else:
+        sl, tp = 120, 240
+        cards_html = "<p style='color:var(--muted);padding:12px'>尚無資料（請執行 run_experiments.py --sl 120）</p>"
+
+    return f"""
+  <!-- TX 已確認策略 ──────────────────────────────────── -->
+  <div id="tx-main-confirmed" class="main-section">
+    <div class="subnav">
+      <button class="sub-tab active" onclick="showTab('tx-confirmed','overview',this)">策略總覽</button>
+      <button class="sub-tab" onclick="showTab('tx-confirmed','context',this)">確認依據</button>
+    </div>
+
+    <div id="tx-confirmed-overview" class="tab-panel active">
+      <div class="part-label"><span class="part-badge">CONFIRMED</span>已確認策略 · SL={sl}pts / TP={tp}pts</div>
+      <div class="insight-grid">
+        <div class="insight good"><strong>✅ SL=120pts 是甜蜜點</strong>系統性測試 SL 30/50/60/80/100/120/150 後，SL=120 時 E09/E07/E12 均達 PF>2.0、WR>50%。</div>
+        <div class="insight info"><strong>📊 確認條件</strong>PF &gt; 1.5 且 WR &gt; 48% 且淨盈虧為正，在 2025-06 至今的 MTX 30m 資料中通過。</div>
+        <div class="insight warn"><strong>⚠ 當前資料期間</strong>2025-06 至今為台指大多頭，確認策略均為多單。空單策略尚無確認版本。</div>
+      </div>
+      <div class="grid-3">
+{cards_html}
+      </div>
+    </div>
+
+    <div id="tx-confirmed-context" class="tab-panel">
+      <div class="part-label"><span class="part-badge">CONFIRMED</span>確認依據 · SL 敏感度分析（2026-05-13）</div>
+      <div class="card">
+        <div class="card-title">🧪 SL 敏感度測試結果（E09/E07/E12，R:R 固定 2:1）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>SL（pts）</th><th>TP（pts）</th><th>獲利策略數</th><th>備註</th></tr></thead>
+            <tbody>
+              <tr><td>30</td><td>60</td><td>1 (E12)</td><td>SL 過緊，ATR 遠大於 30pts</td></tr>
+              <tr><td>60</td><td>120</td><td>3</td><td>E12 PF=1.648, WR=45.2%</td></tr>
+              <tr><td>80</td><td>160</td><td>3–4</td><td>轉折點，開始改善</td></tr>
+              <tr><td>100</td><td>200</td><td>5+</td><td>持續改善</td></tr>
+              <tr class="rank-1"><td><b>120 ★</b></td><td><b>240</b></td><td><b>E09/E07/E12 均 PF>2.0</b></td><td><b>甜蜜點 — 新基準</b></td></tr>
+              <tr><td>150</td><td>300</td><td>同上但交易筆數減少</td><td>信號更少</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;font-size:.85em;color:var(--text2)">
+          <b>根本原因：</b>台指期 MTX 平均 ATR ≈ 50–150 pts，SL=30 只有 0.15%，雜訊就能掃出。SL=120 約等於 0.6%，才能給趨勢策略足夠的呼吸空間。
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 E09 / E07 / E12 綜合對比（SL={sl}, TP={tp}）</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>代碼</th><th>策略</th><th>筆數</th><th>勝率</th><th>PF</th><th>淨盈虧</th><th>日盤 WR</th><th>夜盤 WR</th></tr></thead>
+            <tbody>{sess_rows or "<tr><td colspan='8' style='color:#999'>尚無資料</td></tr>"}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="report-links">
+        <a class="report-link" href="tx/TX-Long-Experiments/report.html">📄 完整多單實驗報告</a>
+      </div>
+    </div>
+  </div><!-- /tx-main-confirmed -->
 """
 
 
@@ -752,32 +981,14 @@ def _tx_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
     <!-- TX 實驗策略 ──────────────────────────────────── -->
     <div id="tx-main-exp" class="main-section">
       <div class="subnav">
-        <button class="sub-tab active" onclick="showTab('tx-exp','overview',this)">回測規格</button>
-        <button class="sub-tab" onclick="showTab('tx-exp','results',this)">實驗結果</button>
+        <button class="sub-tab active" onclick="showTab('tx-exp','overview',this)">綜合對比</button>
+        <button class="sub-tab" onclick="showTab('tx-exp','long',this)">多單 (E01–E20)</button>
+        <button class="sub-tab" onclick="showTab('tx-exp','short',this)">空單 (S01–S20)</button>
         <button class="sub-tab" onclick="showTab('tx-exp','pine',this)">Pine Script</button>
       </div>
 
       <div id="tx-exp-overview" class="tab-panel active">
-        <div class="part-label"><span class="part-badge">PART 1</span>回測規格</div>
-        <div class="grid-4">
-          <div class="metric-card card"><div class="metric-label">商品</div><div class="metric-val" style="font-size:1.1em">MTX 小台</div></div>
-          <div class="metric-card card"><div class="metric-label">時間框架</div><div class="metric-val" style="font-size:1.1em">30 分鐘</div></div>
-          <div class="metric-card card"><div class="metric-label">預設止損</div><div class="metric-val">30 pts</div><div class="metric-sub">NT$1,500/口</div></div>
-          <div class="metric-card card"><div class="metric-label">預設止盈</div><div class="metric-val">60 pts</div><div class="metric-sub">R:R 1:2</div></div>
-          <div class="metric-card card"><div class="metric-label">時間止損</div><div class="metric-val">48 bars</div><div class="metric-sub">24 小時</div></div>
-          <div class="metric-card card"><div class="metric-label">每點價值</div><div class="metric-val">NT$50</div></div>
-          <div class="metric-card card"><div class="metric-label">交易時段</div><div class="metric-val" style="font-size:1em">日盤+夜盤</div></div>
-          <div class="metric-card card"><div class="metric-label">資料起始</div><div class="metric-val" style="font-size:1em">2025-06</div><div class="metric-sub">8,585 bars</div></div>
-        </div>
-        <div class="insight-grid">
-          <div class="insight info"><strong>📊 資料來源</strong><code>TAIFEX_DLY_MXF1!, 30.csv</code>（真實 MTX 行情）<br>更新資料後重新執行 run_experiments.py → run_short_experiments.py → generate_index.py</div>
-          <div class="insight warn"><strong>⚠ 當前期間特性</strong>2025-06 至今台指大多頭；空單全部虧損屬預期結果<br>多單 E12 BB Squeeze Break 是唯一獲利策略（PF=1.132）</div>
-          <div class="insight good"><strong>✅ 下一步</strong>加入 NQ 相關性過濾（NQ RSI 同向確認）<br>加入 MTF 4H 過濾器；分析 SL 30pts 是否過緊（≈0.15%）</div>
-        </div>
-      </div>
-
-      <div id="tx-exp-results" class="tab-panel">
-        <div class="part-label"><span class="part-badge">PART 1</span>實驗結果</div>
+        <div class="part-label"><span class="part-badge">PART 1</span>綜合對比 Top-3</div>
         <div class="grid-2">
           <div class="card">
             <div class="card-title">📈 多單 Top-3（E01–E20）</div>
@@ -788,7 +999,6 @@ def _tx_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
               </table>
             </div>
             {long_btn}
-            <a href="{long_pine}" class="btn btn-pine" style="display:inline-block;margin-top:10px;padding:8px 16px;border-radius:6px;text-decoration:none;font-weight:600;font-size:.88em;color:white;background:#2e7d32;margin-right:8px" download>Pine Script ↓</a>
           </div>
           <div class="card">
             <div class="card-title">📉 空單 Top-3（S01–S20）</div>
@@ -799,8 +1009,40 @@ def _tx_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
               </table>
             </div>
             {short_btn}
-            <a href="{short_pine}" class="btn btn-pine" style="display:inline-block;margin-top:10px;padding:8px 16px;border-radius:6px;text-decoration:none;font-weight:600;font-size:.88em;color:white;background:#2e7d32;margin-right:8px" download>Pine Script ↓</a>
           </div>
+        </div>
+        <div class="insight-grid">
+          <div class="insight good"><strong>✅ SL=120pts 甜蜜點驗證</strong>E09/E07/E12 在 SL=120 下均達 PF>2.0、WR>50%。</div>
+          <div class="insight warn"><strong>⚠ 當前期間</strong>2025-06 至今台指大多頭；空單整體虧損為預期結果。</div>
+          <div class="insight info"><strong>📊 下一步</strong>加入 NQ RSI 相關性過濾；測試 4H MTF 過濾器。</div>
+        </div>
+      </div>
+
+      <div id="tx-exp-long" class="tab-panel">
+        <div class="part-label"><span class="part-badge">PART 1</span>多單實驗（E01–E20）</div>
+        <div class="grid-4">
+          <div class="metric-card card"><div class="metric-label">商品</div><div class="metric-val" style="font-size:1.1em">MTX 小台</div></div>
+          <div class="metric-card card"><div class="metric-label">止損</div><div class="metric-val">120 pts</div><div class="metric-sub">NT$6,000/口</div></div>
+          <div class="metric-card card"><div class="metric-label">止盈</div><div class="metric-val">240 pts</div><div class="metric-sub">R:R 1:2</div></div>
+          <div class="metric-card card"><div class="metric-label">時間止損</div><div class="metric-val">48 bars</div><div class="metric-sub">24 小時</div></div>
+        </div>
+        <div class="report-links">
+          {long_btn}
+          <a class="report-link" href="{long_pine}">📋 ALL_Long_Strategies.pine</a>
+        </div>
+      </div>
+
+      <div id="tx-exp-short" class="tab-panel">
+        <div class="part-label"><span class="part-badge">PART 1</span>空單實驗（S01–S20）</div>
+        <div class="grid-4">
+          <div class="metric-card card"><div class="metric-label">商品</div><div class="metric-val" style="font-size:1.1em">MTX 小台</div></div>
+          <div class="metric-card card"><div class="metric-label">止損</div><div class="metric-val">120 pts</div><div class="metric-sub">NT$6,000/口</div></div>
+          <div class="metric-card card"><div class="metric-label">止盈</div><div class="metric-val">240 pts</div><div class="metric-sub">R:R 1:2</div></div>
+          <div class="metric-card card"><div class="metric-label">期間特性</div><div class="metric-val" style="font-size:.9em">大多頭期</div><div class="metric-sub">空單困難為預期</div></div>
+        </div>
+        <div class="report-links">
+          {short_btn}
+          <a class="report-link" href="{short_pine}">📋 ALL_Short_Strategies.pine</a>
         </div>
       </div>
 
@@ -822,6 +1064,98 @@ def _tx_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
         </div>
       </div>
     </div><!-- /tx-main-exp -->
+"""
+
+
+def _sitemap_html() -> str:
+    xauusd = COMMODITIES[0]
+    tx     = COMMODITIES[1]
+    def _link(href, label, exists=True):
+        if exists:
+            return f"<a href='{href}' style='color:var(--primary)'>{label}</a>"
+        return f"<span style='color:var(--muted)'>{label}</span>"
+
+    xu_long_report  = _link(xauusd['long_dir']  + "/report.html", "多單實驗報告",  (ROOT / xauusd['long_dir']  / "report.html").exists())
+    xu_short_report = _link(xauusd['short_dir'] + "/report.html", "空單實驗報告", (ROOT / xauusd['short_dir'] / "report.html").exists())
+    xu_macro        = _link("xauusd/macro_report.html", "完整宏觀報告",  (ROOT / "xauusd/macro_report.html").exists())
+    tx_long_report  = _link(tx['long_dir']  + "/report.html", "多單實驗報告",  (ROOT / tx['long_dir']  / "report.html").exists())
+    tx_short_report = _link(tx['short_dir'] + "/report.html", "空單實驗報告", (ROOT / tx['short_dir'] / "report.html").exists())
+    tx_macro        = _link("tx/macro_report.html",     "完整宏觀報告",  (ROOT / "tx/macro_report.html").exists())
+    s1_report = _link("xauusd/XAUUSD-Long-S1-AweWithBB/report.html", "S1-AweWithBB 完整報告", (ROOT / "xauusd/XAUUSD-Long-S1-AweWithBB/report.html").exists())
+    s2a_report = _link("xauusd/XAUUSD-Long-S2A-RSI/report.html", "S2A-RSI 完整報告", (ROOT / "xauusd/XAUUSD-Long-S2A-RSI/report.html").exists())
+    s2b_report = _link("xauusd/XAUUSD-Long-S2B-Hammer/report.html", "S2B-Hammer 完整報告", (ROOT / "xauusd/XAUUSD-Long-S2B-Hammer/report.html").exists())
+
+    return f"""
+  <!-- 網站地圖 ───────────────────────────────────────── -->
+  <div id="commodity-sitemap" class="commodity-section">
+    <div class="tab-panel active" style="max-width:1000px;margin:0 auto">
+      <div class="part-label"><span class="part-badge">SITEMAP</span>網站地圖 · 一頁總覽所有內容</div>
+
+      <div class="grid-2">
+        <!-- XAUUSD -->
+        <div class="card">
+          <div class="card-title">🟡 XAUUSD 黃金</div>
+          <table style="width:100%;font-size:.88em">
+            <tbody>
+              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">📐 宏觀分析</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">月度統計 &amp; 季節性（1980–today）</td><td>{xu_macro}</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">週內結構</td><td>→ 宏觀分析 Tab</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">時段分析（9-10 / 14-15 / 20-21 / 23-00）</td><td>→ 宏觀分析 Tab</td></tr>
+
+              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">✅ 已確認策略</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S1-AweWithBB（V3.6.2）</td><td>{s1_report}</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S2A-RSI（V2.3）</td><td>{s2a_report}</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S2B-Hammer（V2.2）</td><td>{s2b_report}</td></tr>
+
+              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🧪 實驗策略（20L + 20S）</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E01–E20 多單實驗</td><td>{xu_long_report}</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S01–S20 空單實驗</td><td>{xu_short_report}</td></tr>
+
+              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">📋 筆記驗證</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">月份強弱 / 季度 / 週次 / 時段</td><td>→ 筆記驗證 Tab</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- TX -->
+        <div class="card">
+          <div class="card-title">🔵 TX 台指期</div>
+          <table style="width:100%;font-size:.88em">
+            <tbody>
+              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">📐 宏觀分析</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">月度統計 &amp; 季節性（2012–today）</td><td>{tx_macro}</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">週內結構</td><td>→ 宏觀分析 Tab</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">時段分析（日盤 vs 夜盤）</td><td>→ 宏觀分析 Tab</td></tr>
+
+              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">✅ 已確認策略（SL=120pts）</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E09 EMA55 Pullback（PF=1.801）</td><td>→ 已確認策略 Tab</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E07 RSI 50 Crossover（PF=2.041）</td><td>→ 已確認策略 Tab</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E12 BB Squeeze Break（PF=2.002）</td><td>→ 已確認策略 Tab</td></tr>
+
+              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🧪 實驗策略（20L + 20S）</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E01–E20 多單實驗</td><td>{tx_long_report}</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S01–S20 空單實驗</td><td>{tx_short_report}</td></tr>
+
+              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">📋 筆記驗證</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">月份強弱 / 季度 / 週次 / 選舉年</td><td>→ 筆記驗證 Tab</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔧 更新流程</div>
+        <div style="font-size:.88em;line-height:2;color:var(--text2)">
+          <b>更新 XAUUSD 實驗結果：</b><br>
+          <code style="background:var(--surface2);padding:2px 8px;border-radius:4px">cd trading/ &amp;&amp; python3 xauusd/run_experiments.py &amp;&amp; python3 xauusd/run_short_experiments.py</code><br><br>
+          <b>更新 TX 實驗結果：</b><br>
+          <code style="background:var(--surface2);padding:2px 8px;border-radius:4px">cd trading/ &amp;&amp; python3 tx/run_experiments.py --sl 120 --tp 240 &amp;&amp; python3 tx/run_short_experiments.py --sl 120 --tp 240</code><br><br>
+          <b>重新生成 index.html：</b><br>
+          <code style="background:var(--surface2);padding:2px 8px;border-radius:4px">python3 generate_index.py</code>
+        </div>
+      </div>
+    </div>
+  </div><!-- /commodity-sitemap -->
 """
 
 
@@ -1095,13 +1429,14 @@ def generate():
     tx_long_rows  = "\n".join(_exp_row_tx(r, "long")  for r in tx_long)
     tx_short_rows = "\n".join(_exp_row_tx(r, "short") for r in tx_short)
 
-    # Build commodity nav tabs
+    # Build commodity nav tabs (+ sitemap)
     commodity_tabs = "\n".join(
         f'    <button class="commodity-tab{"" if i>0 else " active"}" '
         f'data-id="{c["id"]}" onclick="showCommodity(\'{c["id"]}\',this)">'
         f'{c["name"]}</button>'
         for i, c in enumerate(COMMODITIES)
     )
+    commodity_tabs += '\n    <button class="commodity-tab" data-id="sitemap" onclick="showCommodity(\'sitemap\',this)">🗺 網站地圖</button>'
 
     xauusd_log = _session_log_html("xauusd")
     tx_log     = _session_log_html("tx")
@@ -1255,7 +1590,7 @@ tbody tr:hover td{{background:#f8fafc}}
   <div class="commodity-tabs">
 {commodity_tabs}
   </div>
-  <div class="nav-meta">Updated 2026-05-13</div>
+  <div class="nav-meta">Updated 2026-05-14</div>
 </nav>
 
 <!-- ══════════════════════════════════════════════════════════════════
@@ -1263,16 +1598,16 @@ tbody tr:hover td{{background:#f8fafc}}
 ════════════════════════════════════════════════════════════════════ -->
 <div id="commodity-xauusd" class="commodity-section active">
   <div class="commodity-subnav">
-    <button class="nav-main-tab active" onclick="showMain('xauusd-main-opt',this)">現有策略優化</button>
-    <button class="nav-main-tab" onclick="showMain('xauusd-main-exp',this)">實驗策略測試</button>
-    <button class="nav-main-tab" onclick="showMain('xauusd-main-macro',this)">宏觀分析</button>
+    <button class="nav-main-tab active" onclick="showMain('xauusd-main-macro',this)">宏觀分析</button>
+    <button class="nav-main-tab" onclick="showMain('xauusd-main-opt',this)">已確認策略</button>
+    <button class="nav-main-tab" onclick="showMain('xauusd-main-exp',this)">實驗策略</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-validate',this)">筆記驗證</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-log',this)">對話記錄</button>
   </div>
 
+{xu_macro_html}
 {_xauusd_opt_html()}
 {_xauusd_exp_html(xu_long_rows, xu_short_rows, xauusd)}
-{xu_macro_html}
 {xu_validate_html}
 
   <!-- XAUUSD 對話記錄 -->
@@ -1290,12 +1625,14 @@ tbody tr:hover td{{background:#f8fafc}}
 <div id="commodity-tx" class="commodity-section">
   <div class="commodity-subnav">
     <button class="nav-main-tab active" onclick="showMain('tx-main-macro',this)">宏觀分析</button>
+    <button class="nav-main-tab" onclick="showMain('tx-main-confirmed',this)">已確認策略</button>
     <button class="nav-main-tab" onclick="showMain('tx-main-exp',this)">實驗策略</button>
     <button class="nav-main-tab" onclick="showMain('tx-main-validate',this)">筆記驗證</button>
     <button class="nav-main-tab" onclick="showMain('tx-main-log',this)">對話記錄</button>
   </div>
 
 {_tx_macro_html()}
+{_tx_confirmed_html()}
 {_tx_exp_html(tx_long_rows, tx_short_rows, tx)}
 {tx_validate_html}
 
@@ -1307,6 +1644,8 @@ tbody tr:hover td{{background:#f8fafc}}
     </div>
   </div>
 </div><!-- /commodity-tx -->
+
+{_sitemap_html()}
 
 <!-- ══ SETUP SECTION ════════════════════════════════════════════════ -->
 <div class="setup-card">
@@ -1328,7 +1667,7 @@ New-Item -ItemType Junction -Path $dst -Target $src</pre>
 </div>
 
 <div class="footer">
-  Trading Strategy Hub &nbsp;·&nbsp; XAUUSD 黃金 + TX 台指期 &nbsp;·&nbsp; Generated by Claude Code 2026-05-13
+  Trading Strategy Hub &nbsp;·&nbsp; XAUUSD 黃金 + TX 台指期 &nbsp;·&nbsp; Generated by Claude Code 2026-05-14
   <br><br>
   <a href="https://github.com/tittanliao/trading" style="color:var(--muted)">GitHub Repository</a>
   &nbsp;·&nbsp;

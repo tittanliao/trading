@@ -241,6 +241,7 @@ def generate(output_dir: Path, direction: str):
 </style>
 </head>
 <body>
+<div style="padding:10px 24px 0"><a href="../../index.html" style="color:white;font-size:13px;text-decoration:none;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:6px;font-weight:600">← 返回 Trading Hub</a></div>
 <div class="header">
   <h1>台指期 MTX — {label} Experiments</h1>
   <p>SL: {sl_pts} pts &nbsp;|&nbsp; TP: {tp_pts} pts &nbsp;|&nbsp; R:R 1:{tp_pts//sl_pts} &nbsp;|&nbsp; 小台每點 NT$50</p>

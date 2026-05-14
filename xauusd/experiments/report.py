@@ -449,6 +449,7 @@ def generate(
   {CSS}
 </head>
 <body>
+<div style="padding:10px 20px 0"><a href="../../index.html" style="color:#2563eb;font-size:13px;text-decoration:none;background:#dbeafe;padding:4px 12px;border-radius:6px;font-weight:600">← 返回 Trading Hub</a></div>
 <div class="wrap">
 
   <h1>XAUUSD 20-Strategy Experiment</h1>

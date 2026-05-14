@@ -318,6 +318,7 @@ def build_html(df, monthly, sea, wim):
 </style>
 </head>
 <body>
+<a href="../index.html" style="display:inline-block;margin:12px 24px 0;color:#93c5fd;font-size:13px;text-decoration:none;font-weight:600">← 返回 Trading Hub</a>
 
 <h1>TX 台指期 — 宏觀分析報告</h1>
 <p class="subtitle">週線資料 · {monthly['date'].min().strftime('%Y-%m')} ~ {monthly['date'].max().strftime('%Y-%m')} · 共 {total_months} 個月 · 生成時間：{today}</p>
