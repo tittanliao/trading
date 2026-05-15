@@ -57,6 +57,16 @@ trading/
 
 ## 執行方式
 
+### 跨商品共同分析（在 trading/ 根目錄執行）
+
+```bash
+# Mac（需先安裝 pandas、numpy、matplotlib）
+python3.12 shared/run_shared_analysis.py
+
+# 結果存於 shared/shared_results.json（含 base64 heatmap 圖）
+# 執行後需再跑 python generate_index.py 更新 index.html
+```
+
 ### 更新 index.html（更新任一商品實驗結果後）
 
 ```bash

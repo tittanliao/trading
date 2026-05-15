@@ -89,6 +89,19 @@ XAUUSD_LOG = [
 
 TX_LOG = [
     {
+        "date": "2026-05-15",
+        "title": "跨商品分析：整點熱力圖 + 30m RSI 濾鏡",
+        "items": [
+            "新增 shared/run_shared_analysis.py：XAUUSD + TX 共同分析框架",
+            "整點進場熱力圖：星期幾 × 小時 → 歷史勝率 & 平均損益（TX 3,334 筆 / XAU 2,906 筆）",
+            "TX 最佳時段：週二 23:00 WR=73.7%，avg +40.9pts；最差：週四 08:00 WR=33.3%，avg -89.5pts",
+            "XAU 最佳時段：週三 06:00 WR=88.9%（n=9 小樣本）；最差：週一 06:00 WR=10.0%（n=10）",
+            "30m RSI 狀態過濾：TX RSI<MA 時 WR 53.7% avg +8.0pts；RSI>MA 時 WR 53.1% avg +1.8pts",
+            "背離訊號（Regular Bullish/Bearish）欄位在現有 CSV 無資料，需重新從 TradingView 匯出",
+            "新增「跨商品分析」Nav Tab，兩商品分析放同一頁面方便比較",
+        ],
+    },
+    {
         "date": "2026-05-13",
         "title": "SL 敏感度分析 — 確認 30pts 過緊",
         "items": [
@@ -1143,9 +1156,26 @@ def _sitemap_html() -> str:
         </div>
       </div>
 
+      <!-- 跨商品分析 -->
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">📊 跨商品共同分析（Cross-Commodity）</div>
+        <table style="width:100%;font-size:.88em">
+          <tbody>
+            <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">⏰ 整點熱力圖</td></tr>
+            <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">XAUUSD + TX 整點進場勝率 &amp; 損益（星期 × 小時）</td><td>→ 跨商品分析 Tab → 整點熱力圖</td></tr>
+            <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">📈 RSI 濾鏡分析</td></tr>
+            <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">整點進場時，30m RSI 金叉 / 死叉 / 背離對勝率的影響</td><td>→ 跨商品分析 Tab → RSI 濾鏡</td></tr>
+            <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border)">📦 原始資料</td></tr>
+            <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">shared/shared_results.json（含 base64 heatmap 圖）</td><td>→ 執行 run_shared_analysis.py 更新</td></tr>
+          </tbody>
+        </table>
+      </div>
+
       <div class="card">
         <div class="card-title">🔧 更新流程</div>
         <div style="font-size:.88em;line-height:2;color:var(--text2)">
+          <b>更新跨商品分析（整點熱力圖 + RSI 濾鏡）：</b><br>
+          <code style="background:var(--surface2);padding:2px 8px;border-radius:4px">python3.12 shared/run_shared_analysis.py</code><br><br>
           <b>更新 XAUUSD 實驗結果：</b><br>
           <code style="background:var(--surface2);padding:2px 8px;border-radius:4px">cd trading/ &amp;&amp; python3 xauusd/run_experiments.py &amp;&amp; python3 xauusd/run_short_experiments.py</code><br><br>
           <b>更新 TX 實驗結果：</b><br>
@@ -1160,6 +1190,176 @@ def _sitemap_html() -> str:
 
 
 # ─── Validation (note vs data) ───────────────────────────────────────
+def _load_shared_results() -> dict:
+    p = ROOT / "shared/shared_results.json"
+    if not p.exists():
+        return {}
+    with open(p, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _shared_analysis_html(data: dict) -> str:
+    if not data:
+        return """
+  <div id="commodity-shared" class="commodity-section">
+    <div class="tab-panel active"><div class="card">
+      <div class="card-title">跨商品分析</div>
+      <p style="color:var(--muted)">請先執行 <code>python3.12 shared/run_shared_analysis.py</code> 生成資料。</p>
+    </div></div>
+  </div>"""
+
+    def _rsi_table(rsi_stats: dict, unit_label: str) -> str:
+        order = ['overall', 'golden_cross', 'death_cross', 'bullish_div', 'bearish_div', 'rsi_above_ma', 'rsi_below_ma']
+        labels = {
+            'overall': '全部樣本', 'golden_cross': 'RSI 金叉（30m）',
+            'death_cross': 'RSI 死叉（30m）', 'bullish_div': '多頭背離（30m）',
+            'bearish_div': '空頭背離（30m）', 'rsi_above_ma': 'RSI > MA（30m）',
+            'rsi_below_ma': 'RSI < MA（30m）',
+        }
+        rows = []
+        for state in order:
+            s = rsi_stats.get(state)
+            if s is None:
+                rows.append(f"<tr><td>{labels[state]}</td><td colspan='3' style='color:var(--muted);font-style:italic'>無資料（CSV 未匯出訊號）</td></tr>")
+                continue
+            wr = s['win_rate']
+            wr_cls = 'pos' if wr >= 52 else ('neg' if wr < 48 else '')
+            ret = s['avg_ret']
+            ret_cls = 'pos' if ret > 0 else 'neg'
+            ret_str = f"{ret:+.2f}" if unit_label == '%' else f"{ret:+.0f}"
+            rows.append(
+                f"<tr><td>{labels[state]}</td>"
+                f"<td class='{wr_cls}'>{wr:.1f}%</td>"
+                f"<td class='{ret_cls}'>{ret_str}{unit_label}</td>"
+                f"<td style='color:var(--muted)'>{s['count']}</td></tr>"
+            )
+        return "\n".join(rows)
+
+    def _insight_card(label: str, cell: dict | None, unit_label: str, good: bool) -> str:
+        if cell is None:
+            return ""
+        color = "good" if good else "bad"
+        ret_str = f"{cell['avg_ret']:+.2f}{unit_label}" if unit_label == '%' else f"{cell['avg_ret']:+.0f}{unit_label}"
+        return (
+            f"<div class='insight {color}'>"
+            f"<strong>{'最佳' if good else '最差'}時段 · {cell['dow']} {cell['hour']:02d}:00</strong>"
+            f"勝率 {cell['win_rate']:.1f}% &nbsp;|&nbsp; 平均 {ret_str} &nbsp;|&nbsp; n={cell['count']}"
+            f"</div>"
+        )
+
+    xu = data.get("xauusd", {})
+    tx = data.get("tx", {})
+
+    xu_rsi_tbl = _rsi_table(xu.get("rsi_stats", {}), xu.get("unit_label", "%"))
+    tx_rsi_tbl = _rsi_table(tx.get("rsi_stats", {}), tx.get("unit_label", "pts"))
+
+    xu_best  = _insight_card("XAUUSD", xu.get("best_wr"),  xu.get("unit_label", "%"),   True)
+    xu_worst = _insight_card("XAUUSD", xu.get("worst_wr"), xu.get("unit_label", "%"),   False)
+    tx_best  = _insight_card("TX",     tx.get("best_wr"),  tx.get("unit_label", "pts"), True)
+    tx_worst = _insight_card("TX",     tx.get("worst_wr"), tx.get("unit_label", "pts"),  False)
+
+    xu_wr_img  = f"<img src='data:image/png;base64,{xu['wr_heatmap_b64']}'  style='max-width:100%;border-radius:8px'>" if xu.get("wr_heatmap_b64") else ""
+    xu_ret_img = f"<img src='data:image/png;base64,{xu['ret_heatmap_b64']}' style='max-width:100%;border-radius:8px'>" if xu.get("ret_heatmap_b64") else ""
+    xu_rsi_img = f"<img src='data:image/png;base64,{xu['rsi_filter_b64']}' style='max-width:100%;border-radius:8px'>" if xu.get("rsi_filter_b64") else ""
+    tx_wr_img  = f"<img src='data:image/png;base64,{tx['wr_heatmap_b64']}'  style='max-width:100%;border-radius:8px'>" if tx.get("wr_heatmap_b64") else ""
+    tx_ret_img = f"<img src='data:image/png;base64,{tx['ret_heatmap_b64']}' style='max-width:100%;border-radius:8px'>" if tx.get("ret_heatmap_b64") else ""
+    tx_rsi_img = f"<img src='data:image/png;base64,{tx['rsi_filter_b64']}' style='max-width:100%;border-radius:8px'>" if tx.get("rsi_filter_b64") else ""
+
+    xu_n = xu.get("n_total", 0)
+    xu_rsi_n = xu.get("n_rsi_overlap", 0)
+    tx_n = tx.get("n_total", 0)
+    tx_rsi_n = tx.get("n_rsi_overlap", 0)
+
+    return f"""
+  <!-- ══ SHARED CROSS-COMMODITY ANALYSIS ══════════════════════════ -->
+  <div id="commodity-shared" class="commodity-section">
+    <div class="commodity-subnav">
+      <button class="nav-main-tab active" onclick="showMain('shared-main-heatmap',this)">整點熱力圖</button>
+      <button class="nav-main-tab" onclick="showMain('shared-main-rsi',this)">RSI 濾鏡</button>
+    </div>
+
+    <!-- 整點熱力圖 -->
+    <div id="shared-main-heatmap" class="main-section active">
+      <div class="tab-panel active">
+        <div class="part-label"><span class="part-badge">HEATMAP</span>整點進場 · 下一整點出場 — 勝率 &amp; 損益熱力圖</div>
+
+        <div class="card" style="margin-bottom:8px">
+          <div style="font-size:.88em;color:var(--text2);line-height:1.7">
+            <strong>分析方法：</strong>每個整點（00分）進場，下一個整點出場，計算各 <em>星期幾 × 小時</em> 組合的歷史勝率與平均損益。
+            「*」表示樣本 &lt; 5 筆，結果僅供參考。
+            XAUUSD：<strong>{xu_n:,}</strong> 筆 60m bar（週一至週五）。
+            TX MTX：<strong>{tx_n:,}</strong> 筆 60m bar（週一至週五）。
+          </div>
+        </div>
+
+        <!-- XAUUSD 熱力圖 -->
+        <div class="card">
+          <div class="card-title">🟡 XAUUSD 黃金 — 整點進場熱力圖</div>
+          <div class="insight-grid">{xu_best}{xu_worst}</div>
+          <div class="grid-2" style="gap:12px;margin-top:12px">
+            <div>{xu_wr_img}</div>
+            <div>{xu_ret_img}</div>
+          </div>
+        </div>
+
+        <!-- TX 熱力圖 -->
+        <div class="card">
+          <div class="card-title">🔵 TX 台指期 (MTX) — 整點進場熱力圖</div>
+          <div class="insight-grid">{tx_best}{tx_worst}</div>
+          <div class="grid-2" style="gap:12px;margin-top:12px">
+            <div>{tx_wr_img}</div>
+            <div>{tx_ret_img}</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /shared-main-heatmap -->
+
+    <!-- RSI 濾鏡分析 -->
+    <div id="shared-main-rsi" class="main-section">
+      <div class="tab-panel active">
+        <div class="part-label"><span class="part-badge">RSI FILTER</span>30m RSI 金叉 / 死叉 / 背離 — 整點進場過濾效果</div>
+
+        <div class="card" style="margin-bottom:8px">
+          <div style="font-size:.88em;color:var(--text2);line-height:1.7">
+            <strong>分析方法：</strong>在整點進場時，查詢 30 分鐘 RSI 的狀態（金叉 / 死叉 / RSI 位於 MA 上下方 / 背離訊號），
+            比較不同狀態下的歷史勝率與平均損益差異。<br>
+            <strong>注意：</strong>RSI 背離（Regular Bullish / Bearish）欄位在目前匯出的 CSV 中無訊號資料，
+            如需此分析請在 TradingView 匯出時確保 <em>Regular Bullish/Bearish Label</em> 欄位有值。<br>
+            XAUUSD 有效 30m RSI 重疊筆數：<strong>{xu_rsi_n:,}</strong>（共 {xu_n:,} 筆）。
+            TX 有效 30m RSI 重疊筆數：<strong>{tx_rsi_n:,}</strong>（共 {tx_n:,} 筆）。
+          </div>
+        </div>
+
+        <!-- XAUUSD RSI Filter -->
+        <div class="card">
+          <div class="card-title">🟡 XAUUSD 黃金 — 30m RSI 狀態 × 勝率</div>
+          <div style="margin-bottom:12px">{xu_rsi_img}</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>RSI 狀態</th><th>勝率</th><th>平均損益</th><th>樣本數</th></tr></thead>
+              <tbody>{xu_rsi_tbl}</tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TX RSI Filter -->
+        <div class="card">
+          <div class="card-title">🔵 TX 台指期 — 30m RSI 狀態 × 勝率</div>
+          <div style="margin-bottom:12px">{tx_rsi_img}</div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>RSI 狀態</th><th>勝率</th><th>平均損益</th><th>樣本數</th></tr></thead>
+              <tbody>{tx_rsi_tbl}</tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /shared-main-rsi -->
+
+  </div><!-- /commodity-shared -->
+"""
+
+
 def _load_validation() -> dict:
     p = ROOT / "doc/validation_results.json"
     if not p.exists():
@@ -1436,6 +1636,7 @@ def generate():
         f'{c["name"]}</button>'
         for i, c in enumerate(COMMODITIES)
     )
+    commodity_tabs += '\n    <button class="commodity-tab" data-id="shared" onclick="showCommodity(\'shared\',this)">📊 跨商品分析</button>'
     commodity_tabs += '\n    <button class="commodity-tab" data-id="sitemap" onclick="showCommodity(\'sitemap\',this)">🗺 網站地圖</button>'
 
     xauusd_log = _session_log_html("xauusd")
@@ -1444,6 +1645,8 @@ def generate():
     xu_validate_html = _xauusd_validation_html(vdata)
     tx_validate_html = _tx_validation_html(vdata)
     xu_macro_html    = _xauusd_macro_html()
+    shared_data      = _load_shared_results()
+    shared_html      = _shared_analysis_html(shared_data)
 
     html = f"""<!DOCTYPE html>
 <html lang="zh-TW">
@@ -1661,6 +1864,8 @@ tbody tr:hover td{{background:#f8fafc}}
     </div>
   </div>
 </div><!-- /commodity-tx -->
+
+{shared_html}
 
 {_sitemap_html()}
 

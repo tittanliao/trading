@@ -36,6 +36,21 @@ metadata:
 - 宏觀分析：月勝率 63.9%，九月唯一偏空月，四月期望值最大（+518pts avg）
 - 下一步：NQ 相關性過濾 + MTF 4H 過濾；在 TradingView 驗證 E07/E09/E12
 
+## 跨商品共同分析（2026-05-15）
+- 新增 `shared/run_shared_analysis.py`，對 XAUUSD + TX 共同執行：
+  1. **整點熱力圖**：每整點進場 → 下一整點出場，計算星期×小時的勝率和損益
+  2. **30m RSI 濾鏡**：在整點進場時，30m RSI 金叉/死叉/位置對勝率的影響
+- TX 關鍵發現：
+  - 最佳時段：週二 23:00 WR=73.7%, avg +40.9pts（夜盤）
+  - 最差時段：週四 08:00 WR=33.3%, avg -89.5pts（日盤開盤前）
+  - RSI<MA 時略優（WR 53.7%, avg+8.0pts）vs RSI>MA（WR 53.1%, avg+1.8pts）
+- XAUUSD 關鍵發現：
+  - 最佳時段：週三 06:00 WR=88.9%（n=9，小樣本）
+  - 最差時段：週一 06:00 WR=10.0%（n=10）
+- 背離訊號（Regular Bullish/Bearish）CSV 欄位目前無資料，需重新從 TV 匯出
+- 結果存於 `shared/shared_results.json`（含 base64 heatmap 圖）
+- index.html 新增「📊 跨商品分析」Nav Tab（整點熱力圖 + RSI 濾鏡）
+
 ## 筆記驗證結果（2026-05-13，validate_notes.py）
 結果存於 `doc/validation_results.json`；index.html 各商品均有「筆記驗證」頁。
 
