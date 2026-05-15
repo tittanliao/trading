@@ -87,7 +87,17 @@ XAUUSD_LOG = [
     },
 ]
 
-TX_LOG = [
+CROSS_LOG = [
+    {
+        "date": "2026-05-15",
+        "title": "統一對話記錄頁 + 跨商品 Log 整合",
+        "items": [
+            "將 XAUUSD / TX / 跨商品 的所有對話記錄統一整合到「📋 對話記錄」獨立 Tab",
+            "每筆 log 加上商品 tag（🟡 XAUUSD / 🔵 TX / 📊 跨商品），便於追蹤 Prompt 演進歷史",
+            "移除 XAUUSD 和 TX 各自的「對話記錄」子 tab，集中到統一頁面",
+            "新增 feedback_completion_checklist.md 記憶，確保每次完成任務都記錄到 memory",
+        ],
+    },
     {
         "date": "2026-05-15",
         "title": "跨商品分析：整點熱力圖 + 30m RSI 濾鏡",
@@ -98,9 +108,32 @@ TX_LOG = [
             "XAU 最佳時段：週三 06:00 WR=88.9%（n=9 小樣本）；最差：週一 06:00 WR=10.0%（n=10）",
             "30m RSI 狀態過濾：TX RSI<MA 時 WR 53.7% avg +8.0pts；RSI>MA 時 WR 53.1% avg +1.8pts",
             "背離訊號（Regular Bullish/Bearish）欄位在現有 CSV 無資料，需重新從 TradingView 匯出",
-            "新增「跨商品分析」Nav Tab，兩商品分析放同一頁面方便比較",
+            "新增「📊 跨商品分析」Nav Tab，兩商品分析放同一頁面方便比較",
         ],
     },
+    {
+        "date": "2026-05-14",
+        "title": "網站整合：Hub 主頁 + 多商品導覽 + 手機響應式",
+        "items": [
+            "整合 XAUUSD + TX 為 Trading Strategy Hub（根目錄 index.html）",
+            "頂部導覽：XAUUSD 黃金 / TX 台指期 / 📊 跨商品分析 / 🗺 網站地圖",
+            "加入 GitHub Actions 自動部署到 GitHub Pages",
+            "手機響應式：品牌列 + 可橫滑 tab 列，適配小螢幕",
+            "筆記驗證功能：validate_notes.py 比對交易筆記與歷史資料符合率",
+        ],
+    },
+    {
+        "date": "2026-05-13",
+        "title": "XAUUSD + TX 宏觀分析整合 + 網站地圖",
+        "items": [
+            "XAUUSD 宏觀分析（DXY 相關性、月度統計、季節性）整合進 Hub",
+            "TX 宏觀分析：月勝率 63.9%、四月 +518pts、九月唯一偏空",
+            "統一雙商品導覽，網站地圖列出所有分析頁面",
+        ],
+    },
+]
+
+TX_LOG = [
     {
         "date": "2026-05-13",
         "title": "SL 敏感度分析 — 確認 30pts 過緊",
@@ -150,7 +183,7 @@ TX_LOG = [
     },
 ]
 
-SESSION_LOGS = {"xauusd": XAUUSD_LOG, "tx": TX_LOG}
+SESSION_LOGS = {"xauusd": XAUUSD_LOG, "tx": TX_LOG, "cross": CROSS_LOG}
 
 
 # ─── Helpers ─────────────────────────────────────────────────────────
@@ -207,6 +240,72 @@ def _session_log_html(commodity_id: str) -> str:
             f"</div>"
         )
     return "\n".join(blocks)
+
+
+def _unified_log_html() -> str:
+    TAG_CFG = {
+        "xauusd": {"label": "🟡 XAUUSD", "bg": "#fef3c7", "color": "#92400e", "border": "#f59e0b"},
+        "tx":     {"label": "🔵 TX 台指期", "bg": "#dbeafe", "color": "#1e40af", "border": "#3b82f6"},
+        "cross":  {"label": "📊 跨商品",  "bg": "#ede9fe", "color": "#5b21b6", "border": "#7c3aed"},
+    }
+
+    all_entries = []
+    for cid, log in SESSION_LOGS.items():
+        for entry in log:
+            all_entries.append({**entry, "_cid": cid})
+
+    all_entries.sort(key=lambda e: e["date"], reverse=True)
+
+    blocks = []
+    for entry in all_entries:
+        cid = entry["_cid"]
+        cfg = TAG_CFG.get(cid, TAG_CFG["cross"])
+        tag = (
+            f"<span style='display:inline-block;padding:2px 10px;border-radius:12px;"
+            f"background:{cfg['bg']};color:{cfg['color']};"
+            f"border:1px solid {cfg['border']};font-size:.78em;font-weight:700;"
+            f"margin-bottom:6px'>{cfg['label']}</span>"
+        )
+        items_html = "".join(f"<li>{it}</li>" for it in entry["items"])
+        blocks.append(
+            f"<div class='log-entry'>"
+            f"<div class='log-date'>{entry['date']}</div>"
+            f"<div>{tag}<div class='log-title' style='margin-top:2px'>{entry['title']}</div>"
+            f"<ul class='log-items'>{items_html}</ul></div>"
+            f"</div>"
+        )
+
+    legend = "".join(
+        f"<span style='display:inline-flex;align-items:center;gap:5px;margin-right:12px;"
+        f"padding:3px 10px;border-radius:12px;background:{cfg['bg']};color:{cfg['color']};"
+        f"border:1px solid {cfg['border']};font-size:.8em;font-weight:600'>{cfg['label']}</span>"
+        for cid, cfg in TAG_CFG.items()
+    )
+
+    total = len(all_entries)
+    return f"""
+  <!-- ══ UNIFIED SESSION LOG ══════════════════════════════════════════ -->
+  <div id="commodity-history" class="commodity-section">
+    <div class="tab-panel active" style="max-width:1000px;margin:0 auto">
+      <div class="part-label"><span class="part-badge">HISTORY</span>對話記錄 · Prompt &amp; Evolution History</div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+          {legend}
+          <span style="color:var(--muted);font-size:.82em;margin-left:auto">共 {total} 筆記錄</span>
+        </div>
+        <div style="font-size:.84em;color:var(--text2)">
+          每筆記錄標示商品歸屬，方便追蹤跨商品分析演進與 Prompt 歷史。
+          記錄依日期由新至舊排列。
+        </div>
+      </div>
+
+      <div class="card">
+        {"".join(blocks)}
+      </div>
+    </div>
+  </div><!-- /commodity-history -->
+"""
 
 
 # ─── XAUUSD 宏觀分析（動態讀 CSV）─────────────────────────────────
@@ -1638,9 +1737,7 @@ def generate():
     )
     commodity_tabs += '\n    <button class="commodity-tab" data-id="shared" onclick="showCommodity(\'shared\',this)">📊 跨商品分析</button>'
     commodity_tabs += '\n    <button class="commodity-tab" data-id="sitemap" onclick="showCommodity(\'sitemap\',this)">🗺 網站地圖</button>'
-
-    xauusd_log = _session_log_html("xauusd")
-    tx_log     = _session_log_html("tx")
+    commodity_tabs += '\n    <button class="commodity-tab" data-id="history" onclick="showCommodity(\'history\',this)">📋 對話記錄</button>'
     vdata      = _load_validation()
     xu_validate_html = _xauusd_validation_html(vdata)
     tx_validate_html = _tx_validation_html(vdata)
@@ -1822,21 +1919,12 @@ tbody tr:hover td{{background:#f8fafc}}
     <button class="nav-main-tab" onclick="showMain('xauusd-main-opt',this)">已確認策略</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-exp',this)">實驗策略</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-validate',this)">筆記驗證</button>
-    <button class="nav-main-tab" onclick="showMain('xauusd-main-log',this)">對話記錄</button>
   </div>
 
 {xu_macro_html}
 {_xauusd_opt_html()}
 {_xauusd_exp_html(xu_long_rows, xu_short_rows, xauusd)}
 {xu_validate_html}
-
-  <!-- XAUUSD 對話記錄 -->
-  <div id="xauusd-main-log" class="main-section">
-    <div class="tab-panel active">
-      <div class="part-label"><span class="part-badge">LOG</span>分析紀錄 · Collaboration Log</div>
-      <div class="card">{xauusd_log}</div>
-    </div>
-  </div>
 </div><!-- /commodity-xauusd -->
 
 <!-- ══════════════════════════════════════════════════════════════════
@@ -1848,26 +1936,19 @@ tbody tr:hover td{{background:#f8fafc}}
     <button class="nav-main-tab" onclick="showMain('tx-main-confirmed',this)">已確認策略</button>
     <button class="nav-main-tab" onclick="showMain('tx-main-exp',this)">實驗策略</button>
     <button class="nav-main-tab" onclick="showMain('tx-main-validate',this)">筆記驗證</button>
-    <button class="nav-main-tab" onclick="showMain('tx-main-log',this)">對話記錄</button>
   </div>
 
 {_tx_macro_html()}
 {_tx_confirmed_html()}
 {_tx_exp_html(tx_long_rows, tx_short_rows, tx)}
 {tx_validate_html}
-
-  <!-- TX 對話記錄 -->
-  <div id="tx-main-log" class="main-section">
-    <div class="tab-panel active">
-      <div class="part-label"><span class="part-badge">LOG</span>對話記錄 · Session Log</div>
-      <div class="card">{tx_log}</div>
-    </div>
-  </div>
 </div><!-- /commodity-tx -->
 
 {shared_html}
 
 {_sitemap_html()}
+
+{_unified_log_html()}
 
 <!-- ══ SETUP SECTION ════════════════════════════════════════════════ -->
 <div class="setup-card">
