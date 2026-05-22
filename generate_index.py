@@ -1193,6 +1193,7 @@ def _sitemap_html() -> str:
     tx_long_report  = _link(tx['long_dir']  + "/report.html", "多單實驗報告",  (ROOT / tx['long_dir']  / "report.html").exists())
     tx_short_report = _link(tx['short_dir'] + "/report.html", "空單實驗報告", (ROOT / tx['short_dir'] / "report.html").exists())
     tx_macro        = _link("tx/macro_report.html",     "完整宏觀報告",  (ROOT / "tx/macro_report.html").exists())
+    tx_sl120_report = _link("tx/sl120_report.html", "SL=120 甜蜜點報告", (ROOT / "tx/sl120_report.html").exists())
     s1_report = _link("xauusd/XAUUSD-Long-S1-AweWithBB/report.html", "S1-AweWithBB 完整報告", (ROOT / "xauusd/XAUUSD-Long-S1-AweWithBB/report.html").exists())
     s2a_report = _link("xauusd/XAUUSD-Long-S2A-RSI/report.html", "S2A-RSI 完整報告", (ROOT / "xauusd/XAUUSD-Long-S2A-RSI/report.html").exists())
     s2b_report = _link("xauusd/XAUUSD-Long-S2B-Hammer/report.html", "S2B-Hammer 完整報告", (ROOT / "xauusd/XAUUSD-Long-S2B-Hammer/report.html").exists())
@@ -1247,6 +1248,9 @@ def _sitemap_html() -> str:
               <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🧪 實驗策略（20L + 20S）</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E01–E20 多單實驗</td><td>{tx_long_report}</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S01–S20 空單實驗</td><td>{tx_short_report}</td></tr>
+
+              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🎯 SL 甜蜜點分析</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">SL=120pts R:R 1:1 / 1:1.5 / 1:2 全策略比較</td><td>{tx_sl120_report}</td></tr>
 
               <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">📋 筆記驗證</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">月份強弱 / 季度 / 週次 / 選舉年</td><td>→ 筆記驗證 Tab</td></tr>
