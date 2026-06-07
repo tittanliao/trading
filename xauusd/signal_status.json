@@ -1,0 +1,112 @@
+{
+  "generated_at": "2026-06-03T00:26:18.829704",
+  "summary": "── 訊號狀態摘要 2026-05-29 20:30 ──\n現價: 4537.87  │  BB %B: 0.35  │  RSI(14): 50.5  │  AO: 13.88\nBB Basis: 4547.94  │  Upper: 4581.29  │  Lower: 4514.58\n\n[S1 AweWithBB]  ⏳ Fast EMA (4542.15) 需突破 Basis (4547.94)，差 5.8 點\n  上次訊號: 2026-05-28 11:30 @ 4387.93  (64 bars ago)\n[S2 Hybrid]     🔴 未觸發  RSI 現在 50.5，已在 30 以上，可能即將再次觸發（需跌回 30 再彈）\n  上次訊號: 2026-05-28 08:00 @ 4389.7  RSI=34.88  (71 bars ago)\n[S2 Pullback]   🔴 未觸發  下影比=0.12（需>2.0）  ATR=16.94\n  上次錘頭: 2026-05-29 10:00 @ 4530.36  下影比=7.11  (21 bars ago)",
+  "s1": {
+    "strategy": "S1-AweWithBB-V3.4",
+    "timeframe": "30m",
+    "current_bar": {
+      "time": "2026-05-29 20:30:00+00:00",
+      "close": 4537.87,
+      "bb_basis": 4547.94,
+      "bb_upper": 4581.29,
+      "bb_lower": 4514.58,
+      "bb_pct_b": 0.349,
+      "fast_ema3": 4542.15,
+      "ao_val": 13.878,
+      "ao_state": 2,
+      "ao_rising": false,
+      "close_above_basis": false,
+      "fast_ema_above_basis": false,
+      "crossover_now": false
+    },
+    "signal_now": false,
+    "distance_to_trigger": {
+      "fast_ema_vs_basis": -5.79,
+      "note": "fast EMA 需再漲 5.8 點才站上 BB basis"
+    },
+    "last_signal": {
+      "time": "2026-05-28 11:30:00+00:00",
+      "entry": 4387.93,
+      "sl": 4365.99,
+      "tp1": 4409.87,
+      "tp2": 4464.72,
+      "bars_ago": 64
+    },
+    "recent_signals_count_30d": 42
+  },
+  "s2_hybrid": {
+    "strategy": "S2-Hybrid-V2.0",
+    "timeframe": "30m",
+    "current_bar": {
+      "time": "2026-05-29 20:30:00+00:00",
+      "close": 4537.87,
+      "rsi14": 50.55,
+      "rsi_above_30": true,
+      "rsi_below_30": false,
+      "crossover_now": false
+    },
+    "signal_now": false,
+    "mode_a_last_signal": {
+      "time": "2026-05-28 08:00:00+00:00",
+      "price": 4389.7,
+      "rsi_at_signal": 34.88,
+      "sl": 4345.8,
+      "tp1": 4477.49,
+      "tp2": 4565.29,
+      "bars_ago": 71
+    },
+    "mode_b_divergence": {
+      "detected_in_lookback": true,
+      "detail": {
+        "low1_time": "2026-05-28 03:00:00+00:00",
+        "low1_price": 4387.62,
+        "low1_rsi": 19.64,
+        "low2_time": "2026-05-28 07:30:00+00:00",
+        "low2_price": 4387.29,
+        "low2_rsi": 23.91
+      }
+    },
+    "recent_signals_count_30d": 62,
+    "note": "RSI 現在 50.5，已在 30 以上，可能即將再次觸發（需跌回 30 再彈）"
+  },
+  "s2_pullback": {
+    "strategy": "S2-Pullback-V1.9",
+    "timeframe": "30m",
+    "current_bar": {
+      "time": "2026-05-29 20:30:00+00:00",
+      "close": 4537.87,
+      "lower_shadow": 0.57,
+      "body_size": 4.82,
+      "tail_ratio": 0.12,
+      "upper_shadow": 5.59,
+      "total_range": 10.98,
+      "atr14": 16.94,
+      "is_hammer": false,
+      "hammer_conditions": {
+        "tail_ok": false,
+        "upper_ok": false,
+        "range_ok": true
+      }
+    },
+    "signal_now": false,
+    "last_hammer": {
+      "time": "2026-05-29 10:00:00+00:00",
+      "price": 4530.36,
+      "lower_shadow": 5.15,
+      "body_size": 0.72,
+      "ratio": 7.11,
+      "atr_at_signal": 11.49,
+      "bars_ago": 21,
+      "sl": 4485.06,
+      "tp1": 4620.97,
+      "tp2": 4711.57
+    },
+    "recent_signals_count_30d": 29,
+    "if_entry_now": {
+      "entry": 4537.87,
+      "sl": 4492.49,
+      "tp1": 4628.63,
+      "tp2": 4719.38
+    }
+  }
+}
