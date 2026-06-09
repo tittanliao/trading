@@ -1,0 +1,41 @@
+[
+  {
+    "ts": "2026-06-09T19:57",
+    "session": "Europe",
+    "price": 4342.38,
+    "rsi_30m": 59.61,
+    "rsi_ma_30m": 52.90,
+    "bb_pct_b_4h": 0.007,
+    "h4_lower": 4341.0,
+    "h4_basis": 4446.0,
+    "s1_status": "❌ 不利",
+    "s2_status": "⏳ 4311 守住，等回測錘頭",
+    "claude_view": "短線偏多修復，大格局仍空。等美盤回測 4320-4330",
+    "action": "觀望"
+  },
+  {
+    "ts": "2026-06-09T20:03",
+    "session": "Europe",
+    "price": 4343.0,
+    "rsi_30m": 59.91,
+    "rsi_ma_30m": 52.85,
+    "bb_pct_b_4h": 0.120,
+    "h4_lower": 4325.0,
+    "h4_basis": 4400.0,
+    "dxy_rsi": "超買區（留意反轉）",
+    "s1_status": "❌ 不利，距 4H Basis 57 點，未達條件",
+    "s2_status": "⏳ S2_Rev 已觸發於 4311 底部（圖上確認）。現在 4343 屬於半空中，不追。等回測 4320-4335 有錘頭再進",
+    "key_levels": {
+      "support_strong": 4311,
+      "support_a": 4320,
+      "support_b": 4335,
+      "poc_zone_low": 4391,
+      "poc_zone_high": 4399,
+      "h4_basis": 4400,
+      "resistance_red": 4450
+    },
+    "weekly_scenario": "劇本二（震盪）持續。4311 守住，回彈中。下一個測試：POC 4391-4399",
+    "claude_view": "RSI 59.91>MA 52.85 動能持續，Bull 背離已確認。但現價 4343 在支撐與 POC 中間，半空中不做 S2。等回測或等突破 POC 後的 S1 信號",
+    "action": "觀望。若回測 4320-4335 出現錘頭 = A 級 S2 進場"
+  }
+]
