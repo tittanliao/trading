@@ -8,10 +8,18 @@
 ```
 你好，請依序讀取以下檔案，恢復黃金分析工作流：
 
-1. trading/xauusd/skill/ANALYSIS_SKILL.md     ← 分析技術與流程
-2. trading/xauusd/skill/TRADING_PROFILE.md    ← 我的交易習慣
-3. trading/xauusd/daily_log/xauusd_latest.json ← 最近分析狀態
-4. trading/xauusd/daily_log/[最新的 weekly_report_*.txt] ← 最新周報
+1. /Users/tittan/program/github/trading/xauusd/skill/ANALYSIS_SKILL.md
+2. /Users/tittan/program/github/trading/xauusd/skill/TRADING_PROFILE.md
+3. /Users/tittan/program/github/trading/xauusd/daily_log/xauusd_latest.json
+
+4. 【周報①：Gemini 版】
+   在以下路徑找 7 天內最新的 XAUUSD_Weekly_Report_*.gdoc：
+   /Users/tittan/googledrive/XAUUSD/weekly report/
+   用 Chrome 開啟後讀取內容（需要登入 Google）
+
+5. 【周報②：Claude 版】
+   在以下路徑找最新的 weekly_report_*.txt：
+   /Users/tittan/program/github/trading/xauusd/daily_log/
 
 讀完後回覆「工作流已恢復，等待指令」，不需要額外說明。
 ```
@@ -24,7 +32,7 @@
 |------|------|
 | `請分析` | 日常黃金分析（截圖 + 狀態 + 建議） |
 | `週日黃金工作流` | 完整周報生成（CFTC + CSV + 周報） |
-| `請比對周報` | Claude 周報 vs Gemini 周報，輸出綜合分析 |
+| `請比對周報` | 周報①（Gemini/Google Drive 最新）vs 周報②（Claude txt 最新），輸出綜合分析 |
 | `更新 profile` | 更新 TRADING_PROFILE.md 中的個人設定 |
 | `signal scanner` | 執行 xauusd/signal_scanner.py，輸出即時訊號 |
 
