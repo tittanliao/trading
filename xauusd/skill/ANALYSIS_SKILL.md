@@ -48,10 +48,22 @@
 
 ## 日常分析流程（「請分析」觸發）
 
-### Step 1 — 讀取當前狀態
+### Step 1 — 讀取近期 Log 並生成趨勢摘要
 ```
-讀取：xauusd/daily_log/xauusd_latest.json
-目的：了解今日早盤基準（價格、RSI、方向判斷）
+讀取：xauusd/daily_log/xauusd_latest.json（最近 5 筆）
+目的：了解近期價格走勢、RSI 動能方向、關鍵事件
+```
+從最近 5 筆記錄中自動提取：
+- **價格趨勢**：持續上漲 / 震盪 / 持續下跌（附首末價差）
+- **RSI 動能**：轉強（低→高）/ 轉弱（高→低）/ 持平
+- **關鍵事件**：跌破支撐、觸及下軌、訊號觸發等
+- **最後 action**：上次分析的結論是什麼
+
+輸出格式（簡潔，3-4 行）：
+```
+近 24h：價格 XXXX → XXXX（±XX 點），RSI [轉強/轉弱/持平]（XX → XX）
+關鍵事件：[e.g. 4311 跌破 / 週線下軌觸及 / S2 訊號觸發]
+上次建議：[觀望 / 警戒 / 進場]
 ```
 
 ### Step 2 — 取得最新走勢
@@ -60,11 +72,29 @@
 方式 B（僅有 CSV）：讀取 xauusd/csv/ 或 googledrive/XAUUSD/weekly report/csv/
 ```
 
-### Step 3 — 讀取最新周報
+### Step 3 — 讀取最新周報（**強制執行，不得跳過**）
 ```
-路徑：googledrive/XAUUSD/weekly report/XAUUSD_Weekly_Report_[最新].gdoc
-或：xauusd/daily_log/weekly_report_[最新].txt
-目的：取得本週大方向與關鍵價位
+路徑①：/Users/tittan/program/github/trading/xauusd/daily_log/weekly_report_*.txt（最新日期）
+路徑②：/Users/tittan/googledrive/XAUUSD/weekly report/XAUUSD_Weekly_Report_*.gdoc（Gemini 版）
+目的：取得本週大方向、關鍵價位、三種劇本
+```
+
+**週報有效性判斷（每次必做）：**
+1. 讀取週報，列出「關鍵價位總表」中的所有支撐/阻力位
+2. 對照現價：若 **80% 以上關鍵位** 已被突破且現價已遠離，判定週報過期
+3. **若週報過期**：停止分析，直接告知用戶：
+   > 「本週週報（WXX）關鍵位已全部失效，現價 XXXX 已超出週報範圍。請重新下載 CSV 資料，我來生成 W[本週] 週報。下載完成後回覆『資料已下載』。」
+4. **若週報仍有效**：繼續 Step 4，分析中必須引用：
+   - 本週主劇本（劇本一/二/三 + 機率）
+   - 當前最近的有效關鍵位（支撐/阻力）
+   - S1/S2 的週報級別計畫
+
+**輸出中必須加入一段 📰 週報背景：**
+```
+📰 週報背景（WXX）
+主劇本：[劇本X，機率XX%]
+當前有效位：[支撐 XXXX / 阻力 XXXX]
+週報S2 A+：[XXXX（條件）]
 ```
 
 ### Step 4 — 分析要素
@@ -82,7 +112,7 @@
 ### Step 6 — 更新狀態檔
 ```
 寫入：xauusd/daily_log/xauusd_latest.json
-保留最近 10 筆記錄
+保留最近 20 筆記錄
 ```
 
 ---
@@ -94,6 +124,11 @@
 
 現價：XXXX.XX
 BB %B(4H)：X.XX | RSI(30m)：XX.X | DXY：XXX.XXX
+
+📋 近期趨勢回顧（最近 5 筆 Log）
+近 Xh：價格 XXXX → XXXX（±XX 點），RSI [轉強/轉弱/持平]（XX.X → XX.X）
+關鍵事件：[e.g. 4311 跌破 / 週線下軌測試 / S2 A+ 觸發]
+上次建議：[觀望 / 等錘頭 / 進場]
 
 📊 市場狀態
 - 趨勢：[多頭 / 震盪 / 空頭]
