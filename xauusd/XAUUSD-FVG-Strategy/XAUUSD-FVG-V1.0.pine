@@ -100,8 +100,9 @@ htf_ema = request.security(syminfo.tickerid, "240",
 fut_cls = request.security(fut_sym, timeframe.period, close)
 basis   = fut_cls - close
 
-filter_ok = (not use_rsi or (is_long ? rsi_val > rsi_bull_min : rsi_val < rsi_bear_max)) and
-            (not use_htf  or (is_long ? close > htf_ema        : close < htf_ema))
+rsi_ok    = not use_rsi or (is_long ? rsi_val > rsi_bull_min : rsi_val < rsi_bear_max)
+htf_ok    = not use_htf or (is_long ? close > htf_ema        : close < htf_ema)
+filter_ok = rsi_ok and htf_ok
 
 //------------------------------------------------------------------------------
 // 3. FVG 偵測 (FVG Detection)
