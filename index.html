@@ -493,6 +493,7 @@ tbody tr:hover td{background:#f8fafc}
       <button class="sub-tab active" onclick="showTab('xauusd-exp','overview',this)">綜合對比</button>
       <button class="sub-tab" onclick="showTab('xauusd-exp','long',this)">多單 Long (E01–E20)</button>
       <button class="sub-tab" onclick="showTab('xauusd-exp','short',this)">空單 Short (S01–S20)</button>
+      <button class="sub-tab" onclick="showTab('xauusd-exp','smc',this)">🔍 SMC (M01–M20)</button>
     </div>
 
     <div id="xauusd-exp-overview" class="tab-panel active">
@@ -575,6 +576,25 @@ tbody tr:hover td{background:#f8fafc}
       <div class="report-links">
         <a class="report-link" href="xauusd/XAUUSD-Short-Experiments/report.html">📄 完整報告</a>
         <a class="report-link" href="xauusd/XAUUSD-Short-Experiments/pine/ALL_Short_Strategies.pine">📋 ALL_Short_Strategies.pine</a>
+      </div>
+    </div>
+
+    <div id="xauusd-exp-smc" class="tab-panel">
+      <div class="part-label"><span class="part-badge">SMC</span>Smart Money Concepts 實驗（M01–M20）</div>
+      <div class="grid-4">
+        <div class="metric-card card"><div class="metric-label">最強空單</div><div class="metric-val" style="font-size:1em">M12 Bearish FVG+RSI</div></div>
+        <div class="metric-card card"><div class="metric-label">M12 勝率 / PF</div><div class="metric-val green">43.0% / 1.470</div></div>
+        <div class="metric-card card"><div class="metric-label">最強多單</div><div class="metric-val" style="font-size:1em">M09 FVG+OB</div></div>
+        <div class="metric-card card"><div class="metric-label">M09 勝率 / PF</div><div class="metric-val" style="color:#e67e22">34.0% / 1.045</div></div>
+      </div>
+      <div class="insight-grid" style="margin-top:12px">
+        <div class="insight good"><strong>✅ 空單 FVG 最有效</strong>M12（Bearish FVG+RSI 35-70）：158 筆，統計最可信；M17（BSL sweep+FVG）：50% WR 但僅 20 筆</div>
+        <div class="insight warn"><strong>⚠ 多單 SL 太緊</strong>SL 0.5% 對 FVG 進場不合適，FVG 自然 SL 應為 0.8-1.0%；建議重跑驗證</div>
+        <div class="insight info"><strong>📌 整合方式</strong>SMC 不替換 S1/S2，只做 S2 進場分級：A+（+SSL sweep+OB）/ A（+任一SMC）/ B（純錘頭）</div>
+        <div class="insight info"><strong>📋 資料期限制</strong>僅 3 個月 30m 資料（2026-01-21→04-27），建議取 2 年 4H CSV 重跑確認</div>
+      </div>
+      <div class="report-links" style="margin-top:16px">
+        <a class='report-link' href='xauusd/XAUUSD-SMC-Experiments/report.html'>📄 SMC 完整報告 →</a>
       </div>
     </div>
   </div><!-- /xauusd-main-exp -->
