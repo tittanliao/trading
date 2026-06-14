@@ -930,6 +930,7 @@ def _xauusd_fvg_html() -> str:
             <div class="metric-card"><div class="metric-label">SL 類型</div><div class="metric-val" style="font-size:1.1em">Fixed %</div></div>
           </div>
           <div class="report-links">{report_btn}
+            <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/fvg_guide.html">📖 FVG 教學說明</a>
             <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine">📋 FVG V2.0 Pine</a>
           </div>
         </div>
@@ -1403,6 +1404,7 @@ def _sitemap_html() -> str:
               <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🔍 FVG 策略（V2.0）</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.0 多單回測（WR 66.7%，PF 1.660）</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html", "多單報告", (ROOT / "xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html").exists())}</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.0 Pine Script</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine", "V2.0 Pine", (ROOT / "xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine").exists())}</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG 教學說明（含設定 + 圖解）</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/fvg_guide.html", "教學頁面", (ROOT / "xauusd/XAUUSD-FVG-Strategy/fvg_guide.html").exists())}</td></tr>
 
               <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🧪 實驗策略（20L + 20S）</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E01–E20 多單實驗</td><td>{xu_long_report}</td></tr>
@@ -1939,6 +1941,8 @@ def generate():
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trading Strategy Hub</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="shortcut icon" href="favicon.svg">
 <style>
 /* ── Reset & Variables ─────────────────────────────────── */
 *{{box-sizing:border-box;margin:0;padding:0}}
