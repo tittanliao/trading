@@ -45,6 +45,7 @@ SYMBOLS: dict[str, dict] = {
         "with_indicators": False,
         "output_csv":      "Weekly_Report_MGC_M30.csv",  # ! 去除
         "write_db":        False,
+        "optional":        True,   # 失敗時僅 Warning，不中斷管線
     },
 }
 

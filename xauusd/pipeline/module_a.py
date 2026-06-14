@@ -112,14 +112,17 @@ def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
 
     # Bollinger Bands (20, 2.0)
     bb = ta.bbands(close, length=BB_LENGTH, std=BB_STD)
-    # pandas-ta 輸出欄位名：BBL_20_2.0 / BBM_20_2.0 / BBU_20_2.0 / BBB_20_2.0 / BBP_20_2.0
-    bb = bb.rename(columns={
-        f"BBL_{BB_LENGTH}_{float(BB_STD)}" : "BB_Lower",
-        f"BBM_{BB_LENGTH}_{float(BB_STD)}" : "BB_Mid",
-        f"BBU_{BB_LENGTH}_{float(BB_STD)}" : "BB_Upper",
-        f"BBB_{BB_LENGTH}_{float(BB_STD)}" : "BB_Bandwidth",
-        f"BBP_{BB_LENGTH}_{float(BB_STD)}" : "BB_Pct",
-    })
+    # pandas-ta 實際輸出欄位名帶 ddof 後綴，例如 BBL_20_2.0_2.0
+    # 用 startswith 比對前綴，確保版本相容
+    prefix_map = {
+        "BBL": "BB_Lower",
+        "BBM": "BB_Mid",
+        "BBU": "BB_Upper",
+        "BBB": "BB_Bandwidth",
+        "BBP": "BB_Pct",
+    }
+    rename_bb = {col: prefix_map[col[:3]] for col in bb.columns if col[:3] in prefix_map}
+    bb = bb.rename(columns=rename_bb)
 
     # EMA
     ema_fast = ta.ema(close, length=EMA_FAST).rename(f"EMA_{EMA_FAST}")
@@ -148,9 +151,16 @@ def run_module_a() -> dict[str, pd.DataFrame]:
 
     for symbol, cfg in SYMBOLS.items():
         logger.info("▶ %s (%s)", symbol, cfg["exchange"])
+        is_optional = cfg.get("optional", False)
 
         # 抓取原始資料
-        df = fetch_symbol(tv, symbol, cfg["exchange"], N_BARS)
+        try:
+            df = fetch_symbol(tv, symbol, cfg["exchange"], N_BARS)
+        except RuntimeError as exc:
+            if is_optional:
+                logger.warning("  ⚠  %s 抓取失敗（optional，跳過）：%s", symbol, exc)
+                continue
+            raise
 
         # tvDatafeed v2 可能附帶 symbol 欄，統一標準化欄位名
         col_map = {
