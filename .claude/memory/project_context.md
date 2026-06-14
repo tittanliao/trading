@@ -18,13 +18,36 @@ metadata:
 - `trading/tx/` — TX 所有程式碼和資料
 - `trading/.claude/memory/` — **git 追蹤的記憶**，新電腦 clone 後需執行 symlink（見 CLAUDE.md）
 
-## XAUUSD 現況（2026-05-02）
+## XAUUSD 現況（2026-06-14）
 - 三個已開發策略（S1-AweWithBB / S2A-RSI / S2B-Hammer），均在測試新版本
 - S1 V3.6.2：修正 lookahead 重繪 + BB %B 過濾 + 4H HTF 過濾
 - S2A V2.3 / S2B V2.2：時間止損修正（strategy.close()）+ 4H HTF 過濾
 - 20 多單實驗：E03 MACD Signal 最佳（PF 1.643, +9.0%）
 - 20 空單實驗：S19 Bearish Engulf 最佳（PF 1.507, +12.4%）
 - 關鍵發現：DXY RSI < 30 → 三策略勝率 60–75%；HTF alignment=3/3 → S1 WR ~69%
+
+## SMC 回測實驗（2026-06-14 新增）
+- 新增 SMC 回測引擎：`smc_indicators.py` / `strategies_smc.py` / `run_smc_experiments.py`
+- 資料期：2026-01-21 → 04-27（3058 × 30m bars）
+- **核心結論：SMC 不替換 S1/S2，只作為週報輔助參考與 S2 進場分級依據**
+
+### SMC 回測關鍵結果
+- 最強空單：M12 Bearish FVG + RSI 35-70（WR 43.0%、PF 1.470、158 筆）★ 統計最可信
+- 最高品質空單：M17 BSL sweep + FVG（WR 50.0%、PF 2.000，但僅 20 筆）
+- 最強多單：M09 FVG + OB（WR 34.0%、PF 1.045、100 筆）— 勉強轉正
+- 多單偏弱原因：SL 0.5% 太緊，FVG 自然 SL 應為 0.8-1.0%
+
+### SMC 整合到週報的方式
+- ANALYSIS_SKILL.md 新增 Module B+（SMC Context）和週報第 6 項輸出格式
+- 週報 Python 模板加入自包含 SMC 掃描程式碼（scan_fvg / scan_liquidity / check_ssl_sweep）
+- S2 進場品質分級更新：A+（錘頭+SSL sweep+OB）/ A（錘頭+任一SMC）/ B（純錘頭）
+- 對應倉位：A+ 0.05手 / A 0.03手 / B 0.02手
+
+### 週報分析體系（2026-06-14 確立）
+- **三個來源**：Gemini 週報（基本面）/ Dispatch txt（技術面）/ Claude 週報（技術面）
+- **分工原則**：Gemini 主攻宏觀/基本面；Claude/Dispatch 主攻技術分析
+- **合併週報**：三份差距 < 7 天才合併，輸出 Style A/B/C 三份 .docx
+- 用戶已使用 Gemini 寫週報 6 個月，後續可與 Claude 週報做回測比較
 
 ## TX 現況（2026-05-13）
 - SL 敏感度分析完成，**確認 SL=120pts 為新基準（原 30pts 過緊）**

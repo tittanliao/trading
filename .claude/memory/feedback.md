@@ -40,6 +40,13 @@ metadata:
 cd ~/program/github/trading && git add -A && git commit -m "update: [描述]" && git push
 ```
 
+## SMC 是輔助工具，S1/S2 是主策略，不替換
+**Why:** 用戶明確說明：開發 SMC 不是要換策略，而是在週報階段多一點參考資訊。
+**How to apply:**
+- SMC 回測結果 → 只用於「提升 S2 進場品質分級」和「S1 突破品質判斷」
+- 不建議用 SMC 訊號獨立開倉，也不暗示 S1/S2 需要被取代
+- 每次提到 SMC 都要強調「輔助」定位，不要讓用戶誤解為新策略方向
+
 ## 週報 CSV 放在 Google Drive，非 trading/xauusd/csv/
 **Why:** 用戶的週報分析用 CSV 存放在 Google Drive，與日常分析 CSV 分開管理。
 **How to apply:**
