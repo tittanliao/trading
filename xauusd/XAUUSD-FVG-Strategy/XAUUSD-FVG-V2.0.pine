@@ -101,7 +101,7 @@ var float locked_top = na
 //    (逆序迭代，安全刪除)
 //------------------------------------------------------------------------------
 if array.size(fvg_tops) > 0
-    for i = array.size(fvg_tops) - 1 to 0 by -1
+    for i = array.size(fvg_tops) - 1 to 0
         t  = array.get(fvg_tops, i)
         bv = array.get(fvg_bots, i)
         bi = array.get(fvg_bars, i)
@@ -185,7 +185,7 @@ LongEntry  = false
 ShortEntry = false
 
 if MP == 0 and filter_ok and array.size(fvg_tops) > 0
-    for i = array.size(fvg_tops) - 1 to 0 by -1
+    for i = array.size(fvg_tops) - 1 to 0
         t  = array.get(fvg_tops, i)
         bv = array.get(fvg_bots, i)
         bi = array.get(fvg_bars, i)
