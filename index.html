@@ -175,6 +175,7 @@ tbody tr:hover td{background:#f8fafc}
     <button class="nav-main-tab active" onclick="showMain('xauusd-main-macro',this)">宏觀分析</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-opt',this)">已確認策略</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-exp',this)">實驗策略</button>
+    <button class="nav-main-tab" onclick="showMain('xauusd-main-fvg',this)">🔍 FVG 策略</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-validate',this)">筆記驗證</button>
   </div>
 
@@ -598,6 +599,102 @@ tbody tr:hover td{background:#f8fafc}
       </div>
     </div>
   </div><!-- /xauusd-main-exp -->
+
+
+  <!-- XAUUSD FVG 策略 ────────────────────────────────────── -->
+  <div id="xauusd-main-fvg" class="main-section">
+    <div class="subnav">
+      <button class="sub-tab active" onclick="showTab('xauusd-fvg','overview',this)">回測總覽</button>
+      <button class="sub-tab" onclick="showTab('xauusd-fvg','params',this)">參數說明</button>
+    </div>
+
+    <div id="xauusd-fvg-overview" class="tab-panel active">
+      <div class="part-label"><span class="part-badge">FVG</span>Fair Value Gap 策略 V2.0 · 多 FVG 陣列追蹤</div>
+
+      <div class="grid-4">
+        <div class="metric-card card"><div class="metric-label">總交易數</div><div class="metric-val" style="color:var(--primary)">42</div><div class="metric-sub">30m 2026-01–04</div></div>
+        <div class="metric-card card"><div class="metric-label">勝率</div><div class="metric-val green">66.7%</div><div class="metric-sub">28W / 14L</div></div>
+        <div class="metric-card card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.66</div><div class="metric-sub">優化參數</div></div>
+        <div class="metric-card card"><div class="metric-label">淨損益</div><div class="metric-val pos">+11.93%</div><div class="metric-sub">多單 Long</div></div>
+        <div class="metric-card card"><div class="metric-label">平均獲利</div><div class="metric-val pos">+1.071%</div></div>
+        <div class="metric-card card"><div class="metric-label">平均虧損</div><div class="metric-val neg">-1.291%</div></div>
+        <div class="metric-card card"><div class="metric-label">最大單筆獲利</div><div class="metric-val pos">+3.000%</div></div>
+        <div class="metric-card card"><div class="metric-label">平均持倉 Bars</div><div class="metric-val">24.7</div></div>
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight good"><strong>✅ WR 66.7%，PF 1.66</strong>42 筆多單，統計意義穩定，優於 S1/S2 的 44–53% WR。</div>
+        <div class="insight good"><strong>✅ FVG 作為 S2 補充進場工具</strong>FVG 提供明確的 SL 錨點（FVG Natural）+ 流動性缺口回填邏輯，與 S2B 蜂鳥錘互補。</div>
+        <div class="insight warn"><strong>⚠ 資料期間僅 3 個月</strong>2026-01-21 至 04-27，建議取更長 CSV（2年+）重跑確認穩定性。</div>
+        <div class="insight info"><strong>📊 SL=1.5% Fixed 最佳</strong>FVG Natural SL 在此數據集表現不如 Fixed %。TP1=0.5R 快速鎖利後讓利潤飛。</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📈 多單最佳參數（Python 優化）</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="metric-card"><div class="metric-label">FVG 最小大小</div><div class="metric-val" style="font-size:1.1em">0.20%</div></div>
+            <div class="metric-card"><div class="metric-label">FVG 最長有效</div><div class="metric-val" style="font-size:1.1em">20 bars</div></div>
+            <div class="metric-card"><div class="metric-label">止損</div><div class="metric-val" style="font-size:1.1em">1.5%</div></div>
+            <div class="metric-card"><div class="metric-label">TP1 / TP2</div><div class="metric-val" style="font-size:1.1em">0.5R / 2.0R</div></div>
+            <div class="metric-card"><div class="metric-label">時間止損</div><div class="metric-val" style="font-size:1.1em">72 bars</div></div>
+            <div class="metric-card"><div class="metric-label">SL 類型</div><div class="metric-val" style="font-size:1.1em">Fixed %</div></div>
+          </div>
+          <div class="report-links"><a class='report-link' href='xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html'>📄 多單回測報告 →</a>
+            <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine">📋 FVG V2.0 Pine</a>
+          </div>
+        </div>
+        
+      <div class="card">
+        <div class="card-title">📉 空單最佳參數（優化結果）</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px">
+          <div class="metric-card"><div class="metric-label">WR</div><div class="metric-val green">36.6%</div></div>
+          <div class="metric-card"><div class="metric-label">PF</div><div class="metric-val green">1.052</div></div>
+          <div class="metric-card"><div class="metric-label">淨損益</div><div class="metric-val pos">+1.01%</div></div>
+          <div class="metric-card"><div class="metric-label">交易筆數</div><div class="metric-val">101</div></div>
+        </div>
+        <div style="margin-top:12px;font-size:.83em;color:var(--muted)">
+          fvg_min=0.03% · fvg_max=20bars · SL=0.8% · TP1=0.5R · TP2=3.0R · TB=24bars
+        </div>
+      </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🚪 出場類型分佈</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap"><div style='background:var(--surface2);border-radius:6px;padding:10px 16px;text-align:center'><div style='font-size:1.3rem;font-weight:700;color:var(--primary)'>38</div><div style='font-size:.75rem;color:var(--muted);margin-top:2px'>SL</div></div><div style='background:var(--surface2);border-radius:6px;padding:10px 16px;text-align:center'><div style='font-size:1.3rem;font-weight:700;color:var(--primary)'>2</div><div style='font-size:.75rem;color:var(--muted);margin-top:2px'>TimeWin</div></div><div style='background:var(--surface2);border-radius:6px;padding:10px 16px;text-align:center'><div style='font-size:1.3rem;font-weight:700;color:var(--primary)'>2</div><div style='font-size:.75rem;color:var(--muted);margin-top:2px'>TimeLoss</div></div></div>
+        <div style="margin-top:10px;font-size:.82em;color:var(--muted)">SL 出場佔多數屬正常（Profit Flyer 允許在 TP2 前止損），TimeWin = 時間到且獲利、TimeLoss = 時間到但虧損。</div>
+      </div>
+    </div><!-- /xauusd-fvg-overview -->
+
+    <div id="xauusd-fvg-params" class="tab-panel">
+      <div class="part-label"><span class="part-badge">FVG</span>FVG V2.0 策略架構說明</div>
+
+      <div class="insight-grid">
+        <div class="insight info"><strong>📐 FVG 定義</strong>三根 K 棒型態：多頭 FVG = low[0] &gt; high[2]（缺口）；空頭 FVG = high[0] &lt; low[2]。缺口大小 &gt; fvg_min_pct 才記錄。</div>
+        <div class="insight info"><strong>📦 多 FVG 陣列追蹤（V2）</strong>同時最多 max_fvg 個 FVG，最新優先。超過 fvg_max_bars 未觸及自動到期；收盤跌破底部視為無效。</div>
+        <div class="insight info"><strong>🎯 進場條件</strong>價格 wick 進入 FVG 區間（low ≤ top 且 close ≥ bot），下一根開盤進場。每次只進一筆，進場後移除此 FVG。</div>
+        <div class="insight info"><strong>📤 Profit Flyer 出場（S1架構）</strong>TP1 鎖利：SL 拉至 lowest(low, TB/2) 動態追蹤。TP2 後更緊追蹤 lowest(low, TB/4)。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔗 Pine Script 版本比較</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>版本</th><th>FVG 追蹤</th><th>視覺化</th><th>SL 類型</th><th>出場</th></tr></thead>
+            <tbody>
+              <tr><td>V1.0</td><td>單一 FVG（var float）</td><td>簡單 box</td><td>FVG Natural / Fixed %</td><td>Profit Flyer</td></tr>
+              <tr><td><b>V2.0 ★</b></td><td><b>多 FVG 陣列（最多 5 個）</b></td><td><b>多 box 自動延伸右邊界</b></td><td><b>FVG Natural / Fixed %</b></td><td><b>Profit Flyer</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="report-links">
+          <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine">📋 V2.0 Pine Script</a>
+          <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V1.0.pine">📋 V1.0 Pine Script</a>
+          <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/optimization_results.json">📊 optimization_results.json</a>
+        </div>
+      </div>
+    </div><!-- /xauusd-fvg-params -->
+  </div><!-- /xauusd-main-fvg -->
 
 
   <!-- XAUUSD 筆記驗證 -->
@@ -1223,6 +1320,10 @@ tbody tr:hover td{background:#f8fafc}
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S2A-RSI（V2.3）</td><td><a href='xauusd/XAUUSD-Long-S2A-RSI/report.html' style='color:var(--primary)'>S2A-RSI 完整報告</a></td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S2B-Hammer（V2.2）</td><td><a href='xauusd/XAUUSD-Long-S2B-Hammer/report.html' style='color:var(--primary)'>S2B-Hammer 完整報告</a></td></tr>
 
+              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🔍 FVG 策略（V2.0）</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.0 多單回測（WR 66.7%，PF 1.660）</td><td><a href='xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html' style='color:var(--primary)'>多單報告</a></td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.0 Pine Script</td><td><a href='xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine' style='color:var(--primary)'>V2.0 Pine</a></td></tr>
+
               <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🧪 實驗策略（20L + 20S）</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E01–E20 多單實驗</td><td><a href='xauusd/XAUUSD-Long-Experiments/report.html' style='color:var(--primary)'>多單實驗報告</a></td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S01–S20 空單實驗</td><td><a href='xauusd/XAUUSD-Short-Experiments/report.html' style='color:var(--primary)'>空單實驗報告</a></td></tr>
@@ -1303,7 +1404,7 @@ tbody tr:hover td{background:#f8fafc}
       <div class="card" style="margin-bottom:16px">
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:10px">
           <span style='display:inline-flex;align-items:center;gap:5px;margin-right:12px;padding:3px 10px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;font-size:.8em;font-weight:600'>🟡 XAUUSD</span><span style='display:inline-flex;align-items:center;gap:5px;margin-right:12px;padding:3px 10px;border-radius:12px;background:#dbeafe;color:#1e40af;border:1px solid #3b82f6;font-size:.8em;font-weight:600'>🔵 TX 台指期</span><span style='display:inline-flex;align-items:center;gap:5px;margin-right:12px;padding:3px 10px;border-radius:12px;background:#ede9fe;color:#5b21b6;border:1px solid #7c3aed;font-size:.8em;font-weight:600'>📊 跨商品</span>
-          <span style="color:var(--muted);font-size:.82em;margin-left:auto">共 12 筆記錄</span>
+          <span style="color:var(--muted);font-size:.82em;margin-left:auto">共 14 筆記錄</span>
         </div>
         <div style="font-size:.84em;color:var(--text2)">
           每筆記錄標示商品歸屬，方便追蹤跨商品分析演進與 Prompt 歷史。
@@ -1312,7 +1413,7 @@ tbody tr:hover td{background:#f8fafc}
       </div>
 
       <div class="card">
-        <div class='log-entry'><div class='log-date'>2026-05-15</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#ede9fe;color:#5b21b6;border:1px solid #7c3aed;font-size:.78em;font-weight:700;margin-bottom:6px'>📊 跨商品</span><div class='log-title' style='margin-top:2px'>統一對話記錄頁 + 跨商品 Log 整合</div><ul class='log-items'><li>將 XAUUSD / TX / 跨商品 的所有對話記錄統一整合到「📋 對話記錄」獨立 Tab</li><li>每筆 log 加上商品 tag（🟡 XAUUSD / 🔵 TX / 📊 跨商品），便於追蹤 Prompt 演進歷史</li><li>移除 XAUUSD 和 TX 各自的「對話記錄」子 tab，集中到統一頁面</li><li>新增 feedback_completion_checklist.md 記憶，確保每次完成任務都記錄到 memory</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-15</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#ede9fe;color:#5b21b6;border:1px solid #7c3aed;font-size:.78em;font-weight:700;margin-bottom:6px'>📊 跨商品</span><div class='log-title' style='margin-top:2px'>跨商品分析：整點熱力圖 + 30m RSI 濾鏡</div><ul class='log-items'><li>新增 shared/run_shared_analysis.py：XAUUSD + TX 共同分析框架</li><li>整點進場熱力圖：星期幾 × 小時 → 歷史勝率 & 平均損益（TX 3,334 筆 / XAU 2,906 筆）</li><li>TX 最佳時段：週二 23:00 WR=73.7%，avg +40.9pts；最差：週四 08:00 WR=33.3%，avg -89.5pts</li><li>XAU 最佳時段：週三 06:00 WR=88.9%（n=9 小樣本）；最差：週一 06:00 WR=10.0%（n=10）</li><li>30m RSI 狀態過濾：TX RSI<MA 時 WR 53.7% avg +8.0pts；RSI>MA 時 WR 53.1% avg +1.8pts</li><li>背離訊號（Regular Bullish/Bearish）欄位在現有 CSV 無資料，需重新從 TradingView 匯出</li><li>新增「📊 跨商品分析」Nav Tab，兩商品分析放同一頁面方便比較</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-14</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#ede9fe;color:#5b21b6;border:1px solid #7c3aed;font-size:.78em;font-weight:700;margin-bottom:6px'>📊 跨商品</span><div class='log-title' style='margin-top:2px'>網站整合：Hub 主頁 + 多商品導覽 + 手機響應式</div><ul class='log-items'><li>整合 XAUUSD + TX 為 Trading Strategy Hub（根目錄 index.html）</li><li>頂部導覽：XAUUSD 黃金 / TX 台指期 / 📊 跨商品分析 / 🗺 網站地圖</li><li>加入 GitHub Actions 自動部署到 GitHub Pages</li><li>手機響應式：品牌列 + 可橫滑 tab 列，適配小螢幕</li><li>筆記驗證功能：validate_notes.py 比對交易筆記與歷史資料符合率</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-13</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#dbeafe;color:#1e40af;border:1px solid #3b82f6;font-size:.78em;font-weight:700;margin-bottom:6px'>🔵 TX 台指期</span><div class='log-title' style='margin-top:2px'>SL 敏感度分析 — 確認 30pts 過緊</div><ul class='log-items'><li>問題：SL=30pts（≈0.15%）被雜訊掃出後才噴上，導致 19/20 多單虧損</li><li>系統性測試 SL = 30 / 50 / 60 / 80 / 100 / 120 / 150（R:R 固定 2:1）</li><li>SL=30：只有 E12 獲利（PF=1.132, WR=36.1%）</li><li>SL=60：3 策略獲利，E12 PF=1.648, WR=45.2%</li><li>SL=120：甜蜜點 — E09/E07/E12 均 PF>2.0、WR突破50%；E03 淨盈虧 NT$184萬</li><li>SL=120 確認為新基準，更新 Pine Script 預設值</li><li><b>結論：30pts 根本原因是台指期 ATR 平均遠大於 30pts，止損設計需重新校準</b></li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-13</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#dbeafe;color:#1e40af;border:1px solid #3b82f6;font-size:.78em;font-weight:700;margin-bottom:6px'>🔵 TX 台指期</span><div class='log-title' style='margin-top:2px'>宏觀分析 — 月度方向 + 週內結構</div><ul class='log-items'><li>新增 macro_analysis.py：以週線資料（2012–2026，723 根）統計月度勝率與季節性</li><li>整體月勝率 63.9%，平均月漲跌 +199 pts（月初買、月底賣）</li><li>九月是唯一偏空月（42.9%）；十二月最穩（78.6%）；四月期望值最大（平均 +518 pts）</li><li>週內結構：第1、4、5週勝率較高（58–61%）；第3週最弱（55.4%）</li><li>建立操作框架：先看月度季節性偏向 → 再用週線 RSI/BB 判斷當週進場時機</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-13</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#dbeafe;color:#1e40af;border:1px solid #3b82f6;font-size:.78em;font-weight:700;margin-bottom:6px'>🔵 TX 台指期</span><div class='log-title' style='margin-top:2px'>第一版回測引擎完成 + Pine Script 生成</div><ul class='log-items'><li>完成 experiments/ 模組：loader、indicators、engine、runner、report</li><li>20 多單策略 E01–E20（Oscillator / Trend / Breakout / Pattern / Session 五大類）</li><li>20 空單策略 S01–S20（對應多單鏡像邏輯）</li><li>真實資料回測（TAIFEX_DLY_MXF1!, 30.csv，2025-06 起 8585 bars）</li><li>多單 E12 BB Squeeze Break 唯一獲利（PF=1.132, WR=36.1%）</li><li>空單全部虧損 — 資料期間為大多頭，做空困難，為預期結果</li><li>Pine Script v6 多空各一檔：下拉選單選策略、Enable 開關、R:R 可設定</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-13</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#ede9fe;color:#5b21b6;border:1px solid #7c3aed;font-size:.78em;font-weight:700;margin-bottom:6px'>📊 跨商品</span><div class='log-title' style='margin-top:2px'>XAUUSD + TX 宏觀分析整合 + 網站地圖</div><ul class='log-items'><li>XAUUSD 宏觀分析（DXY 相關性、月度統計、季節性）整合進 Hub</li><li>TX 宏觀分析：月勝率 63.9%、四月 +518pts、九月唯一偏空</li><li>統一雙商品導覽，網站地圖列出所有分析頁面</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-12</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#dbeafe;color:#1e40af;border:1px solid #3b82f6;font-size:.78em;font-weight:700;margin-bottom:6px'>🔵 TX 台指期</span><div class='log-title' style='margin-top:2px'>架構設計 — 從 XAUUSD 擴展到台指期</div><ul class='log-items'><li>決定標的：MTX 小台指期（每點 NT$50）</li><li>相關性指標：NQ 納斯達克期貨（同向，可切換 SOX/SPX/VIX）</li><li>SL/TP 改為固定點數（30pts/60pts，R:R 1:2）</li><li>時段：日盤（08:45–13:45）+ 夜盤（15:00–05:00）皆納入</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-02</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;font-size:.78em;font-weight:700;margin-bottom:6px'>🟡 XAUUSD</span><div class='log-title' style='margin-top:2px'>策略命名重構 + 架構統一</div><ul class='log-items'><li>資料夾重命名（git mv）：S2-Hybrid→S2A-RSI、S2-Pullback→S2B-Hammer</li><li>修復 S1 lookahead_on 重繪 bug → lookahead_off</li><li>統一 entry label 規則（S1BB_LE / S2A_LE / S2B_LE）</li><li>三策略均加入 EMA 過濾器群組（預設 off）</li><li>產出：S1 V3.6.2、S2A V2.2、S2B V2.1 測試版</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-01</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;font-size:.78em;font-weight:700;margin-bottom:6px'>🟡 XAUUSD</span><div class='log-title' style='margin-top:2px'>BB 位置分析 + RSI 背離偵測</div><ul class='log-items'><li>建立 bb_analysis.py（%B 7 zone 分類）</li><li>S1 price > BB 上軌時勝率 77.8%（n=9）；中軌以下不建議進場</li><li>divergence.py 程式化偵測 swing low 背離（17 個信號，樣本不足）</li><li>S1 V3.6.1：加入 BB %B ≥ 0.6 過濾器 + 4H HTF RSI 過濾器</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-04-29</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;font-size:.78em;font-weight:700;margin-bottom:6px'>🟡 XAUUSD</span><div class='log-title' style='margin-top:2px'>多時間框架（MTF）共軌分析</div><ul class='log-items'><li>建立 mtf_analysis.py；merge_asof 查找 HTF 狀態</li><li>HTF alignment=3/3 時 S1 勝率達 ~69%</li><li>4H bearish → S1 immediate_loss 飆升；S2 time_bleed 升高</li><li>空單 4H 過濾後平均 +4.1% ΔWR（16/20 改善）</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-04-27</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;font-size:.78em;font-weight:700;margin-bottom:6px'>🟡 XAUUSD</span><div class='log-title' style='margin-top:2px'>初始分析 + DXY 相關性</div><ul class='log-items'><li>設計 4 類虧損分類邏輯（immediate_loss / false_breakout / time_bleed / normal_sl）</li><li>DXY RSI < 30 時三策略勝率均升至 60–75%</li><li>S2 time_bleed 超過 50% — 加時間止損是最高優先</li><li>建立 20 多單 + 20 空單實驗框架；E03 MACD Signal 最佳（PF 1.643）</li></ul></div></div>
+        <div class='log-entry'><div class='log-date'>2026-06-14</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;font-size:.78em;font-weight:700;margin-bottom:6px'>🟡 XAUUSD</span><div class='log-title' style='margin-top:2px'>FVG-V2 多單回測 + Pine Script V2.0 完成</div><ul class='log-items'><li>建立 XAUUSD-FVG-Strategy/ 資料夾，FVG V1.0（單 FVG 追蹤）與 V2.0（多 FVG 陣列追蹤）Pine Script</li><li>V2.0 特色：最多 5 個 FVG 同時追蹤、FVG box 視覺化（extend.right）、最新 FVG 優先進場</li><li>run_fvg_experiments.py：Python 回測引擎，7,560 參數組合優化（8.9 秒完成）</li><li>最佳多單參數：fvg_min=0.20%、fvg_max=20bars、SL=1.5%、TP1=0.5R、TP2=2.0R、TB=72bars</li><li><b>結果：42 筆交易，WR 66.7%，PF 1.660，淨損益 +11.93%</b></li><li>V2.0 Pine Script 預設值已更新為最佳參數（由 PNG 截圖確認）</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-24</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;font-size:.78em;font-weight:700;margin-bottom:6px'>🟡 XAUUSD</span><div class='log-title' style='margin-top:2px'>SMC 實驗（M01–M20）+ HTML 報告</div><ul class='log-items'><li>建立 XAUUSD-SMC-Experiments/ + 20 個 SMC 策略（OB/FVG/SSL/BOS/CHoCH 組合）</li><li>最強空單：M12 Bearish FVG+RSI（158筆，WR 43.0%，PF 1.470）</li><li>最強多單：M09 FVG+OB（PF 1.045，效果不佳）</li><li>整合到 Hub 實驗策略 → SMC 分頁</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-15</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#ede9fe;color:#5b21b6;border:1px solid #7c3aed;font-size:.78em;font-weight:700;margin-bottom:6px'>📊 跨商品</span><div class='log-title' style='margin-top:2px'>統一對話記錄頁 + 跨商品 Log 整合</div><ul class='log-items'><li>將 XAUUSD / TX / 跨商品 的所有對話記錄統一整合到「📋 對話記錄」獨立 Tab</li><li>每筆 log 加上商品 tag（🟡 XAUUSD / 🔵 TX / 📊 跨商品），便於追蹤 Prompt 演進歷史</li><li>移除 XAUUSD 和 TX 各自的「對話記錄」子 tab，集中到統一頁面</li><li>新增 feedback_completion_checklist.md 記憶，確保每次完成任務都記錄到 memory</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-15</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#ede9fe;color:#5b21b6;border:1px solid #7c3aed;font-size:.78em;font-weight:700;margin-bottom:6px'>📊 跨商品</span><div class='log-title' style='margin-top:2px'>跨商品分析：整點熱力圖 + 30m RSI 濾鏡</div><ul class='log-items'><li>新增 shared/run_shared_analysis.py：XAUUSD + TX 共同分析框架</li><li>整點進場熱力圖：星期幾 × 小時 → 歷史勝率 & 平均損益（TX 3,334 筆 / XAU 2,906 筆）</li><li>TX 最佳時段：週二 23:00 WR=73.7%，avg +40.9pts；最差：週四 08:00 WR=33.3%，avg -89.5pts</li><li>XAU 最佳時段：週三 06:00 WR=88.9%（n=9 小樣本）；最差：週一 06:00 WR=10.0%（n=10）</li><li>30m RSI 狀態過濾：TX RSI<MA 時 WR 53.7% avg +8.0pts；RSI>MA 時 WR 53.1% avg +1.8pts</li><li>背離訊號（Regular Bullish/Bearish）欄位在現有 CSV 無資料，需重新從 TradingView 匯出</li><li>新增「📊 跨商品分析」Nav Tab，兩商品分析放同一頁面方便比較</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-14</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#ede9fe;color:#5b21b6;border:1px solid #7c3aed;font-size:.78em;font-weight:700;margin-bottom:6px'>📊 跨商品</span><div class='log-title' style='margin-top:2px'>網站整合：Hub 主頁 + 多商品導覽 + 手機響應式</div><ul class='log-items'><li>整合 XAUUSD + TX 為 Trading Strategy Hub（根目錄 index.html）</li><li>頂部導覽：XAUUSD 黃金 / TX 台指期 / 📊 跨商品分析 / 🗺 網站地圖</li><li>加入 GitHub Actions 自動部署到 GitHub Pages</li><li>手機響應式：品牌列 + 可橫滑 tab 列，適配小螢幕</li><li>筆記驗證功能：validate_notes.py 比對交易筆記與歷史資料符合率</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-13</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#dbeafe;color:#1e40af;border:1px solid #3b82f6;font-size:.78em;font-weight:700;margin-bottom:6px'>🔵 TX 台指期</span><div class='log-title' style='margin-top:2px'>SL 敏感度分析 — 確認 30pts 過緊</div><ul class='log-items'><li>問題：SL=30pts（≈0.15%）被雜訊掃出後才噴上，導致 19/20 多單虧損</li><li>系統性測試 SL = 30 / 50 / 60 / 80 / 100 / 120 / 150（R:R 固定 2:1）</li><li>SL=30：只有 E12 獲利（PF=1.132, WR=36.1%）</li><li>SL=60：3 策略獲利，E12 PF=1.648, WR=45.2%</li><li>SL=120：甜蜜點 — E09/E07/E12 均 PF>2.0、WR突破50%；E03 淨盈虧 NT$184萬</li><li>SL=120 確認為新基準，更新 Pine Script 預設值</li><li><b>結論：30pts 根本原因是台指期 ATR 平均遠大於 30pts，止損設計需重新校準</b></li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-13</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#dbeafe;color:#1e40af;border:1px solid #3b82f6;font-size:.78em;font-weight:700;margin-bottom:6px'>🔵 TX 台指期</span><div class='log-title' style='margin-top:2px'>宏觀分析 — 月度方向 + 週內結構</div><ul class='log-items'><li>新增 macro_analysis.py：以週線資料（2012–2026，723 根）統計月度勝率與季節性</li><li>整體月勝率 63.9%，平均月漲跌 +199 pts（月初買、月底賣）</li><li>九月是唯一偏空月（42.9%）；十二月最穩（78.6%）；四月期望值最大（平均 +518 pts）</li><li>週內結構：第1、4、5週勝率較高（58–61%）；第3週最弱（55.4%）</li><li>建立操作框架：先看月度季節性偏向 → 再用週線 RSI/BB 判斷當週進場時機</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-13</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#dbeafe;color:#1e40af;border:1px solid #3b82f6;font-size:.78em;font-weight:700;margin-bottom:6px'>🔵 TX 台指期</span><div class='log-title' style='margin-top:2px'>第一版回測引擎完成 + Pine Script 生成</div><ul class='log-items'><li>完成 experiments/ 模組：loader、indicators、engine、runner、report</li><li>20 多單策略 E01–E20（Oscillator / Trend / Breakout / Pattern / Session 五大類）</li><li>20 空單策略 S01–S20（對應多單鏡像邏輯）</li><li>真實資料回測（TAIFEX_DLY_MXF1!, 30.csv，2025-06 起 8585 bars）</li><li>多單 E12 BB Squeeze Break 唯一獲利（PF=1.132, WR=36.1%）</li><li>空單全部虧損 — 資料期間為大多頭，做空困難，為預期結果</li><li>Pine Script v6 多空各一檔：下拉選單選策略、Enable 開關、R:R 可設定</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-13</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#ede9fe;color:#5b21b6;border:1px solid #7c3aed;font-size:.78em;font-weight:700;margin-bottom:6px'>📊 跨商品</span><div class='log-title' style='margin-top:2px'>XAUUSD + TX 宏觀分析整合 + 網站地圖</div><ul class='log-items'><li>XAUUSD 宏觀分析（DXY 相關性、月度統計、季節性）整合進 Hub</li><li>TX 宏觀分析：月勝率 63.9%、四月 +518pts、九月唯一偏空</li><li>統一雙商品導覽，網站地圖列出所有分析頁面</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-12</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#dbeafe;color:#1e40af;border:1px solid #3b82f6;font-size:.78em;font-weight:700;margin-bottom:6px'>🔵 TX 台指期</span><div class='log-title' style='margin-top:2px'>架構設計 — 從 XAUUSD 擴展到台指期</div><ul class='log-items'><li>決定標的：MTX 小台指期（每點 NT$50）</li><li>相關性指標：NQ 納斯達克期貨（同向，可切換 SOX/SPX/VIX）</li><li>SL/TP 改為固定點數（30pts/60pts，R:R 1:2）</li><li>時段：日盤（08:45–13:45）+ 夜盤（15:00–05:00）皆納入</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-02</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;font-size:.78em;font-weight:700;margin-bottom:6px'>🟡 XAUUSD</span><div class='log-title' style='margin-top:2px'>策略命名重構 + 架構統一</div><ul class='log-items'><li>資料夾重命名（git mv）：S2-Hybrid→S2A-RSI、S2-Pullback→S2B-Hammer</li><li>修復 S1 lookahead_on 重繪 bug → lookahead_off</li><li>統一 entry label 規則（S1BB_LE / S2A_LE / S2B_LE）</li><li>三策略均加入 EMA 過濾器群組（預設 off）</li><li>產出：S1 V3.6.2、S2A V2.2、S2B V2.1 測試版</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-05-01</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;font-size:.78em;font-weight:700;margin-bottom:6px'>🟡 XAUUSD</span><div class='log-title' style='margin-top:2px'>BB 位置分析 + RSI 背離偵測</div><ul class='log-items'><li>建立 bb_analysis.py（%B 7 zone 分類）</li><li>S1 price > BB 上軌時勝率 77.8%（n=9）；中軌以下不建議進場</li><li>divergence.py 程式化偵測 swing low 背離（17 個信號，樣本不足）</li><li>S1 V3.6.1：加入 BB %B ≥ 0.6 過濾器 + 4H HTF RSI 過濾器</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-04-29</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;font-size:.78em;font-weight:700;margin-bottom:6px'>🟡 XAUUSD</span><div class='log-title' style='margin-top:2px'>多時間框架（MTF）共軌分析</div><ul class='log-items'><li>建立 mtf_analysis.py；merge_asof 查找 HTF 狀態</li><li>HTF alignment=3/3 時 S1 勝率達 ~69%</li><li>4H bearish → S1 immediate_loss 飆升；S2 time_bleed 升高</li><li>空單 4H 過濾後平均 +4.1% ΔWR（16/20 改善）</li></ul></div></div><div class='log-entry'><div class='log-date'>2026-04-27</div><div><span style='display:inline-block;padding:2px 10px;border-radius:12px;background:#fef3c7;color:#92400e;border:1px solid #f59e0b;font-size:.78em;font-weight:700;margin-bottom:6px'>🟡 XAUUSD</span><div class='log-title' style='margin-top:2px'>初始分析 + DXY 相關性</div><ul class='log-items'><li>設計 4 類虧損分類邏輯（immediate_loss / false_breakout / time_bleed / normal_sl）</li><li>DXY RSI < 30 時三策略勝率均升至 60–75%</li><li>S2 time_bleed 超過 50% — 加時間止損是最高優先</li><li>建立 20 多單 + 20 空單實驗框架；E03 MACD Signal 最佳（PF 1.643）</li></ul></div></div>
       </div>
     </div>
   </div><!-- /commodity-history -->

@@ -45,6 +45,28 @@ COMMODITIES = [
 # ─── Session Logs ────────────────────────────────────────────────────
 XAUUSD_LOG = [
     {
+        "date": "2026-06-14",
+        "title": "FVG-V2 多單回測 + Pine Script V2.0 完成",
+        "items": [
+            "建立 XAUUSD-FVG-Strategy/ 資料夾，FVG V1.0（單 FVG 追蹤）與 V2.0（多 FVG 陣列追蹤）Pine Script",
+            "V2.0 特色：最多 5 個 FVG 同時追蹤、FVG box 視覺化（extend.right）、最新 FVG 優先進場",
+            "run_fvg_experiments.py：Python 回測引擎，7,560 參數組合優化（8.9 秒完成）",
+            "最佳多單參數：fvg_min=0.20%、fvg_max=20bars、SL=1.5%、TP1=0.5R、TP2=2.0R、TB=72bars",
+            "<b>結果：42 筆交易，WR 66.7%，PF 1.660，淨損益 +11.93%</b>",
+            "V2.0 Pine Script 預設值已更新為最佳參數（由 PNG 截圖確認）",
+        ],
+    },
+    {
+        "date": "2026-05-24",
+        "title": "SMC 實驗（M01–M20）+ HTML 報告",
+        "items": [
+            "建立 XAUUSD-SMC-Experiments/ + 20 個 SMC 策略（OB/FVG/SSL/BOS/CHoCH 組合）",
+            "最強空單：M12 Bearish FVG+RSI（158筆，WR 43.0%，PF 1.470）",
+            "最強多單：M09 FVG+OB（PF 1.045，效果不佳）",
+            "整合到 Hub 實驗策略 → SMC 分頁",
+        ],
+    },
+    {
         "date": "2026-05-02",
         "title": "策略命名重構 + 架構統一",
         "items": [
@@ -818,6 +840,141 @@ def _xauusd_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
 """
 
 
+def _xauusd_fvg_html() -> str:
+    results_path = ROOT / "xauusd/XAUUSD-FVG-Strategy/fvg_long_results.json"
+    opt_path     = ROOT / "xauusd/XAUUSD-FVG-Strategy/optimization_results.json"
+    report_link  = "xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html"
+    report_exists = (ROOT / report_link).exists()
+    report_btn = f"<a class='report-link' href='{report_link}'>📄 多單回測報告 →</a>" if report_exists else ""
+
+    if not results_path.exists():
+        return """
+  <div id="xauusd-main-fvg" class="main-section">
+    <div class="tab-panel active"><div class="card">
+      <div class="card-title">FVG 策略</div>
+      <p style="color:var(--muted)">請先執行 <code>python3 xauusd/run_fvg_experiments.py</code> 生成資料。</p>
+    </div></div>
+  </div>"""
+
+    with open(results_path, encoding="utf-8") as f:
+        r = json.load(f)
+
+    best_short = None
+    if opt_path.exists():
+        with open(opt_path, encoding="utf-8") as f:
+            opt = json.load(f)
+        best_short = next((x for x in opt if x.get('direction') == 'Short'), None)
+
+    ex = r.get('exit_breakdown', {})
+    ex_html = "".join(
+        f"<div style='background:var(--surface2);border-radius:6px;padding:10px 16px;text-align:center'>"
+        f"<div style='font-size:1.3rem;font-weight:700;color:var(--primary)'>{v}</div>"
+        f"<div style='font-size:.75rem;color:var(--muted);margin-top:2px'>{k}</div></div>"
+        for k, v in ex.items()
+    )
+
+    short_card = ""
+    if best_short:
+        short_card = f"""
+      <div class="card">
+        <div class="card-title">📉 空單最佳參數（優化結果）</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px">
+          <div class="metric-card"><div class="metric-label">WR</div><div class="metric-val green">{best_short['win_rate']}%</div></div>
+          <div class="metric-card"><div class="metric-label">PF</div><div class="metric-val green">{best_short['profit_factor']:.3f}</div></div>
+          <div class="metric-card"><div class="metric-label">淨損益</div><div class="metric-val pos">+{best_short['net_pnl_pct']:.2f}%</div></div>
+          <div class="metric-card"><div class="metric-label">交易筆數</div><div class="metric-val">{best_short['trades']}</div></div>
+        </div>
+        <div style="margin-top:12px;font-size:.83em;color:var(--muted)">
+          fvg_min={best_short['fvg_min_pct']}% · fvg_max={best_short['fvg_max_bars']}bars · SL={best_short['sl_pct']}% · TP1={best_short['tp1_r']}R · TP2={best_short['tp2_r']}R · TB={best_short['tb']}bars
+        </div>
+      </div>"""
+
+    return f"""
+  <!-- XAUUSD FVG 策略 ────────────────────────────────────── -->
+  <div id="xauusd-main-fvg" class="main-section">
+    <div class="subnav">
+      <button class="sub-tab active" onclick="showTab('xauusd-fvg','overview',this)">回測總覽</button>
+      <button class="sub-tab" onclick="showTab('xauusd-fvg','params',this)">參數說明</button>
+    </div>
+
+    <div id="xauusd-fvg-overview" class="tab-panel active">
+      <div class="part-label"><span class="part-badge">FVG</span>Fair Value Gap 策略 V2.0 · 多 FVG 陣列追蹤</div>
+
+      <div class="grid-4">
+        <div class="metric-card card"><div class="metric-label">總交易數</div><div class="metric-val" style="color:var(--primary)">{r['trades']}</div><div class="metric-sub">30m 2026-01–04</div></div>
+        <div class="metric-card card"><div class="metric-label">勝率</div><div class="metric-val {'green' if r['win_rate']>=55 else 'red'}">{r['win_rate']}%</div><div class="metric-sub">{r['wins']}W / {r['losses']}L</div></div>
+        <div class="metric-card card"><div class="metric-label">獲利因子</div><div class="metric-val {'green' if r['profit_factor']>=1.5 else 'red'}">{r['profit_factor']}</div><div class="metric-sub">優化參數</div></div>
+        <div class="metric-card card"><div class="metric-label">淨損益</div><div class="metric-val {'pos' if r['net_pnl_pct']>0 else 'neg'}">{r['net_pnl_pct']:+.2f}%</div><div class="metric-sub">多單 Long</div></div>
+        <div class="metric-card card"><div class="metric-label">平均獲利</div><div class="metric-val pos">{r['avg_win']:+.3f}%</div></div>
+        <div class="metric-card card"><div class="metric-label">平均虧損</div><div class="metric-val neg">{r['avg_loss']:+.3f}%</div></div>
+        <div class="metric-card card"><div class="metric-label">最大單筆獲利</div><div class="metric-val pos">{r['max_win']:+.3f}%</div></div>
+        <div class="metric-card card"><div class="metric-label">平均持倉 Bars</div><div class="metric-val">{r['avg_bars']}</div></div>
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight good"><strong>✅ WR 66.7%，PF 1.66</strong>42 筆多單，統計意義穩定，優於 S1/S2 的 44–53% WR。</div>
+        <div class="insight good"><strong>✅ FVG 作為 S2 補充進場工具</strong>FVG 提供明確的 SL 錨點（FVG Natural）+ 流動性缺口回填邏輯，與 S2B 蜂鳥錘互補。</div>
+        <div class="insight warn"><strong>⚠ 資料期間僅 3 個月</strong>2026-01-21 至 04-27，建議取更長 CSV（2年+）重跑確認穩定性。</div>
+        <div class="insight info"><strong>📊 SL=1.5% Fixed 最佳</strong>FVG Natural SL 在此數據集表現不如 Fixed %。TP1=0.5R 快速鎖利後讓利潤飛。</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📈 多單最佳參數（Python 優化）</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="metric-card"><div class="metric-label">FVG 最小大小</div><div class="metric-val" style="font-size:1.1em">0.20%</div></div>
+            <div class="metric-card"><div class="metric-label">FVG 最長有效</div><div class="metric-val" style="font-size:1.1em">20 bars</div></div>
+            <div class="metric-card"><div class="metric-label">止損</div><div class="metric-val" style="font-size:1.1em">1.5%</div></div>
+            <div class="metric-card"><div class="metric-label">TP1 / TP2</div><div class="metric-val" style="font-size:1.1em">0.5R / 2.0R</div></div>
+            <div class="metric-card"><div class="metric-label">時間止損</div><div class="metric-val" style="font-size:1.1em">72 bars</div></div>
+            <div class="metric-card"><div class="metric-label">SL 類型</div><div class="metric-val" style="font-size:1.1em">Fixed %</div></div>
+          </div>
+          <div class="report-links">{report_btn}
+            <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine">📋 FVG V2.0 Pine</a>
+          </div>
+        </div>
+        {short_card}
+      </div>
+
+      <div class="card">
+        <div class="card-title">🚪 出場類型分佈</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">{ex_html}</div>
+        <div style="margin-top:10px;font-size:.82em;color:var(--muted)">SL 出場佔多數屬正常（Profit Flyer 允許在 TP2 前止損），TimeWin = 時間到且獲利、TimeLoss = 時間到但虧損。</div>
+      </div>
+    </div><!-- /xauusd-fvg-overview -->
+
+    <div id="xauusd-fvg-params" class="tab-panel">
+      <div class="part-label"><span class="part-badge">FVG</span>FVG V2.0 策略架構說明</div>
+
+      <div class="insight-grid">
+        <div class="insight info"><strong>📐 FVG 定義</strong>三根 K 棒型態：多頭 FVG = low[0] &gt; high[2]（缺口）；空頭 FVG = high[0] &lt; low[2]。缺口大小 &gt; fvg_min_pct 才記錄。</div>
+        <div class="insight info"><strong>📦 多 FVG 陣列追蹤（V2）</strong>同時最多 max_fvg 個 FVG，最新優先。超過 fvg_max_bars 未觸及自動到期；收盤跌破底部視為無效。</div>
+        <div class="insight info"><strong>🎯 進場條件</strong>價格 wick 進入 FVG 區間（low ≤ top 且 close ≥ bot），下一根開盤進場。每次只進一筆，進場後移除此 FVG。</div>
+        <div class="insight info"><strong>📤 Profit Flyer 出場（S1架構）</strong>TP1 鎖利：SL 拉至 lowest(low, TB/2) 動態追蹤。TP2 後更緊追蹤 lowest(low, TB/4)。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔗 Pine Script 版本比較</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>版本</th><th>FVG 追蹤</th><th>視覺化</th><th>SL 類型</th><th>出場</th></tr></thead>
+            <tbody>
+              <tr><td>V1.0</td><td>單一 FVG（var float）</td><td>簡單 box</td><td>FVG Natural / Fixed %</td><td>Profit Flyer</td></tr>
+              <tr><td><b>V2.0 ★</b></td><td><b>多 FVG 陣列（最多 5 個）</b></td><td><b>多 box 自動延伸右邊界</b></td><td><b>FVG Natural / Fixed %</b></td><td><b>Profit Flyer</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="report-links">
+          <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine">📋 V2.0 Pine Script</a>
+          <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V1.0.pine">📋 V1.0 Pine Script</a>
+          <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/optimization_results.json">📊 optimization_results.json</a>
+        </div>
+      </div>
+    </div><!-- /xauusd-fvg-params -->
+  </div><!-- /xauusd-main-fvg -->
+"""
+
+
 def _tx_macro_html() -> str:
     csv_path = ROOT / "tx/csv/TAIFEX_DLY_MXF1!, 1W.csv"
     if not csv_path.exists():
@@ -1242,6 +1399,10 @@ def _sitemap_html() -> str:
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S1-AweWithBB（V3.6.2）</td><td>{s1_report}</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S2A-RSI（V2.3）</td><td>{s2a_report}</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S2B-Hammer（V2.2）</td><td>{s2b_report}</td></tr>
+
+              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🔍 FVG 策略（V2.0）</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.0 多單回測（WR 66.7%，PF 1.660）</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html", "多單報告", (ROOT / "xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html").exists())}</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.0 Pine Script</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine", "V2.0 Pine", (ROOT / "xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine").exists())}</td></tr>
 
               <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🧪 實驗策略（20L + 20S）</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E01–E20 多單實驗</td><td>{xu_long_report}</td></tr>
@@ -1945,12 +2106,14 @@ tbody tr:hover td{{background:#f8fafc}}
     <button class="nav-main-tab active" onclick="showMain('xauusd-main-macro',this)">宏觀分析</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-opt',this)">已確認策略</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-exp',this)">實驗策略</button>
+    <button class="nav-main-tab" onclick="showMain('xauusd-main-fvg',this)">🔍 FVG 策略</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-validate',this)">筆記驗證</button>
   </div>
 
 {xu_macro_html}
 {_xauusd_opt_html()}
 {_xauusd_exp_html(xu_long_rows, xu_short_rows, xauusd)}
+{_xauusd_fvg_html()}
 {xu_validate_html}
 </div><!-- /commodity-xauusd -->
 
