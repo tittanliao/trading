@@ -126,9 +126,9 @@ bear_fvg_top = low[2]    // FVG 頂（自然止損參考）
 bear_fvg_bot = high      // FVG 底（反彈入場點）
 
 // 最小尺寸過濾（排除噪音級別的微小缺口）
-fvg_size_pct = is_long ?
-    (bull_fvg_raw ? (bull_fvg_top - bull_fvg_bot) / close * 100 : 0.0) :
-    (bear_fvg_raw ? (bear_fvg_top - bear_fvg_bot) / close * 100 : 0.0)
+bull_size    = bull_fvg_raw ? (bull_fvg_top - bull_fvg_bot) / close * 100 : 0.0
+bear_size    = bear_fvg_raw ? (bear_fvg_top - bear_fvg_bot) / close * 100 : 0.0
+fvg_size_pct = is_long ? bull_size : bear_size
 
 new_fvg = (is_long ? bull_fvg_raw : bear_fvg_raw) and fvg_size_pct >= fvg_min_pct
 
@@ -204,15 +204,14 @@ ep      = strategy.opentrades.entry_price(strategy.opentrades - 1)
 bars_in = bar_index - strategy.opentrades.entry_bar_index(strategy.opentrades - 1)
 
 // 止損價格（FVG 自然邊界 or 固定 %）
-sl_price = sl_type == "FVG Natural" ?
-    (is_long ?
-        (not na(locked_bot) ?
-            locked_bot * (1 - sl_buffer / 100) :
-            ep * (1 - sl_pct / 100)) :
-        (not na(locked_top) ?
-            locked_top * (1 + sl_buffer / 100) :
-            ep * (1 + sl_pct / 100))) :
-    (is_long ? ep * (1 - sl_pct / 100) : ep * (1 + sl_pct / 100))
+var float sl_price = na
+if sl_type == "FVG Natural"
+    if is_long
+        sl_price := not na(locked_bot) ? locked_bot * (1 - sl_buffer / 100) : ep * (1 - sl_pct / 100)
+    else
+        sl_price := not na(locked_top) ? locked_top * (1 + sl_buffer / 100) : ep * (1 + sl_pct / 100)
+else
+    sl_price := is_long ? ep * (1 - sl_pct / 100) : ep * (1 + sl_pct / 100)
 
 // R 倍數計算（基於進場 → SL 距離）
 r_dist = math.abs(ep - sl_price)
@@ -312,11 +311,11 @@ if show_boxes
 // ── 進場標籤（同 S1 風格）───────────────────────────────────────────────────
 if (LongEntry or ShortEntry) and show_labels
     // 重新計算顯示用的 SL（進場當根的 close 還未反映 ep，用 close 近似）
-    sl_lbl = sl_type == "FVG Natural" ?
-        (LongEntry ?
-            locked_bot * (1 - sl_buffer / 100) :
-            locked_top * (1 + sl_buffer / 100)) :
-        (LongEntry ? close * (1 - sl_pct / 100) : close * (1 + sl_pct / 100))
+    sl_lbl = float(na)
+    if sl_type == "FVG Natural"
+        sl_lbl := LongEntry ? locked_bot * (1 - sl_buffer / 100) : locked_top * (1 + sl_buffer / 100)
+    else
+        sl_lbl := LongEntry ? close * (1 - sl_pct / 100) : close * (1 + sl_pct / 100)
     r_lbl   = math.abs(close - sl_lbl)
     tp1_lbl = LongEntry ? close + r_lbl * tp1_r : close - r_lbl * tp1_r
     tp2_lbl = LongEntry ? close + r_lbl * tp2_r : close - r_lbl * tp2_r
