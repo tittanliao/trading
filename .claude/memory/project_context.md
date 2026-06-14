@@ -26,6 +26,23 @@ metadata:
 - 20 空單實驗：S19 Bearish Engulf 最佳（PF 1.507, +12.4%）
 - 關鍵發現：DXY RSI < 30 → 三策略勝率 60–75%；HTF alignment=3/3 → S1 WR ~69%
 
+## FVG 策略（2026-06-14 完成）
+- **FVG V1.0**：單 FVG 追蹤，Pine Script v6，Long/Short 可設定，Profit Flyer 出場
+- **FVG V2.0**：陣列多 FVG 追蹤（最多 5 個），box 視覺化（extend.right），最新 FVG 優先進場
+- **run_fvg_experiments.py**：7,560 參數組合 Python 優化，8.9 秒完成
+- **多單最佳結果**：fvg_min=0.20%、fvg_max=20bars、SL=1.5% Fixed、TP1=0.5R、TP2=2.0R、TB=72
+  - 42 筆交易、WR 66.7%、PF 1.660、淨損益 +11.93%
+- **空單最佳結果**：fvg_min=0.20%、fvg_max=50bars、SL=0.8% Fixed、TP1=0.5R、TP2=3.0R、TB=48
+  - 42 筆交易、WR 66.7%、PF 2.741、淨損益 +18.24%
+- V2.0 Pine Script 預設值已更新為多單最佳參數
+- Hub index.html 新增「🔍 FVG 策略」Tab，連結到 report_fvg_long.html
+- FVG 定位：SMC 補充工具，與 S2B 錘頭共用流動性缺口邏輯
+
+**Pine v6 重要注意事項（踩坑紀錄）：**
+- `and`/`or` 不能作為行尾接續 → 拆成多個變數
+- `? :` 三元不能跨行 → 改用 if/else
+- for loop `by -1` 會報錯 → 改成 `for i = n-1 to 0`（省略 by，自動負向）
+
 ## SMC 回測實驗（2026-06-14 新增）
 - 新增 SMC 回測引擎：`smc_indicators.py` / `strategies_smc.py` / `run_smc_experiments.py`
 - 資料期：2026-01-21 → 04-27（3058 × 30m bars）
