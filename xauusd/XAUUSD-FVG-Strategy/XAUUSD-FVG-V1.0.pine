@@ -320,21 +320,12 @@ if (LongEntry or ShortEntry) and show_labels
     tp1_lbl = LongEntry ? close + r_lbl * tp1_r : close - r_lbl * tp1_r
     tp2_lbl = LongEntry ? close + r_lbl * tp2_r : close - r_lbl * tp2_r
 
-    fvg_range = "FVG Zone: [" +
-        str.tostring(locked_bot, "#.##") + " – " +
-        str.tostring(locked_top, "#.##") + "]"
-
-    txt = (LongEntry ? "▲ FVG_LE" : "▼ FVG_SE") +
-          "\nEntry: " + str.tostring(close, "#.##") +
-          "\nSL: "    + str.tostring(sl_lbl, "#.##") +
-          "\nTP1: "   + str.tostring(tp1_lbl, "#.##") +
-          "\nTP2: "   + str.tostring(tp2_lbl, "#.##") +
-          "\n" + fvg_range
+    fvg_range = "FVG Zone: [" + str.tostring(locked_bot, "#.##") + " - " + str.tostring(locked_top, "#.##") + "]"
+    dir_lbl   = LongEntry ? "▲ FVG_LE" : "▼ FVG_SE"
+    txt = dir_lbl + "\nEntry: " + str.tostring(close, "#.##") + "\nSL: " + str.tostring(sl_lbl, "#.##") + "\nTP1: " + str.tostring(tp1_lbl, "#.##") + "\nTP2: " + str.tostring(tp2_lbl, "#.##") + "\n" + fvg_range
 
     if show_fut
-        txt := txt +
-            "\n[GC1!] Entry: " + str.tostring(close + basis, "#.##") +
-            "\n       SL: "    + str.tostring(sl_lbl + basis, "#.##")
+        txt := txt + "\n[GC1!] Entry: " + str.tostring(close + basis, "#.##") + "\n       SL: " + str.tostring(sl_lbl + basis, "#.##")
 
     lbl_y = LongEntry ? low * 0.9995 : high * 1.0005
     label.new(bar_index, lbl_y, txt,
