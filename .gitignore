@@ -6,3 +6,5 @@ __pycache__/
 .venv/
 venv/
 reports/
+.claude/worktrees/
+**/.claude/settings.local.json
