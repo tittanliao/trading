@@ -76,6 +76,7 @@
 ```
 路徑①：/Users/tittan/program/github/trading/xauusd/daily_log/weekly_report_*.txt（最新日期）
 路徑②：/Users/tittan/googledrive/XAUUSD/weekly report/XAUUSD_Weekly_Report_*.gdoc（Gemini 版）
+CSV路徑：/Users/tittan/googledrive/XAUUSD/weekly report/csv/（週報專用最新 CSV，供週報生成使用）
 目的：取得本週大方向、關鍵價位、三種劇本
 ```
 
@@ -151,9 +152,79 @@ BB %B(4H)：X.XX | RSI(30m)：XX.X | DXY：XXX.XXX
 ## 周報分析流程（「週日黃金工作流」觸發）
 
 ### 資料準備
-1. 抓取 CFTC 資料：`https://www.tradingster.com/cot/futures/disagg/088691`
-2. 讀取三份 30m CSV（XAUUSD / DXY / MGC），resample 至 4H / 1D / 1W
+
+#### Step 0 — 掛載 Google Drive CSV 資料夾（必做，不得跳過）
+```
+週報 CSV 存放於 Google Drive，沙盒無法自動存取，需先呼叫：
+mcp__cowork__request_cowork_directory(path="~/googledrive/XAUUSD/weekly report/csv")
+
+成功後資料夾掛載於：
+  - Read/Write/Edit/Glob/Grep：使用 ~/googledrive/XAUUSD/weekly report/csv/
+  - bash：使用 /sessions/gracious-zen-ptolemy/mnt/csv/
+
+若連接失敗：要求用戶手動複製 CSV 至 trading/xauusd/csv/
+```
+
+#### CSV 檔案清單（trading/googledrive/XAUUSD/weekly report/csv/ 內）
+```
+FX_IDC_XAUUSD, 1D.csv     ← XAUUSD 日線（含 Basis/Upper/Lower/RSI/RSI-MA/背離欄位）
+FX_IDC_XAUUSD, 1W.csv     ← XAUUSD 週線
+FX_IDC_XAUUSD, 240.csv    ← XAUUSD 4H
+FX_IDC_XAUUSD, 60.csv     ← XAUUSD 1H
+FX_IDC_XAUUSD, 30.csv     ← XAUUSD 30m
+TVC_DXY, 1D.csv            ← DXY 日線
+TVC_DXY, 1W.csv            ← DXY 週線
+TVC_DXY, 240.csv           ← DXY 4H
+TVC_DXY, 30.csv            ← DXY 30m
+MGC_1d.csv / MGC_4h.csv   ← MGC 微型黃金期貨（備用）
+```
+
+#### 資料有效性確認
+```python
+# 確認最新資料日期（tail -3 任一 CSV）
+tail -3 "FX_IDC_XAUUSD, 1D.csv"
+# 若最後一筆距今 > 3 天，提醒用戶重新從 TradingView 匯出
+```
+
+#### 分析步驟
+1. 抓取 CFTC 資料：`https://www.tradingster.com/cot/futures/disagg/088691`（web_fetch）
+2. 讀取 CSV 並計算指標（Python / bash）
 3. 計算 BB(20)、RSI(14)、ATR(14)、EMA(50/200)
+
+#### Python 分析模板（每次週報使用）
+```python
+import pandas as pd, numpy as np
+CSV_DIR = "/sessions/gracious-zen-ptolemy/mnt/csv/"   # bash 路徑
+
+def load_csv(fname):
+    for enc in ['utf-8', 'utf-8-sig', 'big5', 'cp950']:
+        try:
+            df = pd.read_csv(CSV_DIR + fname, encoding=enc, encoding_errors='ignore')
+            df['time'] = pd.to_datetime(df['time'])
+            return df.sort_values('time').reset_index(drop=True)
+        except: continue
+    return None
+
+xau_1d = load_csv("FX_IDC_XAUUSD, 1D.csv")
+xau_1w = load_csv("FX_IDC_XAUUSD, 1W.csv")
+xau_4h = load_csv("FX_IDC_XAUUSD, 240.csv")
+dxy_1d = load_csv("TVC_DXY, 1D.csv")
+dxy_1w = load_csv("TVC_DXY, 1W.csv")
+
+# EMA
+for df in [xau_1d, xau_4h]:
+    df['ema50']  = df['close'].ewm(span=50).mean()
+    df['ema200'] = df['close'].ewm(span=200).mean()
+
+# ATR
+def calc_atr(df, n=14):
+    tr = pd.concat([df['high']-df['low'],
+                    (df['high']-df['close'].shift()).abs(),
+                    (df['low']-df['close'].shift()).abs()], axis=1).max(axis=1)
+    return tr.rolling(n).mean().iloc[-1]
+
+atr_4h = calc_atr(xau_4h)
+```
 
 ### 周報四模組架構
 
@@ -193,6 +264,105 @@ BB %B(4H)：X.XX | RSI(30m)：XX.X | DXY：XXX.XXX
 - **週末週報**：週六或週日
 - **週間週報**：通常週三晚上
 - **緊急週報**：超大波動時加開，加入本週收盤預測 + 下週三種劇本
+
+---
+
+## 合併週報流程（「合併週報」觸發）
+
+### ⚠ 前置條件（執行前必查）
+
+**Step 0：確認 Claude 當週報告存在**
+```
+路徑：~/googledrive/XAUUSD/claude/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx
+```
+- 若不存在 → 先執行下方「週報資料準備」流程生成 Claude 版本，再合併
+- 若存在但日期差 > 7 天（舊週）→ 同上，重新生成當週報告
+- ❌ 絕對不能用舊週的 Claude 報告當交易員 A（W24 教訓：用 W23 Wed 導致所有價位過時）
+
+### 三份週報來源
+```
+① Claude 週報（Dispatch Cowork 本次生成）
+   路徑：~/googledrive/XAUUSD/claude/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx
+   掛載：mcp__cowork__request_cowork_directory(path="~/googledrive/XAUUSD/claude")
+   讀取：python-docx（見下方）
+
+② Gemini 週報（用戶手動生成，Google Drive 存為 .gdoc）
+   路徑：~/googledrive/XAUUSD/weekly report/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}.gdoc
+   掛載：mcp__cowork__request_cowork_directory(path="~/googledrive/XAUUSD/weekly report")
+   讀取：Chrome MCP + JS fetch（見下方）⚠ 格式是 .gdoc，不是 .txt
+
+③ Dispatch 週報（Cowork 分析生成）
+   路徑：~/program/github/trading/xauusd/daily_log/weekly_report_W{週次}_{YYYYMMDD}.txt
+   讀取：Read 工具或 bash cat
+```
+
+### 讀取技巧
+```python
+# Claude .docx（python-docx）
+pip install python-docx --break-system-packages -q
+from docx import Document
+text = '\n'.join([p.text for p in Document('/path/file.docx').paragraphs if p.text.strip()])
+```
+
+```javascript
+// Gemini .gdoc（Chrome MCP + JS fetch）
+// Step 1: bash cat .gdoc 取得 doc_id（JSON 格式含 doc_id 欄位）
+// Step 2: 在 Chrome MCP 的 tab 中執行：
+fetch('https://docs.google.com/document/d/{doc_id}/export?format=txt')
+  .then(r => r.text()).then(t => { window._gdoc_text = t; })
+// Step 3: 讀取 window._gdoc_text
+// 注意：需用戶 Chrome 已登入 Google 帳號
+```
+
+### 有效性判斷
+- 三份報告日期差距 < 7 天 → 可合併
+- 若有時間差 → 在報告中標注，以較新的 Gemini/Dispatch 為現況基準
+- 若缺少某份報告 → 提示用戶，不強行合併
+
+### 執行步驟
+1. **確認 Claude 當週報告存在**（見前置條件）
+2. **讀取三份報告**，各自提取：主劇本 + 機率、關鍵支撐/阻力、S1/S2 條件、本週最大風險
+3. **製作共識/分歧對照表**（3 欄：Claude / Gemini / Dispatch）
+4. **用 docx-js 生成三個 Style Combine .docx**
+
+### Combine 輸出格式（三個 Style，各一份）
+```
+輸出路徑：~/googledrive/XAUUSD/claude/
+命名：XAUUSD_W{週次}_Combine_Style{A/B/C}.docx
+
+每份檔案結構：
+1. 標題：【黃金劍盾週報 Combine】W{N} — 三交易員觀點整合
+2. Style 標識 + 審核日期
+3. 三份報告概覽表（交易員 / 日期 / 主情境）
+4. 交易員 A（Claude）核心觀點
+5. 交易員 B（Gemini）核心觀點
+6. 交易員 C（Dispatch）核心觀點
+7. 共識與分歧對照表（含仲裁結論）
+8. 主管審核意見（各 Style 風格）
+```
+
+### 三個 Style 風格定義
+```
+Style A — 量化風控主管審核版
+  輸出：共識確認 → 分歧量化仲裁（數字/機率）→ 收斂操作建議 + 倉位上限
+  語氣：精確、量化、冷靜
+
+Style B — 資深老鳥主管拍板版
+  輸出：【好消息】共識 → 【關於分歧】分析 → 【這週怎麼做】執行 → 【最重要一件事】
+  語氣：口語化、大白話、有人情味
+
+Style C — 投資委員會正式審核版
+  輸出：一、報告說明 / 二、共識事項 / 三、分歧與決議 / 四、操作決議表格 / 五、下次審核
+  語氣：正式會議紀錄，逐條決議
+```
+
+### 參考提示詞位置
+```
+提示詞（.gdoc）：~/googledrive/XAUUSD/claude/prompt/xauusd_weekly_report_prompt.gdoc
+Doc ID：1gKMZbIKcKTT3BWk2r0_BQQrWBfTEPyGps0qQzfhYj8w
+讀取：用 Chrome MCP 的 JS fetch export?format=txt 方式（同 Gemini 讀取）
+完整 SOP：~/googledrive/XAUUSD/claude/prompt/claude_xauusd_weekly_report_skill.txt
+```
 
 ---
 

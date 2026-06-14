@@ -39,3 +39,39 @@ metadata:
 ```bash
 cd ~/program/github/trading && git add -A && git commit -m "update: [描述]" && git push
 ```
+
+## 週報 CSV 放在 Google Drive，非 trading/xauusd/csv/
+**Why:** 用戶的週報分析用 CSV 存放在 Google Drive，與日常分析 CSV 分開管理。
+**How to apply:**
+- 週報生成時優先讀：`~/googledrive/XAUUSD/weekly report/csv/`
+- 若 Google Drive 未掛載到 session，請用戶手動複製到 `trading/xauusd/csv/` 或連接該資料夾
+- 備用路徑（舊版）：`trading/xauusd/csv/`（可能過時）
+
+## 週報生成流程（確立於 2026-06-13 W24）
+**Why:** 完整跑過一次 W24 週報後，確立正確的 SOP，避免下次重複找路徑。
+**How to apply:**
+1. 先呼叫 `mcp__cowork__request_cowork_directory(path="~/googledrive/XAUUSD/weekly report/csv")`
+2. 掛載後 bash 路徑為 `/sessions/.../mnt/csv/`，Read 工具用 `~/googledrive/XAUUSD/weekly report/csv/`
+3. 用 Python 讀取 CSV → 計算 BB/RSI/EMA/ATR → 生成分析數據
+4. 抓 CFTC：`https://www.tradingster.com/cot/futures/disagg/088691`
+5. 輸出週報存至 `trading/xauusd/daily_log/weekly_report_W{週次}_{日期}.txt`
+6. 完成後提醒用戶 git add + commit + push
+
+## 合併週報（三交易員 Combine）觸發詞與 SOP
+**Why:** 用戶說「合併週報」時，需比對 Claude/Gemini/Dispatch 三份週報，產出 3 種 Style 的 Combine .docx。
+**How to apply:**
+- 觸發詞：「合併週報」
+- 三份週報路徑：
+  - Claude：`~/googledrive/XAUUSD/claude/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx`
+  - Gemini：`~/googledrive/XAUUSD/weekly report/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}.txt`
+  - Dispatch：`~/program/github/trading/xauusd/daily_log/weekly_report_W{週次}_{YYYYMMDD}.txt`
+- 三份差距 < 7 天才合併，否則提示用戶等齊
+- 輸出：3 個 .docx → `~/googledrive/XAUUSD/claude/XAUUSD_W{N}_Combine_Style{A/B/C}.docx`
+- 詳細格式見 ANALYSIS_SKILL.md「合併週報流程」章節
+- 提示詞位置：Google Doc 1gKMZbIKcKTT3BWk2r0_BQQrWBfTEPyGps0qQzfhYj8w（需瀏覽器開啟）
+
+7. 合併週報前必須先生成 Claude 當週報告（W24 教訓：用了 W23 Wed 舊報告當交易員 A，所有價位過時）
+   流程：先生成 Claude W{N} .docx → 再讀取 Gemini .gdoc + Dispatch .txt → 才能執行合併
+   
+8. Gemini 週報格式是 .gdoc（非 .txt），需用 Chrome MCP + JS fetch export?format=txt 讀取
+   路徑：~/googledrive/XAUUSD/weekly report/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}.gdoc
