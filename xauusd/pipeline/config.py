@@ -20,8 +20,21 @@ TV_EXPORT_PATH          = CSV_DIR / "FX_IDC_XAUUSD, 30.csv"
 VALIDATION_FAIL_IF_MISSING = True   # True = 檔案不存在直接終止；False = 跳過驗證
 
 # ── tvDatafeed 帳號（留空 = 匿名模式） ────────────────────────────────────────
-TV_USERNAME = ""
-TV_PASSWORD = ""
+TV_USERNAME = "aaasdf691@gmail.com"
+TV_PASSWORD = "525629qqQQqq"
+
+# ── Google 登入帳號：用 sessionid 動態取得 auth_token ────────────────────────
+# 取得方式：
+#   1. Chrome 開啟 tradingview.com 並登入
+#   2. F12 → Application → Cookies → .tradingview.com
+#   3. 複製 sessionid 和 sessionid_sign 的 Value 貼到下方
+#   留空 = 使用 username/password 登入
+TV_SESSIONID      = "drnmd2k8k3rh5xtbafzi1d4hkluh5y17"
+TV_SESSIONID_SIGN = "v3:eeRT2cRyOmCZgzXB0JSCz9X4wrpDtT0Q2srdImivykA="
+TV_DEVICE_T       = "V2E4ejoy.WzwQatjGGQZqRwSUgLbpPcfFXpQCrZsDOjLPr6aHm2s"
+
+# ── 備用：直接填入 auth_token（靜態，不建議） ─────────────────────────────────
+TV_AUTH_TOKEN = ""
 
 # ── 抓取商品設定 ───────────────────────────────────────────────────────────────
 # with_indicators : 是否計算技術指標（只有 XAUUSD 需要）
@@ -40,10 +53,10 @@ SYMBOLS: dict[str, dict] = {
         "output_csv":      "Weekly_Report_DXY_M30.csv",
         "write_db":        False,
     },
-    "MGC1!": {
+    "GC1!": {
         "exchange":        "COMEX",
         "with_indicators": False,
-        "output_csv":      "Weekly_Report_MGC_M30.csv",  # ! 去除
+        "output_csv":      "Weekly_Report_GC_M30.csv",   # 標準黃金期貨（MGC1! 不可用）
         "write_db":        False,
         "optional":        True,   # 失敗時僅 Warning，不中斷管線
     },

@@ -12,6 +12,7 @@ Module A：熱資料獲取與週報產出
 單獨執行：python module_a.py
 """
 import logging
+import re
 import sys
 import time
 from pathlib import Path
@@ -19,12 +20,14 @@ from dateutil.relativedelta import relativedelta
 
 import pandas as pd
 import pandas_ta as ta
+import requests
 from tvDatafeed import TvDatafeed, Interval
 
 # 允許直接執行（python module_a.py）時找到 config
 sys.path.insert(0, str(Path(__file__).parent))
 from config import (
-    TV_USERNAME, TV_PASSWORD,
+    TV_USERNAME, TV_PASSWORD, TV_AUTH_TOKEN,
+    TV_SESSIONID, TV_SESSIONID_SIGN, TV_DEVICE_T,
     SYMBOLS, N_BARS, LOOKBACK_MONTHS,
     BB_LENGTH, BB_STD, EMA_FAST, EMA_SLOW,
     OUTPUT_DIR, TIMEZONE,
@@ -35,16 +38,67 @@ logger = logging.getLogger(__name__)
 
 # ── tvDatafeed 連線 ────────────────────────────────────────────────────────────
 
+def _fetch_token_via_sessionid() -> str | None:
+    """用 sessionid cookie 向 TradingView 取得 JWT auth_token。
+    Google 登入帳號沒有獨立的 TV 密碼，必須用此方式取得 token。
+    """
+    if not TV_SESSIONID:
+        return None
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+            'Referer': 'https://www.tradingview.com/',
+        }
+        cookies = {
+            'sessionid':      TV_SESSIONID,
+            'sessionid_sign': TV_SESSIONID_SIGN,
+            'device_t':       TV_DEVICE_T,
+        }
+        r = requests.get('https://www.tradingview.com/', headers=headers,
+                         cookies=cookies, timeout=15)
+        m = re.search(r'"auth_token"\s*:\s*"([^"]+)"', r.text)
+        if m:
+            token = m.group(1)
+            logger.info("tvDatafeed：sessionid 取得 auth_token 成功（長度 %d）", len(token))
+            return token
+        logger.warning("tvDatafeed：sessionid 有效但找不到 auth_token，可能已過期")
+    except Exception as exc:
+        logger.warning("tvDatafeed：sessionid 取得 token 失敗：%s", exc)
+    return None
+
+
 def get_tv_client(max_retries: int = 3) -> TvDatafeed:
-    """建立 tvDatafeed 連線，失敗時指數退避重試。"""
+    """
+    建立 tvDatafeed 連線，認證優先順序：
+      1. TV_SESSIONID   → 動態取得 auth_token（Google 登入帳號）
+      2. TV_AUTH_TOKEN  → 直接注入靜態 token
+      3. TV_USERNAME/PASSWORD → 帳號密碼登入
+      4. 匿名模式
+    """
     for attempt in range(1, max_retries + 1):
         try:
-            if TV_USERNAME and TV_PASSWORD:
-                tv = TvDatafeed(TV_USERNAME, TV_PASSWORD)
-                logger.info("tvDatafeed：已登入帳號 %s", TV_USERNAME)
+            tv = TvDatafeed()   # 先建立匿名連線
+
+            if TV_SESSIONID:
+                token = _fetch_token_via_sessionid()
+                if token:
+                    tv.token = token
+                    logger.info("tvDatafeed：sessionid 認證完成")
+                else:
+                    logger.warning("sessionid 認證失敗，降級為匿名模式")
+            elif TV_AUTH_TOKEN:
+                tv.token = TV_AUTH_TOKEN
+                logger.info("tvDatafeed：使用靜態 auth_token 認證")
+            elif TV_USERNAME and TV_PASSWORD:
+                tv2 = TvDatafeed(TV_USERNAME, TV_PASSWORD)
+                if tv2.token != "unauthorized_user_token":
+                    tv = tv2
+                    logger.info("tvDatafeed：帳號密碼登入成功（%s）", TV_USERNAME)
+                else:
+                    logger.warning("帳號密碼登入失敗，降級為匿名模式")
             else:
-                tv = TvDatafeed()
                 logger.warning("tvDatafeed：匿名模式（部分商品或歷史深度可能受限）")
+
             return tv
         except Exception as exc:
             logger.error("連線失敗（第 %d/%d 次）：%s", attempt, max_retries, exc)
