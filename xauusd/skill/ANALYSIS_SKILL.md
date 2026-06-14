@@ -1,5 +1,5 @@
 # XAUUSD 黃金分析技術文件
-# 版本：20260607 | 策略：黃金劍盾（S1 V3.4 / S2 V1.9）
+# 版本：20260614 | 策略：黃金劍盾（S1 V3.4 / S2 V1.9）+ SMC 輔助參考
 
 ## 角色定義
 你是「黃金劍盾策略」的首席交易員。每次收到「請分析」指令時，
@@ -39,6 +39,16 @@
   - TP2：4.0R
 - **風險分配**：每筆 0.75% 總資金
 - **適用環境**：明確支撐位、BB 帶收縮、RSI 超賣區域
+
+#### S2 進場品質分級（含 SMC 維度）
+
+| 等級 | 條件 | 倉位 | 說明 |
+|------|------|------|------|
+| **A+** | 錘頭 + SSL sweep + Bullish OB | 0.05 手 | 三重確認，最強進場 |
+| **A**  | 錘頭 + 任一 SMC（SSL sweep 或 Bullish OB）| 0.03 手 | 機構區確認，標準進場 |
+| **B**  | 純錘頭 + 關鍵支撐（無 SMC 確認）| 0.02 手 | 原有標準，縮倉進場 |
+
+> SMC 說明：SSL sweep = 當根 K 棒下影刺破近期低點後收回；Bullish OB = 前次下跌前最後一根陽線區間
 
 ### 雙核心風險分配
 - S1 + S2 同時持倉上限：總風險 1.5%（各 0.75%）
@@ -240,6 +250,62 @@ def calc_atr(df, n=14):
     return tr.rolling(n).mean().iloc[-1]
 
 atr_4h = calc_atr(xau_4h)
+
+# ── SMC Context 掃描（接在上方模板後執行）────────────────────────────────────
+
+def scan_fvg(df, lookback_bars=50):
+    """掃描最近 N 根 K 棒內未填補的 FVG。"""
+    h, l, c = df['high'].values, df['low'].values, df['close'].values
+    n = len(df)
+    bull_fvgs, bear_fvgs = [], []
+    for j in range(2, n):
+        if h[j-2] < l[j]:   # Bullish FVG（上行衝動留下的缺口）
+            bull_fvgs.append({'bar': j, 'bottom': round(h[j-2], 2), 'top': round(l[j], 2)})
+        if l[j-2] > h[j]:   # Bearish FVG（下行衝動留下的缺口）
+            bear_fvgs.append({'bar': j, 'bottom': round(h[j], 2), 'top': round(l[j-2], 2)})
+    # 只保留 lookback_bars 內形成、尚未完全填補的 FVG
+    active_bull = [z for z in bull_fvgs if z['bar'] >= n - lookback_bars
+                   and not any(l[k] <= z['bottom'] for k in range(z['bar'], n))]
+    active_bear = [z for z in bear_fvgs if z['bar'] >= n - lookback_bars
+                   and not any(h[k] >= z['top'] for k in range(z['bar'], n))]
+    return active_bull[-3:], active_bear[-3:]   # 最近各 3 個
+
+def scan_liquidity(df, lookback_bars=30):
+    """找出 BSL（擺動高點 / 買方流動性）和 SSL（擺動低點 / 賣方流動性）。"""
+    h, l = df['high'].values, df['low'].values
+    n = len(df)
+    bsl, ssl = [], []
+    for i in range(2, min(lookback_bars, n - 2)):
+        idx = n - 1 - i
+        if idx < 2: break
+        if h[idx] > h[idx-1] and h[idx] > h[idx-2] and h[idx] > h[idx+1] and h[idx] > h[idx+2]:
+            bsl.append(round(h[idx], 2))
+        if l[idx] < l[idx-1] and l[idx] < l[idx-2] and l[idx] < l[idx+1] and l[idx] < l[idx+2]:
+            ssl.append(round(l[idx], 2))
+    return sorted(set(bsl), reverse=True)[:3], sorted(set(ssl))[:3]
+
+def check_ssl_sweep(df, lookback_bars=5):
+    """最近 N 根是否有 SSL sweep（下影刺破近期低點後收回 → S2 信心+1）。"""
+    l, c = df['low'].values, df['close'].values
+    n = len(df)
+    for i in range(n - lookback_bars, n):
+        if i < 31: continue
+        prior_low = l[i-30:i].min()
+        if l[i] < prior_low and c[i] > prior_low:
+            return True, round(prior_low, 2)
+    return False, None
+
+# 執行（用 4H 資料）
+bull_fvg_4h, bear_fvg_4h = scan_fvg(xau_4h, lookback_bars=50)
+bsl_4h, ssl_4h             = scan_liquidity(xau_4h, lookback_bars=30)
+ssl_swept, ssl_level        = check_ssl_sweep(xau_4h, lookback_bars=5)
+
+print("=== SMC Context（4H）===")
+print(f"Bearish FVG 阻力：{[(z['bottom'], z['top']) for z in bear_fvg_4h] or '無'}")
+print(f"Bullish FVG 支撐：{[(z['bottom'], z['top']) for z in bull_fvg_4h] or '無'}")
+print(f"BSL（買方流動性）：{bsl_4h or '無'}")
+print(f"SSL（賣方流動性）：{ssl_4h or '無'}")
+print(f"SSL Sweep：{'✅ 有！位於 ' + str(ssl_level) + '  ← S2 A+ 信心+1' if ssl_swept else '❌ 無'}")
 ```
 
 ### 周報四模組架構
@@ -257,6 +323,17 @@ atr_4h = calc_atr(xau_4h)
   - Zone 2（標準）：Daily BB Basis
   - Zone 3（極限）：Weekly/Daily BB Lower + 整數關口
 
+**Module B+：SMC Context（FVG / OB / 流動性）**
+- 執行上方 SMC Python 掃描，輸出 4H 級別結果
+- **Bearish FVG**（阻力）：S1 突破須清掉此區才算有效，否則縮倉
+- **Bullish FVG**（支撐）：S2 進場若落在此區，等級自動升一格（B→A）
+- **BSL 位置**（買方流動性 / 前擺動高點）：S1 TP 目標參考；BSL 被清掉後反轉 = 做空信號
+- **SSL 位置**（賣方流動性 / 前擺動低點）：S2 候選進場區；若本週已出現 SSL sweep → S2 信心升 A+
+- **S1 SMC 品質輔助判斷**：
+  - ✅ 加分：突破位同時清掉 BSL（機構掃停損後繼續推）
+  - ⚠️ 注意：突破位處於 Bearish FVG 內（遇阻力，考慮分批或縮倉）
+  - ❌ 警示：突破後仍在大 Bearish FVG 陰影下（假突破風險高）
+
 **Module C：作戰劇本（Battle Plan）**
 - S1 計畫：定義具體「突破位」（1H EMA 50）
 - S2 計畫：定義 A+ 支撐區
@@ -272,9 +349,21 @@ atr_4h = calc_atr(xau_4h)
 3. 交易員備忘錄（5點）
 4. CFTC 籌碼數據事實（表格 + 解讀）
 5. 關鍵價位總表（5-10個，表格）
-6. 下週三種劇本（多頭/震盪/空頭 + 機率）
-7. 策略執行劇本（S1 A+/A/B，S2 A+/A/B）
-8. 結語（心理建設 + 風控提醒）
+6. SMC Context（4H 掃描結果，格式如下）
+7. 下週三種劇本（多頭/震盪/空頭 + 機率）
+8. 策略執行劇本（S1 A+/A/B，S2 A+/A/B 含 SMC 等級）
+9. 結語（心理建設 + 風控提醒）
+
+**SMC Context 輸出格式（第 6 項）：**
+```
+🔍 SMC Context（4H 掃描）
+Bearish FVG（阻力）：XXXX–XXXX / XXXX–XXXX
+Bullish FVG（支撐）：XXXX–XXXX（若無則標「本週無未填 FVG」）
+BSL 位置（前高 / 買方流動性）：XXXX, XXXX → S1 突破參考
+SSL 位置（前低 / 賣方流動性）：XXXX, XXXX → S2 進場候選
+本週 SSL Sweep：[✅ 有，位於 XXXX → S2 信心升 A+] / [❌ 無]
+S1 品質：[✅ 突破清掉 BSL / ⚠️ 在 FVG 內突破 / ❌ FVG 阻力未清]
+```
 
 ### 週報頻率
 - **週末週報**：週六或週日
