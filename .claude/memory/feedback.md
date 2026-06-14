@@ -75,3 +75,7 @@ cd ~/program/github/trading && git add -A && git commit -m "update: [描述]" &&
    
 8. Gemini 週報格式是 .gdoc（非 .txt），需用 Chrome MCP + JS fetch export?format=txt 讀取
    路徑：~/googledrive/XAUUSD/weekly report/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}.gdoc
+
+9. 週報 CFTC 數據必須主動抓最新截圖（W24 教訓：直接複製 Dispatch 報告的 6/2 數據，漏抓 6/9 版本）
+   正確步驟：ls ~/googledrive/XAUUSD/weekly\ report/cftc/ → 找最新 .png → Read 讀取圖片 → 提取數字
+   CFTC 每週五公布（前一週二截止），週報日期是週六/日時應有當週最新數據

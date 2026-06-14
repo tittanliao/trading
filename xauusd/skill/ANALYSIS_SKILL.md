@@ -187,7 +187,23 @@ tail -3 "FX_IDC_XAUUSD, 1D.csv"
 ```
 
 #### 分析步驟
-1. 抓取 CFTC 資料：`https://www.tradingster.com/cot/futures/disagg/088691`（web_fetch）
+1. **抓取 CFTC 資料（必須用此順序）**
+   ```
+   Step A：先檢查用戶已備好的截圖（優先）
+     ls ~/googledrive/XAUUSD/weekly\ report/cftc/
+     → 找最新 .png（檔名含日期，如 GOLD-CFTC-20260609.png）
+     → CFTC 每週五公布前一個週二截止的數據
+       範例：週六/日出週報時，應有截至當週週一前兩天（週二）的最新 .png
+     → 用 Read 工具讀取圖片（Claude 可直接看圖提取數字）
+
+   Step B：若 GDrive 截圖不是本週最新 → 再用 web_fetch 補抓
+     URL：https://www.tradingster.com/cot/futures/disagg/088691
+     注意：web_fetch 可能因頁面 JS 渲染失敗，改用 Chrome MCP navigate
+   ```
+
+   ⚠️ **絕對不能做**：直接沿用上一份週報（Dispatch/Claude/Gemini）的 CFTC 數字
+   → W24 教訓：Dispatch 報告用了 6/2 舊數據，而 GDrive 早已有 6/9 截圖，多滯後 7 天
+
 2. 讀取 CSV 並計算指標（Python / bash）
 3. 計算 BB(20)、RSI(14)、ATR(14)、EMA(50/200)
 
