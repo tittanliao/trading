@@ -642,7 +642,7 @@ tbody tr:hover td{background:#f8fafc}
             <div class="metric-card"><div class="metric-label">時間止損</div><div class="metric-val" style="font-size:1.1em">72 bars</div></div>
             <div class="metric-card"><div class="metric-label">SL 類型</div><div class="metric-val" style="font-size:1.1em">Fixed %</div></div>
           </div>
-          <div class="report-links"><a class='report-link' href='xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html'>📄 多單回測報告 →</a>
+          <div class="report-links"><a class='report-link' href='xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html'>📄 30m 多單報告 →</a>
             <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/fvg_guide.html">📖 FVG 教學說明</a>
             <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine">📋 FVG V2.0 Pine</a>
           </div>
@@ -660,6 +660,33 @@ tbody tr:hover td{background:#f8fafc}
           fvg_min=0.03% · fvg_max=20bars · SL=0.8% · TP1=0.5R · TP2=3.0R · TB=24bars
         </div>
       </div>
+      </div>
+      
+      <div class="card" style="border-left:3px solid #f0c040">
+        <div class="card-title">⚡ 60m 最佳化回測（2025-10 → 2026-04，7個月 3058 bars，12,288 參數組合）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+          <div>
+            <div style="font-size:.8rem;font-weight:700;color:#26a69a;margin-bottom:6px">▲ Long 多單</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              <div class="metric-card"><div class="metric-label">WR</div><div class="metric-val green">79.5%</div></div>
+              <div class="metric-card"><div class="metric-label">PF</div><div class="metric-val green">2.923</div></div>
+              <div class="metric-card"><div class="metric-label">淨損益</div><div class="metric-val pos">+24.47%</div></div>
+              <div class="metric-card"><div class="metric-label">筆數</div><div class="metric-val">39</div></div>
+            </div>
+            <div style="margin-top:8px;font-size:.75em;color:var(--muted)">FVG Min 0.30% · Max 20bars · SL Fixed 2.0% · TP1 0.5R / TP2 2.0R · TB 48h</div>
+          </div>
+          <div>
+            <div style="font-size:.8rem;font-weight:700;color:#ef5350;margin-bottom:6px">▼ Short 空單</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              <div class="metric-card"><div class="metric-label">WR</div><div class="metric-val green">70.5%</div></div>
+              <div class="metric-card"><div class="metric-label">PF</div><div class="metric-val green">2.269</div></div>
+              <div class="metric-card"><div class="metric-label">淨損益</div><div class="metric-val pos">+16.50%</div></div>
+              <div class="metric-card"><div class="metric-label">筆數</div><div class="metric-val">44</div></div>
+            </div>
+            <div style="margin-top:8px;font-size:.75em;color:var(--muted)">FVG Min 0.30% · Max 10bars · SL Fixed 1.0% · TP1 0.5R / TP2 4.0R · TB 48h</div>
+          </div>
+        </div>
+        <div class="report-links" style="margin-top:12px"><a class='report-link' href='xauusd/XAUUSD-FVG-Strategy/report_fvg_60m.html'>📄 60m 多空報告 →</a></div>
       </div>
 
       <div class="card">
@@ -686,14 +713,16 @@ tbody tr:hover td{background:#f8fafc}
             <thead><tr><th>版本</th><th>FVG 追蹤</th><th>視覺化</th><th>SL 類型</th><th>出場</th></tr></thead>
             <tbody>
               <tr><td>V1.0</td><td>單一 FVG（var float）</td><td>簡單 box</td><td>FVG Natural / Fixed %</td><td>Profit Flyer</td></tr>
-              <tr><td><b>V2.0 ★</b></td><td><b>多 FVG 陣列（最多 5 個）</b></td><td><b>多 box 自動延伸右邊界</b></td><td><b>FVG Natural / Fixed %</b></td><td><b>Profit Flyer</b></td></tr>
+              <tr><td>V2.0</td><td>多 FVG 陣列（最多 5 個）</td><td>多 box 自動延伸右邊界</td><td>FVG Natural / Fixed %</td><td>Profit Flyer</td></tr>
+              <tr><td><b>V2.1 ★</b></td><td><b>雙陣列（Bull + Bear 同時顯示）</b></td><td><b>支撐綠 / 壓力紅，填充+邊框分離透明度</b></td><td><b>FVG Natural / Fixed %</b></td><td><b>Profit Flyer</b></td></tr>
             </tbody>
           </table>
         </div>
         <div class="report-links">
+          <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.1.pine">📋 V2.1 Pine Script ★</a>
           <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine">📋 V2.0 Pine Script</a>
           <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V1.0.pine">📋 V1.0 Pine Script</a>
-          <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/optimization_results.json">📊 optimization_results.json</a>
+          <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/optimization_results_60m.json">📊 60m optimization JSON</a>
         </div>
       </div>
     </div><!-- /xauusd-fvg-params -->
@@ -1324,7 +1353,9 @@ tbody tr:hover td{background:#f8fafc}
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S2B-Hammer（V2.2）</td><td><a href='xauusd/XAUUSD-Long-S2B-Hammer/report.html' style='color:var(--primary)'>S2B-Hammer 完整報告</a></td></tr>
 
               <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🔍 FVG 策略（V2.0）</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.0 多單回測（WR 66.7%，PF 1.660）</td><td><a href='xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html' style='color:var(--primary)'>多單報告</a></td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG 30m 多單回測（WR 66.7%，PF 1.660）</td><td><a href='xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html' style='color:var(--primary)'>30m 多單報告</a></td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG 60m 多空最佳化（WR Long 79.5% / Short 70.5%）</td><td><a href='xauusd/XAUUSD-FVG-Strategy/report_fvg_60m.html' style='color:var(--primary)'>60m 多空報告</a></td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.1 Pine Script（雙向 FVG 顯示）</td><td><a href='xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.1.pine' style='color:var(--primary)'>V2.1 Pine ★</a></td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.0 Pine Script</td><td><a href='xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine' style='color:var(--primary)'>V2.0 Pine</a></td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG 教學說明（含設定 + 圖解）</td><td><a href='xauusd/XAUUSD-FVG-Strategy/fvg_guide.html' style='color:var(--primary)'>教學頁面</a></td></tr>
 

@@ -840,12 +840,51 @@ def _xauusd_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
 """
 
 
+def _fvg_60m_card(res_60m, report_60m_btn) -> str:
+    if not res_60m:
+        return ""
+    lo = res_60m.get('Long', {}).get('stats', {})
+    sh = res_60m.get('Short', {}).get('stats', {})
+    if not lo:
+        return ""
+    return f"""
+      <div class="card" style="border-left:3px solid #f0c040">
+        <div class="card-title">⚡ 60m 最佳化回測（2025-10 → 2026-04，7個月 3058 bars，12,288 參數組合）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+          <div>
+            <div style="font-size:.8rem;font-weight:700;color:#26a69a;margin-bottom:6px">▲ Long 多單</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              <div class="metric-card"><div class="metric-label">WR</div><div class="metric-val green">{lo.get('win_rate',0)}%</div></div>
+              <div class="metric-card"><div class="metric-label">PF</div><div class="metric-val green">{lo.get('profit_factor',0):.3f}</div></div>
+              <div class="metric-card"><div class="metric-label">淨損益</div><div class="metric-val pos">+{lo.get('net_pnl_pct',0):.2f}%</div></div>
+              <div class="metric-card"><div class="metric-label">筆數</div><div class="metric-val">{lo.get('trades',0)}</div></div>
+            </div>
+            <div style="margin-top:8px;font-size:.75em;color:var(--muted)">FVG Min 0.30% · Max 20bars · SL Fixed 2.0% · TP1 0.5R / TP2 2.0R · TB 48h</div>
+          </div>
+          <div>
+            <div style="font-size:.8rem;font-weight:700;color:#ef5350;margin-bottom:6px">▼ Short 空單</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              <div class="metric-card"><div class="metric-label">WR</div><div class="metric-val green">{sh.get('win_rate',0)}%</div></div>
+              <div class="metric-card"><div class="metric-label">PF</div><div class="metric-val green">{sh.get('profit_factor',0):.3f}</div></div>
+              <div class="metric-card"><div class="metric-label">淨損益</div><div class="metric-val pos">+{sh.get('net_pnl_pct',0):.2f}%</div></div>
+              <div class="metric-card"><div class="metric-label">筆數</div><div class="metric-val">{sh.get('trades',0)}</div></div>
+            </div>
+            <div style="margin-top:8px;font-size:.75em;color:var(--muted)">FVG Min 0.30% · Max 10bars · SL Fixed 1.0% · TP1 0.5R / TP2 4.0R · TB 48h</div>
+          </div>
+        </div>
+        <div class="report-links" style="margin-top:12px">{report_60m_btn}</div>
+      </div>"""
+
+
 def _xauusd_fvg_html() -> str:
-    results_path = ROOT / "xauusd/XAUUSD-FVG-Strategy/fvg_long_results.json"
-    opt_path     = ROOT / "xauusd/XAUUSD-FVG-Strategy/optimization_results.json"
-    report_link  = "xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html"
+    results_path  = ROOT / "xauusd/XAUUSD-FVG-Strategy/fvg_long_results.json"
+    opt_path      = ROOT / "xauusd/XAUUSD-FVG-Strategy/optimization_results.json"
+    results_60m_path = ROOT / "xauusd/XAUUSD-FVG-Strategy/fvg_60m_results.json"
+    report_link   = "xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html"
+    report_60m_link = "xauusd/XAUUSD-FVG-Strategy/report_fvg_60m.html"
     report_exists = (ROOT / report_link).exists()
-    report_btn = f"<a class='report-link' href='{report_link}'>📄 多單回測報告 →</a>" if report_exists else ""
+    report_btn = f"<a class='report-link' href='{report_link}'>📄 30m 多單報告 →</a>" if report_exists else ""
+    report_60m_btn = f"<a class='report-link' href='{report_60m_link}'>📄 60m 多空報告 →</a>" if (ROOT / report_60m_link).exists() else ""
 
     if not results_path.exists():
         return """
@@ -864,6 +903,12 @@ def _xauusd_fvg_html() -> str:
         with open(opt_path, encoding="utf-8") as f:
             opt = json.load(f)
         best_short = next((x for x in opt if x.get('direction') == 'Short'), None)
+
+    res_60m = None
+    if results_60m_path.exists():
+        with open(results_60m_path, encoding="utf-8") as f:
+            d60 = json.load(f)
+        res_60m = d60.get('results', {})
 
     ex = r.get('exit_breakdown', {})
     ex_html = "".join(
@@ -936,6 +981,7 @@ def _xauusd_fvg_html() -> str:
         </div>
         {short_card}
       </div>
+      {_fvg_60m_card(res_60m, report_60m_btn)}
 
       <div class="card">
         <div class="card-title">🚪 出場類型分佈</div>
@@ -961,14 +1007,16 @@ def _xauusd_fvg_html() -> str:
             <thead><tr><th>版本</th><th>FVG 追蹤</th><th>視覺化</th><th>SL 類型</th><th>出場</th></tr></thead>
             <tbody>
               <tr><td>V1.0</td><td>單一 FVG（var float）</td><td>簡單 box</td><td>FVG Natural / Fixed %</td><td>Profit Flyer</td></tr>
-              <tr><td><b>V2.0 ★</b></td><td><b>多 FVG 陣列（最多 5 個）</b></td><td><b>多 box 自動延伸右邊界</b></td><td><b>FVG Natural / Fixed %</b></td><td><b>Profit Flyer</b></td></tr>
+              <tr><td>V2.0</td><td>多 FVG 陣列（最多 5 個）</td><td>多 box 自動延伸右邊界</td><td>FVG Natural / Fixed %</td><td>Profit Flyer</td></tr>
+              <tr><td><b>V2.1 ★</b></td><td><b>雙陣列（Bull + Bear 同時顯示）</b></td><td><b>支撐綠 / 壓力紅，填充+邊框分離透明度</b></td><td><b>FVG Natural / Fixed %</b></td><td><b>Profit Flyer</b></td></tr>
             </tbody>
           </table>
         </div>
         <div class="report-links">
+          <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.1.pine">📋 V2.1 Pine Script ★</a>
           <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine">📋 V2.0 Pine Script</a>
           <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V1.0.pine">📋 V1.0 Pine Script</a>
-          <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/optimization_results.json">📊 optimization_results.json</a>
+          <a class="report-link" href="xauusd/XAUUSD-FVG-Strategy/optimization_results_60m.json">📊 60m optimization JSON</a>
         </div>
       </div>
     </div><!-- /xauusd-fvg-params -->
@@ -1402,7 +1450,9 @@ def _sitemap_html() -> str:
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S2B-Hammer（V2.2）</td><td>{s2b_report}</td></tr>
 
               <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🔍 FVG 策略（V2.0）</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.0 多單回測（WR 66.7%，PF 1.660）</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html", "多單報告", (ROOT / "xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html").exists())}</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG 30m 多單回測（WR 66.7%，PF 1.660）</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html", "30m 多單報告", (ROOT / "xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html").exists())}</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG 60m 多空最佳化（WR Long 79.5% / Short 70.5%）</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/report_fvg_60m.html", "60m 多空報告", (ROOT / "xauusd/XAUUSD-FVG-Strategy/report_fvg_60m.html").exists())}</td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.1 Pine Script（雙向 FVG 顯示）</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.1.pine", "V2.1 Pine ★", (ROOT / "xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.1.pine").exists())}</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.0 Pine Script</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine", "V2.0 Pine", (ROOT / "xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine").exists())}</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG 教學說明（含設定 + 圖解）</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/fvg_guide.html", "教學頁面", (ROOT / "xauusd/XAUUSD-FVG-Strategy/fvg_guide.html").exists())}</td></tr>
 
