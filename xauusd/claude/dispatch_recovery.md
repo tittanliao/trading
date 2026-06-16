@@ -8,9 +8,9 @@
 ```
 你好，請依序讀取以下檔案，恢復黃金分析工作流：
 
-1. /Users/tittan/program/github/trading/xauusd/skill/ANALYSIS_SKILL.md
-2. /Users/tittan/program/github/trading/xauusd/skill/TRADING_PROFILE.md
-3. /Users/tittan/program/github/trading/xauusd/daily_log/xauusd_latest.json
+1. /Users/tittan/program/github/trading/xauusd/claude/ANALYSIS_SKILL.md
+2. /Users/tittan/program/github/trading/xauusd/claude/TRADING_PROFILE.md
+3. /Users/tittan/program/github/trading/xauusd/claude/daily/（讀最新的 YYYY-MM-DD.json）
 
 4. 【周報①：Gemini 版】
    在以下路徑找 7 天內最新的 XAUUSD_Weekly_Report_*.gdoc：
@@ -30,7 +30,7 @@
 
 | 指令 | 說明 |
 |------|------|
-| `請分析` | 日常黃金分析（截圖 + 狀態 + 建議） |
+| `請分析` | ① 讀 xauusd_latest.json 最後一筆 → ② 從 `~/googledrive/XAUUSD/weekly report/` 找最新 Gemini 週報（.png/.gdoc/.txt）並讀取 → ③ 用 computer use 截取 Chrome TradingView XAUUSD 30m 即時截圖（不用 API/Yahoo Finance）→ ④ 結合 json + 週報 + 截圖做分析 → ⑤ 輸出標準格式結果 → ⑥ 自動 append 結果到 xauusd_latest.json（不問用戶）→ ⑦ 提醒 git commit/push |
 | `週日黃金工作流` | 完整周報生成（CFTC + CSV + 周報） |
 | `請比對周報` | 周報①（Gemini/Google Drive 最新）vs 周報②（Claude txt 最新），輸出綜合分析 |
 | `更新 profile` | 更新 TRADING_PROFILE.md 中的個人設定 |
@@ -63,8 +63,8 @@
 ## 完成清單（Completion Checklist）
 
 每次任務結束前確認：
-- [ ] `xauusd_latest.json` 已更新
-- [ ] 重要分析已存到 `daily_log/`
+- [ ] `xauusd/claude/daily/YYYY-MM-DD.json` 已更新
+- [ ] `xauusd/claude/context.md` 已更新
 - [ ] TRADING_PROFILE 若有新發現已更新
 - [ ] git commit + push
 
@@ -77,7 +77,7 @@
 ```
 請初始化 xauusd_latest.json 並開始使用。
 
-檔案路徑：/Users/tittan/program/github/trading/xauusd/daily_log/xauusd_latest.json
+檔案路徑：/Users/tittan/program/github/trading/xauusd/claude/daily/YYYY-MM-DD.json
 
 【用途】
 每次「請分析」結束後，把本次分析重點寫入這個檔案。
