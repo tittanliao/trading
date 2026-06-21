@@ -1,5 +1,5 @@
 # XAUUSD 合併週報技術文件
-# 版本：20260614 | 觸發指令：「合併週報」
+# 版本：20260621 | 觸發指令：「合併週報」
 # 本文件在「合併週報」觸發時讀取。日常分析請使用 ANALYSIS_SKILL.md。
 
 ---
@@ -24,8 +24,8 @@
 
 ② Gemini 週報（用戶手動生成，Google Drive 存為 .gdoc）
    路徑：/Users/tittan/googledrive/XAUUSD/weekly report/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}.gdoc
-   讀取：Read .gdoc 取 doc_id → Chrome MCP navigate → scroll+screenshot
-   ⚠ 格式是 .gdoc，不是 .txt
+   讀取：browser-cookie3（見下方，已驗證 HTTP 200，不需用戶介入）
+   ⚠ 格式是 .gdoc（190 bytes JSON 指標），不是真正文件
 
 ③ Dispatch 週報（分析生成）
    路徑：/Users/tittan/program/github/trading/xauusd/daily_log/weekly_report_W{週次}_{YYYYMMDD}.txt
@@ -73,6 +73,7 @@ r = requests.get(url, cookies=cj, allow_redirects=True, timeout=15,
 2. **讀取三份報告**，各自提取：主劇本 + 機率、關鍵支撐/阻力、S1/S2 條件、本週最大風險
 3. **製作共識/分歧對照表**（3 欄：Claude / Gemini / Dispatch）
 4. **生成三個 Style Combine .docx**
+5. **⚡ 自動更新 index.html**（見下方「Step 5」段落，必跑）
 
 ### Combine 輸出格式（三個 Style，各一份）
 ```
@@ -104,6 +105,68 @@ Style C — 投資委員會正式審核版
   輸出：一、報告說明 / 二、共識事項 / 三、分歧與決議 / 四、操作決議表格 / 五、下次審核
   語氣：正式會議紀錄，逐條決議
 ```
+
+### Step 5：自動更新 index.html（Merge 完成後必跑）
+
+Combine 生成完成後，從仲裁結論中提取共識欄位，儲存 JSON 並呼叫 Python。
+
+**共識欄位說明：**
+| 欄位 | 來源 | 說明 |
+|------|------|------|
+| `week` | 本週週次（如 W26） | 命名用 |
+| `day` | Sun / Wed | 命名用 |
+| `price` | 最新收盤（從 CSV 也可自動取） | 現價 |
+| `bias` | 仲裁結論 | 本週方向偏向（簡短） |
+| `account` | context.md 帳戶餘額 | 顯示用 |
+| `scenario2` | 仲裁主情境 + 機率 | 主劇本描述 |
+| `s2` | 仲裁 S2 A+ 進場區 | 關鍵支撐數字 |
+| `s1` | 仲裁 S1 觸發條件 | 突破確認條件 |
+| `cftc_note` | CFTC 籌碼摘要（一句話） | 籌碼方向 |
+| `scenario1_pct` / `scenario2_pct` / `scenario3_pct` | 仲裁機率分配 | 劇本機率 |
+
+**Python 執行碼（在 Bash tool 執行）：**
+```python
+import json, subprocess, os
+
+# 從仲裁結論填入以下欄位
+consensus = {
+    "week": "W26",        # ← 填當週週次
+    "day": "Sun",          # ← Sun 或 Wed
+    "price": 4155.57,      # ← 最新收盤價
+    "bias": "觀望，等S2 A+",    # ← 仲裁偏向（簡短）
+    "account": 21649,      # ← context.md 帳戶餘額
+    "scenario2": "震盪尋底 60%，等 4118 SSL Sweep + 錘頭",  # ← 主情境
+    "s2": "4082-4118（日線/4H BB下軌）",   # ← S2 A+ 進場區
+    "s1": "站回 1H 中軌 4165 + AO 翻正",  # ← S1 觸發條件
+    "cftc_note": "MM 淨多微降，散戶追空；技術底部需確認",  # ← CFTC 一句話
+    "scenario1_pct": 25,   # ← 劇本一機率
+    "scenario2_pct": 60,   # ← 劇本二機率（主情境）
+    "scenario3_pct": 15,   # ← 劇本三機率
+    "source": "Combine（Claude × Gemini × Dispatch 仲裁）"
+}
+
+reports_dir = "/Users/tittan/program/github/trading/xauusd/claude/reports"
+json_path = f"{reports_dir}/weekly_consensus_{consensus['week']}_{consensus['day']}.json"
+with open(json_path, 'w', encoding='utf-8') as f:
+    json.dump(consensus, f, ensure_ascii=False, indent=2)
+print(f"✅ 儲存 {json_path}")
+
+result = subprocess.run(
+    ['python3.12', 'xauusd/claude/generate_weekly_html.py', '--from-json', json_path],
+    cwd='/Users/tittan/program/github/trading',
+    capture_output=True, text=True
+)
+print(result.stdout)
+if result.returncode != 0:
+    print("❌ 錯誤:", result.stderr)
+```
+
+**執行後確認：**
+- `xauusd/index.html` 週報分析 tab 已更新
+- `xauusd/claude/reports/weekly_consensus_W{N}_{day}.json` 已儲存
+- 報告歸檔 tab 自動掃 reports/ 目錄，新 Combine .docx 自動出現
+
+---
 
 ### 參考提示詞位置
 ```
