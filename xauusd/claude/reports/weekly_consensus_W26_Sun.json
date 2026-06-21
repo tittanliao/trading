@@ -174,14 +174,14 @@
   ],
   "week": "W26",
   "day": "Sun",
-  "bias": "觀望，等S2 A+（4082-4118）",
+  "bias": "觀望，等SSL Sweep後S2 A+",
   "account": 21649,
-  "scenario2": "震盪尋底 60%，下探 4118/4082 SSL Sweep 後錘頭進場",
-  "s2": "4082-4118（日線/4H BB下軌 + FVG）",
-  "s1": "站回 1H 中軌 4165 + AO 翻正（配合 DXY 回落）",
-  "cftc_note": "MM 多單 -3087 / 空單 +3229，機構打壓；散戶追空創底燃料",
-  "scenario1_pct": 25,
-  "scenario2_pct": 60,
-  "scenario3_pct": 15,
-  "source": "Combine（Claude × Gemini × Dispatch 仲裁）"
+  "scenario2": "震盪尋底 61%，下探4096-4131 SSL Sweep + M30錘頭 → S2 A+",
+  "s2": "4096-4131（4H FVG+SSL主區）/ 4075-4082（日線下軌極限）",
+  "s1": "4165站穩 + AO翻正 + DXY回落（FVG牆4178-4201需清掉）",
+  "cftc_note": "MM淨多105,863（-6,316 減多增空）；交換商空頭回補+底部信號；6/20期待更新",
+  "scenario1_pct": 22,
+  "scenario2_pct": 61,
+  "scenario3_pct": 17,
+  "source": "Combine（Claude W26 × Gemini W25/W26 × Dispatch W24 仲裁）"
 }
