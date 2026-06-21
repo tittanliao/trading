@@ -22,7 +22,8 @@ warnings.filterwarnings('ignore')
 
 CSV_DIR    = "/Users/tittan/googledrive/XAUUSD/weekly report/csv/"
 REPORTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reports")
-INDEX_HTML  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "index.html")
+# 目標是根目錄 trading/index.html（上兩層：xauusd/claude/ → xauusd/ → trading/）
+INDEX_HTML  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "index.html")
 
 # ── CSV 指標計算 ──────────────────────────────────────────────────────────
 def load_csv(fname):
@@ -177,7 +178,7 @@ def build_archive_rows():
     for (week, day, year), info in sorted(groups.items(), reverse=True):
         def link(fname, label):
             if not fname: return '—'
-            return f'<a class="report-link" href="claude/reports/{fname}">{label}</a>'
+            return f'<a class="report-link" href="xauusd/claude/reports/{fname}">{label}</a>'
         rows += f"""<tr>
           <td><strong>{week}</strong></td>
           <td class="td-date">{year}-{day} {day}</td>
@@ -243,16 +244,16 @@ def build_weekly_section(c):
     archive_rows = build_archive_rows()
 
     return f"""
-<!-- WEEKLY_SECTION_START -->
-<div id="main-weekly" class="main-section">
+<!-- XAUUSD_WEEKLY_SECTION_START -->
+<div id="xauusd-main-weekly" class="main-section">
   <div class="subnav">
-    <button class="sub-tab active" onclick="showTab('wk','now',this)">本週重點</button>
-    <button class="sub-tab" onclick="showTab('wk','history',this)">近5週走勢</button>
-    <button class="sub-tab" onclick="showTab('wk','archive',this)">報告歸檔</button>
+    <button class="sub-tab active" onclick="showTab('xauusd-wk','now',this)">本週重點</button>
+    <button class="sub-tab" onclick="showTab('xauusd-wk','history',this)">近5週走勢</button>
+    <button class="sub-tab" onclick="showTab('xauusd-wk','archive',this)">報告歸檔</button>
   </div>
 
   <!-- ── 本週重點 ───────────────────────────────────────────────── -->
-  <div id="wk-now" class="tab-panel active">
+  <div id="xauusd-wk-now" class="tab-panel active">
     <div class="part-label">
       <span class="part-badge">{week_id} {day_label}</span>
       本週重點 · {gen_date}
@@ -335,10 +336,10 @@ def build_weekly_section(c):
         此劇本暫停操作
       </div>
     </div>
-  </div><!-- /wk-now -->
+  </div><!-- /xauusd-wk-now -->
 
   <!-- ── 近5週走勢 ──────────────────────────────────────────────── -->
-  <div id="wk-history" class="tab-panel">
+  <div id="xauusd-wk-history" class="tab-panel">
     <div class="part-label"><span class="part-badge">近5週</span>週線走勢</div>
     <div class="card">
       <div class="tbl-wrap">
@@ -379,10 +380,10 @@ def build_weekly_section(c):
         </div>
       </div>
     </div>
-  </div><!-- /wk-history -->
+  </div><!-- /xauusd-wk-history -->
 
   <!-- ── 報告歸檔 ────────────────────────────────────────────────── -->
-  <div id="wk-archive" class="tab-panel">
+  <div id="xauusd-wk-archive" class="tab-panel">
     <div class="part-label"><span class="part-badge">歸檔</span>週報 + Combine 報告</div>
     <div class="card">
       <div style="font-size:.83em;color:var(--muted);margin-bottom:12px">
@@ -395,32 +396,27 @@ def build_weekly_section(c):
         </table>
       </div>
       <div style="margin-top:14px;padding:10px 14px;background:var(--surface2);border-radius:8px;font-size:.82em;color:var(--text2);font-family:monospace">
-        python3.12 claude/generate_weekly_html.py --from-json claude/reports/weekly_consensus_W26_Sun.json
+        python3.12 xauusd/claude/generate_weekly_html.py --from-json xauusd/claude/reports/weekly_consensus_W26_Sun.json
       </div>
     </div>
-  </div><!-- /wk-archive -->
-</div><!-- /main-weekly -->
-<!-- WEEKLY_SECTION_END -->"""
+  </div><!-- /xauusd-wk-archive -->
+</div><!-- /xauusd-main-weekly -->
+<!-- XAUUSD_WEEKLY_SECTION_END -->"""
 
 # ── index.html 更新 ───────────────────────────────────────────────────────
 def update_index_html(weekly_html):
     with open(INDEX_HTML, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    pattern = r'<!-- WEEKLY_SECTION_START -->.*?<!-- WEEKLY_SECTION_END -->'
+    pattern = r'<!-- XAUUSD_WEEKLY_SECTION_START -->.*?<!-- XAUUSD_WEEKLY_SECTION_END -->'
     if re.search(pattern, content, re.DOTALL):
         content = re.sub(pattern, weekly_html.strip(), content, flags=re.DOTALL)
     else:
-        content = content.replace('</body>', weekly_html + '\n</body>')
-
-    if "showMain('weekly'" not in content:
-        content = content.replace(
-            '<div class="nav-meta">',
-            '<button class="nav-main-tab" onclick="showMain(\'weekly\',this)">📊 週報分析</button>\n    <div class="nav-meta">'
-        )
+        # fallback: insert before /commodity-xauusd closing tag
+        content = content.replace('</div><!-- /commodity-xauusd -->', weekly_html + '\n</div><!-- /commodity-xauusd -->')
 
     today = date.today().strftime('%Y-%m-%d')
-    content = re.sub(r'Updated \d{4}-\d{2}-\d{2}', f'Updated {today}', content)
+    content = re.sub(r'Generated by Claude Code \d{4}-\d{2}-\d{2}', f'Generated by Claude Code {today}', content)
 
     with open(INDEX_HTML, 'w', encoding='utf-8') as f:
         f.write(content)
