@@ -6,7 +6,7 @@ import time
 from datetime import datetime
 
 # 🌟 填入你的 Twelve Data API Key
-TWELVEDATA_API_KEY = "YOUR_TWELVEDATA_API_KEY"
+TWELVEDATA_API_KEY = os.environ.get("TWELVEDATA_API_KEY", "")
 
 output_dir = "/Users/tittan/googledrive/XAUUSD/weekly report/csv"
 if not os.path.exists(output_dir):
