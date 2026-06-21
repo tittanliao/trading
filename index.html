@@ -616,7 +616,11 @@ tbody tr:hover td{background:#f8fafc}
             <div class="metric-card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$494</div></div>
           </div>
           <div style="margin-top:12px;font-size:.82em;color:var(--muted)">主要問題：immediate_loss 31% · 504 筆交易</div>
-          <div class="report-links"><a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report.html">完整報告 →</a></div>
+          <div class="report-links">
+            <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report.html">完整報告 →</a>
+            <a class="report-link" href="#" onclick="goToMacroBacktest();return false;" style="border-color:var(--purple);color:var(--purple)">📊 宏觀回測結果 →</a>
+          </div>
+          <div style="margin-top:6px;font-size:.8em;color:var(--muted)">宏觀最佳：NEUTRAL（WR 58.7%，PF 2.08）；WAIT 期過濾有效（PF +0.12）</div>
         </div>
         <div class="card">
           <div class="card-title">📊 S2A-RSI <span class="badge badge-yellow">V2.3</span></div>
@@ -627,7 +631,11 @@ tbody tr:hover td{background:#f8fafc}
             <div class="metric-card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$1,177</div></div>
           </div>
           <div style="margin-top:12px;font-size:.82em;color:var(--muted)">主要問題：time_bleed 52% · 161 筆交易</div>
-          <div class="report-links"><a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/report.html">完整報告 →</a></div>
+          <div class="report-links">
+            <a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/report.html">完整報告 →</a>
+            <a class="report-link" href="#" onclick="goToMacroBacktest();return false;" style="border-color:var(--purple);color:var(--purple)">📊 宏觀回測結果 →</a>
+          </div>
+          <div style="margin-top:6px;font-size:.8em;color:var(--muted)">⚠️ STRONG BUY 期最差（WR 34.4%）；最佳：NEUTRAL（WR 66.7%，PF 4.71）</div>
         </div>
         <div class="card">
           <div class="card-title">📊 S2B-Hammer <span class="badge badge-yellow">V2.2</span></div>
@@ -638,7 +646,11 @@ tbody tr:hover td{background:#f8fafc}
             <div class="metric-card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$1,431</div></div>
           </div>
           <div style="margin-top:12px;font-size:.82em;color:var(--muted)">主要問題：time_bleed 54% · 200 筆交易</div>
-          <div class="report-links"><a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/report.html">完整報告 →</a></div>
+          <div class="report-links">
+            <a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/report.html">完整報告 →</a>
+            <a class="report-link" href="#" onclick="goToMacroBacktest();return false;" style="border-color:var(--purple);color:var(--purple)">📊 宏觀回測結果 →</a>
+          </div>
+          <div style="margin-top:6px;font-size:.8em;color:var(--muted)">各宏觀環境均穩（WR 42–46%）；宏觀敏感度最低</div>
         </div>
       </div>
 
@@ -2010,6 +2022,16 @@ function showTab(prefix, id, btn) {
   btn.closest('.subnav').querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
   document.getElementById(panelId).classList.add('active');
   btn.classList.add('active');
+}
+
+function goToMacroBacktest() {
+  const xauBtn = document.querySelector('.commodity-tab[data-id="xauusd"]');
+  showCommodity('xauusd', xauBtn);
+  const macroMainBtn = document.querySelector('[onclick*="xauusd-main-macro"]');
+  showMain('xauusd-main-macro', macroMainBtn);
+  const macroTabBtn = document.querySelector('[onclick*="macrobacktest"]');
+  showTab('xauusd-macro', 'macrobacktest', macroTabBtn);
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 </script>
 
