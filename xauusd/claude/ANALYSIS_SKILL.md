@@ -105,68 +105,49 @@
 
 ### Step 2 — 讀取最新周報（**強制執行，不得跳過**）
 
-> ⚠️ **順序說明**：Step 2 讀完 Gemini 週報後，Chrome MCP tab 會佔據前景，
-> 導致 computer use 截圖拍不到 TradingView。
-> 因此**週報讀取排在截圖之前**，讀完立即把 Chrome MCP tab 還原，再截圖。
-
 ```
-【Gemini 週報】讀取方式（gdoc 唯一來源）：
+【Gemini 週報】讀取方式（已驗證，gdoc 唯一來源）：
 
-1. 找最新的 XAUUSD_Weekly_Report_*_Sun.gdoc 或 *_Wed.gdoc（7 天內）
-   路徑：/Users/tittan/googledrive/XAUUSD/weekly report/*.gdoc
-2. 用 Read 工具讀取該 .gdoc 檔案，取出 "doc_id" 欄位（.gdoc 是 190 byte JSON 指標）
-3. 用 mcp__Claude_in_Chrome__navigate 開啟：
-     https://docs.google.com/document/d/{doc_id}/edit
-4. 用 mcp__Claude_in_Chrome__browser_batch 搭配 scroll + screenshot 逐頁捲動截圖，
-   讀取完整週報內文（⚠ get_page_text 只能讀到目錄，無法讀內文，必須用 scroll+screenshot）
-→ 成功後記錄來源為「gdoc W__」
+⚡ 若本次對話中已讀過週報，直接跳至 Step 3，不重複讀取。
 
-⛔ 若 gdoc 無法讀取 → 立即停止分析，回覆：
+1. 用 bash 找最新 .gdoc 檔案：
+   ls -t "/Users/tittan/googledrive/XAUUSD/weekly report/"*.gdoc | head -1
+   確認是 7 天內的 *_Sun.gdoc 或 *_Wed.gdoc
+
+2. 用 computer use 的 open_application 開啟 Finder，
+   導航至 /Users/tittan/googledrive/XAUUSD/weekly report/
+   雙擊最新 .gdoc 檔案 → Chrome 自動開啟 Google Doc
+
+3. 等待 Chrome 載入（約 2 秒），用 mcp__Claude_in_Chrome__browser_batch
+   搭配 scroll（amount: 5）+ screenshot 逐段讀取全文
+   ⚠️ get_page_text 只能讀到目錄，無法讀內文，必須用 scroll+screenshot
+
+4. 讀完後記錄週報週次（WXX）
+
+⛔ 若 gdoc 無法讀取 → 立即停止，回覆：
 「Gemini gdoc 週報無法讀取，請確認：
  1. Chrome 已登入 Google 帳號
  2. Google Drive 已掛載（/Users/tittan/googledrive）
  完成後再輸入「請分析」重試。」
-
-❌ 不使用 PNG 或 txt 替代
-❌ 不繼續分析
-
-CSV路徑：/Users/tittan/googledrive/XAUUSD/weekly report/csv/（週報專用最新 CSV，供週報生成使用）
-目的：取得本週大方向、關鍵價位、三種劇本
-```
-
-**【讀完週報後必做：還原 Chrome 前景】**（僅當走①主要路徑讀了 Google Doc 時）
-```
-讀完週報截圖後，執行以下兩步讓 TradingView 重新成為 Chrome 的 active tab：
-1. mcp__Claude_in_Chrome__navigate(url="about:blank")
-   → 把 MCP tab 導向空白頁，不再佔前景
-2. mcp__computer-use__open_application(app="Google Chrome")
-   → 把 Chrome 帶回前景；此時 TradingView 應已是 active tab
-完成後繼續 Step 3 截圖。
 ```
 
 ### Step 3 — 取得最新走勢（**強制用 computer use 截圖，不得用 API / Yahoo Finance / CSV 替代**）
 ```
-【截圖前置步驟】
-1. 截圖確認當前畫面
-2. 若有任何對話框（Google Drive 另存新檔、下載提示等）→ 用 Chrome MCP 按 Escape 關閉
-3. 截圖確認對話框已關閉
-4. 確認 Chrome 顯示 TradingView XAUUSD 30m 才截圖
+【截圖前置步驟（讀完週報後執行）】
 
-主要方式（強制）：
-1. 呼叫 mcp__computer-use__request_access 取得 Chrome 操作權限
-   （若 Step 2 已執行還原步驟，Chrome 前景應已是 TradingView，直接截圖）
-2. 截圖確認 Chrome 已開啟 TradingView XAUUSD 30m 圖表
-3. 若未開啟：提示用戶「請在 Chrome 開啟 TradingView → XAUUSD → 30m，完成後回覆」
-4. 截取截圖，用於分析即時 K 棒形態、BB 位置、AO 方向
+1. 關閉 Chrome MCP tab（讀週報時開的分頁）：
+   mcp__Claude_in_Chrome__tabs_close_mcp()  ← 執行 1-2 次清除 MCP tabs
 
-⛔ 若無法取得 TradingView XAUUSD 30m 截圖 → 立即停止分析，回覆：
-「TradingView XAUUSD 30m 截圖無法取得，請：
- 1. 在 Chrome 開啟 TradingView → XAUUSD → 30m 圖表
- 2. 確認沒有任何彈出視窗擋住畫面
- 完成後再輸入「請分析」重試。」
+2. 把 Chrome 帶回前景：
+   mcp__computer-use__open_application(app="Google Chrome")
 
-❌ 不使用 CSV 替代
-❌ 不繼續分析
+3. 截圖確認 Chrome 顯示 TradingView XAUUSD 30m：
+   mcp__computer-use__computer_batch → screenshot
+   - 若已是 TradingView → 直接截圖完成
+   - 若不是 → 提示用戶「請在 Chrome 切換至 TradingView XAUUSD 30m」
+
+⛔ 若無法取得 TradingView XAUUSD 30m 截圖 → 停止分析，回覆：
+「TradingView XAUUSD 30m 截圖無法取得，請在 Chrome 開啟後再輸入「請分析」重試。」
 ```
 
 **週報有效性判斷（每次必做）：**
