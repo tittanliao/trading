@@ -57,6 +57,77 @@
     "alerts": "S1-AweWithBB-V3.4 order sell@2.3 filled 17:19:26"
   },
   {
+    "timestamp": "2026-06-16T18:20",
+    "timezone": "Asia/Taipei",
+    "session": "歐盤",
+    "price": 4344.16,
+    "rsi": 62.49,
+    "rsi_signal": 55.76,
+    "awe": "Bear",
+    "note": "4342-4349盤整超過60分鐘，RSI從68.08降至62.49（-5.59），頂背離強化。30m當前蠟燭O4345 H4349 L4342 C4344（十字/上影線），9分鐘後收線。收線≤4343→方案B觸發（進場4340-4344，SL4350，TP1:4327，TP2:4305，雙倉計畫）。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "等9分鐘後30m收線，收≤4343→方案B空",
+    "strategy": "方案B拒絕空（條件逼近）",
+    "key_levels": {
+      "resistance": [4349.02, 4353, 4380, 4462],
+      "support": [4331.02, 4327.23, 4305.43]
+    },
+    "account_mode": "recovery"
+  },
+  {
+    "timestamp": "2026-06-16T19:49",
+    "timezone": "Asia/Taipei",
+    "session": "歐美盤",
+    "price": 4337.05,
+    "rsi": 56.82,
+    "rsi_signal": 54.14,
+    "awe": "Bear",
+    "trade": {
+      "action": "SHORT_ENTRY",
+      "entry": 4343,
+      "stop_loss": 4350,
+      "tp1": 4327,
+      "tp2": 4305,
+      "lots": "0.03-0.05",
+      "plan": "雙倉：倉A@4327平；倉B移成本後等4305",
+      "pnl_now": "+5.95pts（浮盈）"
+    },
+    "note": "方案B空頭觸發。4343進場，現價4337，RSI 56.82下降中（從18:20的62.49快速跌）。4331 FVG支撐需注意，倉A可在4327-4331間出場。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "持倉：空單4343，等TP1 4327",
+    "strategy": "方案B拒絕空（已進場）",
+    "account_mode": "recovery"
+  },
+  {
+    "timestamp": "2026-06-16T22:15",
+    "timezone": "Asia/Taipei",
+    "session": "美盤",
+    "price": 4334.5,
+    "rsi": 58.29,
+    "rsi_signal": 50.18,
+    "awe": "Bear",
+    "trade": {
+      "action": "SHORT_HOLDING",
+      "entry": 4343,
+      "stop_loss": 4350,
+      "tp1": 4327,
+      "tp2": 4305,
+      "lots": "0.03-0.05",
+      "plan": "雙倉：倉A@4327平；倉B移成本後等4305",
+      "pnl_now": "+8.5pts（浮盈）"
+    },
+    "note": "RSI紫線50.18已觸及中軸，下行動能大幅消耗。S2-Pullback-V1.9於20:00觸發buy信號（對立訊號），FVG 4331撐住反彈至4334。倉A建議4333-4335附近出場鎖利；倉B收緊SL至4341（保本+1），若4331跌破持有等4327/4315。W24 60%主劇本區間震盪，不追殺。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "評估倉A出場（4333-4335），倉B SL收緊至4341",
+    "strategy": "方案B拒絕空（持倉管理）",
+    "key_levels": {
+      "resistance": [4335.9, 4356.8],
+      "support": [4331.0, 4327.0, 4314.8]
+    },
+    "account_mode": "recovery",
+    "alerts": "S2-Pullback-V1.9 order buy@2.3 filled 20:00:00（對立訊號，注意反彈風險）"
+  },
+  {
     "timestamp": "2026-06-16T17:44",
     "timezone": "Asia/Taipei",
     "session": "歐盤",

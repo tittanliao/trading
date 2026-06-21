@@ -1,0 +1,205 @@
+[
+  {
+    "timestamp": "2026-06-17T00:03",
+    "timezone": "Asia/Taipei",
+    "session": "美盤尾段",
+    "price": 4337.14,
+    "rsi": 52.94,
+    "rsi_signal": 52.90,
+    "awe": "Bear",
+    "trade": {
+      "action": "FLAT",
+      "note": "空單4343已TP出場（用戶確認）"
+    },
+    "note": "空單4343已達TP出場。現價4337，RSI雙線52.9幾乎重疊（完全中性）。AWE Bear標籤仍在。價格夾在4331 FVG支撐與4338 FVG阻力之間，為盤整震盪帶。無明確方向訊號，現為觀望。等美盤方向選擇：跌破4331下看4319/4305；若反彈測試4343-4345區並出現再次拒絕+RSI背離則可考慮再空。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "觀望（FLAT）",
+    "strategy": "等待新突破或拒絕信號",
+    "key_levels": {
+      "resistance": [4338.6, 4343.0, 4355.4],
+      "support": [4331.0, 4319.1, 4305.0]
+    },
+    "account_mode": "recovery"
+  },
+  {
+    "timestamp": "2026-06-17T07:08",
+    "timezone": "Asia/Taipei",
+    "session": "亞盤",
+    "price": 4336.30,
+    "rsi": 52.20,
+    "rsi_signal": 51.45,
+    "awe": "Bear",
+    "trade": {
+      "action": "FLAT",
+      "note": "亞盤規則，15:00前不交易"
+    },
+    "note": "現價4336，RSI雙線52.2/51.45幾近中性，AWE Bear持續。S1-AweWithBB-V3.4於00:30觸發buy@2.3（亞盤早段）。另有2筆隱藏alert待確認。價格夾於4331 FVG支撐與4350阻力之間。等歐盤15:00後方向：突破4350→S1多；跌破4331→4320/4305；反彈測試4343-4344拒絕→再空。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "觀望（亞盤規則）",
+    "strategy": "等歐盤15:00後方向確認",
+    "key_levels": {
+      "resistance": [4335.69, 4344.0, 4350.1],
+      "support": [4331.0, 4320.2, 4305.0]
+    },
+    "account_mode": "recovery",
+    "alerts": "S1-AweWithBB-V3.4 order buy@2.3 filled 00:30:00（+2 hidden alerts）"
+  },
+  {
+    "timestamp": "2026-06-17T13:04",
+    "timezone": "Asia/Taipei",
+    "session": "亞盤末段",
+    "price": 4325.80,
+    "rsi": 49.81,
+    "rsi_signal": 42.01,
+    "rsi_divergence": "Bear",
+    "trade": {
+      "action": "FLAT",
+      "note": "亞盤規則，15:00前不交易，但已備妥空單計劃"
+    },
+    "note": "從07:08的4336跌至4325（-11pt）。RSI黃線49.81剛破50中軸，紫線42.01深入空方。S1-AweWithBB-V3.4於12:34觸發SELL。+3 hidden alerts。現價踩在W24支撐4324，下方FVG底4323.7。等15:00歐盤：條件A反彈至4330-4331拒絕→空，SL4338，TP1:4305，TP2:4282；條件B跌破4323 FVG→追空，SL4333。失效：收復4333。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "觀望（亞盤），歐盤後空單計劃備妥",
+    "strategy": "方案B拒絕空（等歐盤確認）",
+    "key_levels": {
+      "resistance": [4331.0, 4333.9, 4344.0],
+      "support": [4323.7, 4305.0, 4282.0]
+    },
+    "account_mode": "recovery",
+    "alerts": "S1-AweWithBB-V3.4 order sell@2.3 filled 12:34:24（+3 hidden alerts）"
+  },
+  {
+    "timestamp": "2026-06-17T15:31",
+    "timezone": "Asia/Taipei",
+    "session": "歐盤",
+    "price": 4329.50,
+    "rsi": 47.62,
+    "rsi_signal": 46.59,
+    "rsi_divergence": "Bear",
+    "trade": {
+      "action": "WATCHING",
+      "note": "條件A成形中，等30m收線確認"
+    },
+    "note": "歐盤開31分鐘。現價4329.5正測試4330-4331壓力區（條件A反彈拒絕）。RSI雙線<50確認空方。當前30m蠟燭剩28分鐘。收線≤4331→進空（入場4328-4332，SL4338，TP1:4305，TP2:4282，RR≈3:1）；收線>4333→失效。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "等30m收線確認條件A（剩28分鐘）",
+    "strategy": "方案B拒絕空（條件A觸發中）",
+    "key_levels": {
+      "resistance": [4331.0, 4332.2, 4342.8],
+      "support": [4328.9, 4321.5, 4305.0, 4282.0]
+    },
+    "account_mode": "recovery",
+    "alerts": "S1-AweWithBB-V3.4 sell@12:34 仍有效"
+  },
+  {
+    "timestamp": "2026-06-17T18:16",
+    "timezone": "Asia/Taipei",
+    "session": "歐美交匯",
+    "price": 4328.90,
+    "rsi": 48.59,
+    "rsi_signal": 44.99,
+    "rsi_divergence": "Bear",
+    "trade": {
+      "action": "SIGNAL_CONFIRMED",
+      "note": "條件A確認，可進場空單",
+      "entry_zone": "4328-4330",
+      "stop_loss": 4338,
+      "tp1": 4305,
+      "tp2": 4282
+    },
+    "note": "15:00歐盤後4331被拒絕三次，條件A成立。當前30m蠟燭H=4331.1觸頂回落，上影線明確。RSI雙線48.59/44.99雙空。入場4328-4330，SL4338，TP1:4305（倉A，RR≈2.9:1），TP2:4282（倉B）。失效：收復4333。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "條件A觸發，進空信號確認",
+    "strategy": "方案B拒絕空（條件A觸發）",
+    "key_levels": {
+      "resistance": [4331.0, 4341.9],
+      "support": [4319.2, 4305.0, 4282.0]
+    },
+    "account_mode": "recovery"
+  },
+  {
+    "timestamp": "2026-06-17T20:03",
+    "timezone": "Asia/Taipei",
+    "session": "美盤",
+    "price": 4322.70,
+    "rsi": 45.78,
+    "rsi_signal": 42.07,
+    "rsi_divergence": "Bear",
+    "note": "從18:16的4328.9繼續跌至4322.7（-6.2pt）。RSI雙線45.78/42.07持續空方。FVG底部支撐4321.4僅1.3點下方。S1於19:00觸發BUY（反向信號，機構視為買點）。Fed02:00台灣（6小時後）。若持有條件A空單（4329進場）：倉A考慮4321-4322出場鎖利+7pt；倉B SL移至4329。若空手：不進場，等Fed後確認。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "若持倉→考慮倉A出場；若空手→不進場等Fed",
+    "strategy": "Fed前保守管理",
+    "key_levels": {
+      "resistance": [4327.7, 4331.0, 4334.1],
+      "support": [4321.4, 4305.0]
+    },
+    "account_mode": "recovery",
+    "alerts": "S1-AweWithBB-V3.4 order buy@2.3 filled 19:00（+4 hidden alerts）"
+  },
+  {
+    "timestamp": "2026-06-17T21:38",
+    "timezone": "Asia/Taipei",
+    "session": "美盤",
+    "price": 4337.90,
+    "rsi": 57.92,
+    "rsi_signal": 48.08,
+    "rsi_divergence": "Bear（但動能翻轉）",
+    "trade": {
+      "action": "FLAT",
+      "note": "空單失效條件觸發（收復4333），Fed前不進場"
+    },
+    "note": "從20:03的4322.7反彈至4337.9（+15.2pt，1.5小時）。FVG 4321底部撐住，S1 Buy@19:00信號正確。RSI黃線57.92重站50以上，空單失效條件觸發（>4333）。現為空手。Fed 02:00台灣（4.5h後），不做新倉，等聲明後30分鐘確認方向。四巫日明天。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "空手等Fed，空單計劃作廢",
+    "strategy": "等Fed後方向確認",
+    "key_levels": {
+      "resistance": [4350.0],
+      "support": [4336.5, 4331.0, 4320.4]
+    },
+    "account_mode": "recovery"
+  },
+  {
+    "timestamp": "2026-06-17T22:33",
+    "timezone": "Asia/Taipei",
+    "session": "美盤",
+    "price": 4361.40,
+    "rsi": 52.39,
+    "rsi_signal": 72.45,
+    "rsi_divergence": "Bull（RSI看漲背離剛出現）",
+    "trade": {
+      "action": "FLAT",
+      "note": "RSI超買+Fed 3.5h後，不追多"
+    },
+    "note": "從21:38的4337.9再漲+23.5至4361.4，底部4322起算共+39點。RSI紫72.45超買，Bull背離出現。W24阻力4356已穿越。Fed 02:00台灣（3.5h後），絕不追多。四巫日明天。等Fed後確認：鴿派→4352附近找多；鷹派→反轉跌回4331確認再評估空。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "空手等Fed（02:00台灣）",
+    "strategy": "等Fed後方向確認再入場",
+    "key_levels": {
+      "resistance": [4364.0],
+      "support": [4352.8, 4332.0, 4311.3]
+    },
+    "account_mode": "recovery"
+  },
+  {
+    "timestamp": "2026-06-17T23:00",
+    "timezone": "Asia/Taipei",
+    "session": "美盤",
+    "price": 4345.40,
+    "rsi": 53.53,
+    "rsi_signal": 58.31,
+    "rsi_divergence": "Bear+Bull雙訊號",
+    "trade": {
+      "action": "FLAT",
+      "note": "等Fed 02:00台灣"
+    },
+    "note": "4361高點（22:33）→S1 SELL@22:37→回落至4345（-16pt）。RSI紫從72.45降至58.31，超買解除中。4350.5為阻力。支撐4332.2/4331/4313.9。Fed 02:00台灣（3h後），空手不動。等02:30方向確認：鴿派→4332附近找多；4361破頂→多方向；跌回4331→再評估空。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "空手等Fed",
+    "strategy": "等Fed後確認",
+    "key_levels": {
+      "resistance": [4350.5, 4361.0],
+      "support": [4332.2, 4331.0, 4313.9]
+    },
+    "account_mode": "recovery",
+    "alerts": "S1-AweWithBB-V3.4 order sell@2.3 filled 22:37:41"
+  }
+]
