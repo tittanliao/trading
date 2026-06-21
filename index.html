@@ -479,75 +479,113 @@ tbody tr:hover td{background:#f8fafc}
 
     <!-- Macro 回測 Tab ─────────────────────────────────── -->
     <div id="xauusd-macro-macrobacktest" class="tab-panel">
-      <div class="part-label"><span class="part-badge">MACRO BACKTEST</span>Macro Score 對 S1 / S2 策略的影響回測</div>
+      <div class="part-label"><span class="part-badge">MACRO BACKTEST</span>Macro Score 對 S1 / S2 真實策略的影響（2024-01 → 2026-04，504+161+200 筆）</div>
 
       <div class="insight-grid">
-        <div class="insight bad">
-          <strong>🚨 樣本偏差警告</strong>
-          回測期間（2026-01-21 → 2026-04-27）正值黃金從 $2800 暴漲至 $3500+ 的歷史級多頭，
-          由「關稅戰 + 央行購金 + 去美元化」驅動，DXY 與黃金出現同漲異常，傳統 DXY−黃金反向關係暫時失效。
-          <strong>GVZ 全程超過 20（100% Extreme）</strong>，代表整個回測期間均為高波動事件驅動型行情。
-          宏觀過濾的真正效果需在牛熊混合的更長期資料中驗證（建議 2024-01 起）。
+        <div class="insight good">
+          <strong>✅ 真實策略回測（非代理信號）</strong>
+          使用 TradingView Pine Script 實際回測匯出的交易 CSV，每筆交易配對對應進場日的 Macro Score。
+          資料涵蓋 2024-01 至 2026-04（超過 2 年），包含牛市、修正、盤整等多種市場環境。
         </div>
         <div class="insight warn">
-          <strong>⚠️ 反常現象：WAIT 期間 E12 表現反而最好</strong>
-          宏觀邏輯：WAIT = 逆風環境 → 策略理應表現差。
-          實際：E12 在 WAIT 期間 WR 43.9% / PF 1.610 / Net +6.8%，STRONG BUY 期間 WR 33.3% / PF 1.000 / Net 0%。
-          推斷原因：WAIT 期（DXY 強 + 利率高）代表短線過度悲觀反轉的節點；STRONG BUY 期反而是前期大漲後的高位震盪。
+          <strong>⚠️ 新發現：S2A-RSI 在 STRONG BUY 期表現最差</strong>
+          傳統邏輯認為 STRONG BUY = 黃金逆風解除 = 應該做多。但 S2A（逆勢左側）在 STRONG BUY 期 WR 只有 34.4%，
+          NEUTRAL 期卻高達 66.7%。原因：STRONG BUY 時黃金強勁上漲，逆勢反轉信號頻繁假信號。
         </div>
       </div>
 
-      <!-- S1 Proxy (E12) 結果 -->
+      <!-- S1-AweWithBB 真實結果 -->
       <div class="card">
-        <h3 style="color:var(--primary);margin-bottom:12px">S1-proxy：E12 BB Squeeze Break（最接近 S1 右側突破邏輯）</h3>
+        <h3 style="color:var(--primary);margin-bottom:4px">S1-AweWithBB（V3.4）— 504 筆，2024-01 → 2026-04</h3>
+        <p style="color:var(--muted);font-size:.84em;margin:0 0 12px">右側突破策略。WAIT 期過濾（移除 222 筆）後 PF 顯著提升。</p>
         <table class="results-table" style="font-size:.88em">
-          <thead><tr><th>條件</th><th>交易筆</th><th>勝率</th><th>獲利因子</th><th>淨盈虧%</th><th>說明</th></tr></thead>
+          <thead><tr><th>條件</th><th>交易筆</th><th>勝率</th><th>獲利因子</th><th>淨盈虧%</th><th>ΔWR</th><th>ΔPF</th></tr></thead>
           <tbody>
-            <tr><td><strong>基準線（無過濾）</strong></td><td>88</td><td>39.8%</td><td>1.337</td><td>+8.82%</td><td>所有交易</td></tr>
-            <tr><td><strong>過濾後（排除 WAIT）</strong></td><td>48</td><td>37.5%</td><td>1.200</td><td>+3.00%</td><td>僅 NEUTRAL/STRONG BUY</td></tr>
-            <tr style="background:rgba(239,68,68,.07)"><td colspan="6" style="font-style:italic;color:var(--muted)">→ 移除 40 筆後：WR ↓2.3%，PF ↓0.14，Net ↓5.82%。過濾器在此期間表現<strong>反效果</strong>。</td></tr>
+            <tr><td><strong>Baseline（無過濾）</strong></td><td>504</td><td>53.2%</td><td>1.524</td><td>+62.41%</td><td>—</td><td>—</td></tr>
+            <tr style="background:rgba(34,197,94,.06)"><td><strong>Filtered（排除 WAIT）</strong></td><td>282</td><td><strong>54.3%</strong></td><td><strong>1.639</strong></td><td>+41.50%</td><td style="color:#22c55e;font-weight:700">+1.1%</td><td style="color:#22c55e;font-weight:700">+0.115</td></tr>
           </tbody>
         </table>
-
         <h4 style="margin:14px 0 8px;color:var(--text2)">按宏觀 Verdict 分組</h4>
         <table class="results-table" style="font-size:.88em">
           <thead><tr><th>Verdict</th><th>交易筆</th><th>勝率</th><th>獲利因子</th><th>淨盈虧%</th></tr></thead>
           <tbody>
-            <tr style="background:rgba(239,68,68,.07)"><td><span class="badge badge-red">WAIT</span></td><td>41</td><td><strong>43.9%</strong></td><td><strong>1.610</strong></td><td><strong>+6.82%</strong></td></tr>
-            <tr style="background:rgba(234,179,8,.07)"><td><span class="badge badge-yellow">NEUTRAL</span></td><td>14</td><td>42.9%</td><td>1.500</td><td>+2.00%</td></tr>
-            <tr style="background:rgba(34,197,94,.07)"><td><span class="badge badge-green">STRONG BUY</span></td><td>33</td><td>33.3%</td><td>1.000</td><td>0.00%</td></tr>
+            <tr style="background:rgba(34,197,94,.06)"><td><span class="badge badge-green">STRONG BUY</span></td><td>190</td><td>52.1%</td><td>1.457</td><td>+20.95%</td></tr>
+            <tr style="background:rgba(234,179,8,.10)"><td><span class="badge badge-yellow">NEUTRAL</span></td><td>92</td><td style="color:#22c55e;font-weight:700">58.7%</td><td style="color:#22c55e;font-weight:700">2.075 ★</td><td>+20.55%</td></tr>
+            <tr style="background:rgba(239,68,68,.06)"><td><span class="badge badge-red">WAIT</span></td><td>222</td><td>51.8%</td><td>1.387</td><td>+20.91%</td></tr>
           </tbody>
         </table>
+        <div class="insight good" style="margin-top:10px;font-size:.85em">
+          <strong>結論</strong>：NEUTRAL 環境（Score 3–4）是 S1 最佳進場環境（WR 58.7%，PF 2.075），遠優於 STRONG BUY。
+          WAIT 過濾有效：PF 從 1.524 提升至 1.639，建議維持「WAIT 不做 S1」規則。
+        </div>
       </div>
 
-      <!-- S2 Proxy 結果 -->
+      <!-- S2A-RSI 真實結果 -->
       <div class="card">
-        <h3 style="color:var(--primary);margin-bottom:12px">S2-proxy：E18 Hammer + E06 RSI Oversold</h3>
+        <h3 style="color:var(--primary);margin-bottom:4px">S2A-RSI（V2.0）— 160 筆，2024-01 → 2026-04</h3>
+        <p style="color:var(--muted);font-size:.84em;margin:0 0 12px">左側逆勢（RSI 指標觸發）。S2 不套用 WAIT 過濾，全數執行。</p>
         <table class="results-table" style="font-size:.88em">
-          <thead><tr><th>策略代理</th><th>交易筆</th><th>勝率</th><th>獲利因子</th><th>淨盈虧%</th><th>說明</th></tr></thead>
+          <thead><tr><th>Verdict</th><th>交易筆</th><th>勝率</th><th>獲利因子</th><th>淨盈虧%</th></tr></thead>
           <tbody>
-            <tr><td>E18 Hammer（S2B-proxy）</td><td>20</td><td>15.0%</td><td>0.353</td><td>-5.50%</td><td>本期間整體表現不佳</td></tr>
-            <tr><td>E06 RSI Oversold（S2A-proxy）</td><td>43</td><td>30.2%</td><td>0.867</td><td>-2.00%</td><td>接近損益平衡</td></tr>
-            <tr style="background:rgba(239,68,68,.07)"><td colspan="6" style="font-style:italic;color:var(--muted)">→ S2 策略無 WAIT 交易被移除（宏觀過濾對 S2 無效），本期間 S2 代理策略整體表現差，可能原因：(1) 程式化代理不完整；(2) 史詩牛市中逆勢反轉信號失效。</td></tr>
+            <tr style="background:rgba(34,197,94,.04)"><td><span class="badge badge-green">STRONG BUY</span></td><td>64</td><td style="color:#ef4444;font-weight:700">34.4% ⚠️</td><td style="color:#ef4444">1.259</td><td>+10.90%</td></tr>
+            <tr style="background:rgba(234,179,8,.12)"><td><span class="badge badge-yellow">NEUTRAL</span></td><td>21</td><td style="color:#22c55e;font-weight:700">66.7% ★</td><td style="color:#22c55e;font-weight:700">4.713 ★</td><td>+25.99%</td></tr>
+            <tr style="background:rgba(239,68,68,.06)"><td><span class="badge badge-red">WAIT</span></td><td>75</td><td>41.3%</td><td>1.577</td><td>+25.38%</td></tr>
           </tbody>
         </table>
+        <div class="insight bad" style="margin-top:10px;font-size:.85em">
+          <strong>🔴 新發現（修正操作規則）</strong>：STRONG BUY 環境是 S2A 最危險的時機（WR 34.4%，低於損益平衡水位），
+          NEUTRAL 才是最佳（WR 66.7%，PF 4.713）。建議在 STRONG BUY 期對 S2A 縮至最小倉（0.01 lot），
+          NEUTRAL 期可正常執行，WAIT 期縮倉 0.02 lot（維持原規則）。
+        </div>
       </div>
 
-      <!-- 結論與下一步 -->
+      <!-- S2B-Hammer 真實結果 -->
       <div class="card">
-        <h3 style="color:var(--primary);margin-bottom:12px">💡 操作結論 &amp; 下一步</h3>
-        <div class="insight good">
-          <strong>✅ 宏觀框架已建立，等待更長數據驗證</strong>
-          Macro Score 計算邏輯（Real Rate ×2 + US10Y + DXY + VIX + Gold MA50）完整實作，4 支日線 CSV 已就位。
-          <strong>下一步</strong>：從 TradingView 匯出 2024-01-01 起的 XAUUSD 30m CSV，執行 <code>python3.12 xauusd/run_macro_backtest.py</code> 重跑，即可得到跨牛熊市環境的比較結果。
+        <h3 style="color:var(--primary);margin-bottom:4px">S2B-Hammer（V1.9）— 199 筆，2024-01 → 2026-04</h3>
+        <p style="color:var(--muted);font-size:.84em;margin:0 0 12px">左側逆勢（錘頭型態觸發）。各宏觀環境表現最均衡。</p>
+        <table class="results-table" style="font-size:.88em">
+          <thead><tr><th>Verdict</th><th>交易筆</th><th>勝率</th><th>獲利因子</th><th>淨盈虧%</th></tr></thead>
+          <tbody>
+            <tr style="background:rgba(34,197,94,.04)"><td><span class="badge badge-green">STRONG BUY</span></td><td>72</td><td>44.4%</td><td>1.713</td><td>+29.63%</td></tr>
+            <tr style="background:rgba(234,179,8,.10)"><td><span class="badge badge-yellow">NEUTRAL</span></td><td>39</td><td>46.2%</td><td>1.798</td><td>+16.86%</td></tr>
+            <tr style="background:rgba(239,68,68,.06)"><td><span class="badge badge-red">WAIT</span></td><td>88</td><td>42.0%</td><td>1.587</td><td>+31.14%</td></tr>
+          </tbody>
+        </table>
+        <div class="insight info" style="margin-top:10px;font-size:.85em">
+          <strong>結論</strong>：S2B 在各宏觀環境下表現均穩（WR 42–46%，PF 1.59–1.80），宏觀敏感度最低。
+          WAIT 期 WR 稍差但仍獲利；STRONG BUY 與 NEUTRAL 差異不大。維持原操作規則（縮倉但不停止）。
         </div>
-        <div class="insight info">
-          <strong>📊 當前 Macro Score 現況（截至 2026-06-21）</strong>
-          最新 Score = <strong>0 / 6（WAIT）</strong>：Real Rate 偏高、DXY 偏強，技術上黃金宏觀逆風。
-          GVZ 回測期間全程 Extreme（>20），建議縮倉 50% 直至 GVZ 回落至 20 以下。
-        </div>
-        <div class="report-links" style="margin-top:12px">
-          <a class="report-link" href="xauusd/XAUUSD-Macro/macro_backtest_report.html">📄 完整 Macro 回測報告</a>
+      </div>
+
+      <!-- 修訂後操作規則總表 -->
+      <div class="card">
+        <h3 style="color:var(--primary);margin-bottom:12px">📋 修訂後操作規則（依回測結果更新）</h3>
+        <table class="results-table" style="font-size:.88em">
+          <thead><tr><th>策略</th><th>STRONG BUY（Score 5–6）</th><th>NEUTRAL（Score 3–4）</th><th>WAIT（Score 0–2）</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>S1-AweWithBB</strong></td>
+              <td>正常執行，但 NEUTRAL 更優</td>
+              <td style="color:#22c55e;font-weight:700">最佳環境 ★ 正常倉位</td>
+              <td style="color:#ef4444">⛔ 不執行</td>
+            </tr>
+            <tr>
+              <td><strong>S2A-RSI</strong></td>
+              <td style="color:#ef4444">⚠️ 縮至 0.01 lot（新增）</td>
+              <td style="color:#22c55e;font-weight:700">最佳環境 ★ 正常倉位</td>
+              <td style="color:#f59e0b">縮倉 0.02 lot</td>
+            </tr>
+            <tr>
+              <td><strong>S2B-Hammer</strong></td>
+              <td>正常執行</td>
+              <td>正常執行</td>
+              <td style="color:#f59e0b">縮倉 0.02 lot</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="report-links" style="margin-top:14px">
+          <a class="report-link" href="xauusd/XAUUSD-Macro/real_macro_backtest_report.html">📄 完整真實策略回測報告</a>
+          <a class="report-link" href="xauusd/XAUUSD-Macro/macro_backtest_report.html">📄 早期 Proxy 回測報告（參考）</a>
         </div>
       </div>
 
@@ -1803,7 +1841,7 @@ tbody tr:hover td{background:#f8fafc}
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">Pine Script v3.7 下載</td><td><a href='xauusd/XAUUSD-Macro/XAUUSD-Macro-v3.7.pine' style='color:var(--primary)'>下載 v3.7</a></td></tr>
               <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--purple);border-bottom:1px solid var(--border)">🔬 Macro 回測（S1/S2 × Macro Score）</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">Macro Score 過濾對 S1 / S2 的影響（2026-01–04）</td><td>→ 宏觀分析 → 🔬 Macro 回測 Tab</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">完整 Macro 回測報告（HTML）</td><td><a href='xauusd/XAUUSD-Macro/macro_backtest_report.html' style='color:var(--primary)'>Macro 回測報告</a></td></tr>
+              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">完整真實策略回測報告（HTML）</td><td><a href='xauusd/XAUUSD-Macro/real_macro_backtest_report.html' style='color:var(--primary)'>真實策略回測報告</a></td></tr>
 
               <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">✅ 已確認策略</td></tr>
               <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S1-AweWithBB（V3.6.2）</td><td><a href='xauusd/XAUUSD-Long-S1-AweWithBB/report.html' style='color:var(--primary)'>S1-AweWithBB 完整報告</a></td></tr>
