@@ -211,7 +211,8 @@ tbody tr:hover td{background:#f8fafc}
     <button class="nav-main-tab active" onclick="showMain('optimization',this)">現有策略優化</button>
     <button class="nav-main-tab" onclick="showMain('experiments',this)">實驗策略測試</button>
   </div>
-  <div class="nav-meta">Updated 2026-05-02</div>
+  <button class="nav-main-tab" onclick="showMain('weekly',this)">📊 週報分析</button>
+    <div class="nav-meta">Updated 2026-06-21</div>
 </nav>
 
 <!-- ══ SECTION A: 現有策略優化 ══════════════════════════════════ -->
@@ -714,5 +715,180 @@ function showTab(prefix, id, btn) {
 }
 </script>
 
+
+<!-- WEEKLY_SECTION_START -->
+<div id="main-weekly" class="main-section">
+  <div class="subnav">
+    <button class="sub-tab active" onclick="showTab('wk','now',this)">本週重點</button>
+    <button class="sub-tab" onclick="showTab('wk','history',this)">近5週走勢</button>
+    <button class="sub-tab" onclick="showTab('wk','archive',this)">報告歸檔</button>
+  </div>
+
+  <!-- 本週重點 -->
+  <div id="wk-now" class="tab-panel active">
+    <div class="part-label"><span class="part-badge">W25 Sun</span>本週分析重點 · 2026-06-21</div>
+
+    <div class="grid-4">
+      <div class="metric-card card">
+        <div class="metric-label">XAUUSD 現價</div>
+        <div class="metric-val neg">4155.57</div>
+        <div class="metric-sub">本週 -54.5 (-1.3%)</div>
+      </div>
+      <div class="metric-card card">
+        <div class="metric-label">日線 RSI / BB%B</div>
+        <div class="metric-val"><span class="badge badge-blue">32.5</span></div>
+        <div class="metric-sub">BB %B = 0.14 | 4H RSI 30.7</div>
+      </div>
+      <div class="metric-card card">
+        <div class="metric-label">DXY 美元</div>
+        <div class="metric-val yellow">100.76</div>
+        <div class="metric-sub">RSI = <span class="badge badge-yellow">73.0 超買</span> | 承壓黃金⚠️</div>
+      </div>
+      <div class="metric-card card">
+        <div class="metric-label">帳戶偏向</div>
+        <div class="metric-val" style="font-size:1em;color:var(--text2)">觀望，等S2 A+ @4…</div>
+        <div class="metric-sub">帳戶 $21,649 | ATR1D 119.7</div>
+      </div>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight warn"><strong>⭐ 主情境（55-60%）</strong>震盪尋底 57.5%，等 SSL Sweep 4121 後 S2 A+ @ 4095-4131</div>
+      <div class="insight info"><strong>🛡️ S2 A+ 進場區</strong>4095-4131（4H FVG+4H下軌）/ 4082（備選日線下軌）<br>等 SSL Sweep + M30 錘頭確認</div>
+      <div class="insight good"><strong>🚀 S1 啟動條件</strong>站回1H中軌4165 + AO翻正 + DXY回落<65</div>
+      <div class="insight bad"><strong>🔍 SMC 4H — Bearish FVG（阻力）</strong>4233.3-4239.6, 4186.3-4201.1, 4178.7-4183.6<br>Bullish FVG（支撐）：4096.0-4131.1</div>
+      <div class="insight purple"><strong>💧 流動性（4H）</strong>BSL 前高：4382.4 / 4369.4 / 4355.1<br>SSL 前低：4121.4 / 4218.4 / 4305.2</div>
+      <div class="insight info"><strong>📊 CFTC（06-09）</strong>MM 淨多 105,863（減多+3,087，增空+3,229）<br>散戶追空 → 反轉燃料</div>
+    </div>
+
+    <div class="part-label"><span class="part-badge">PART 2</span>關鍵位階 · Key Levels</div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>方向</th><th>價位</th><th>來源</th></tr></thead>
+          <tbody><tr><td class="neg">阻力</td><td><strong>5323.5</strong></td><td style="color:var(--muted);font-size:.82em">週線BB上軌</td></tr><tr><td class="neg">阻力</td><td><strong>4670.5</strong></td><td style="color:var(--muted);font-size:.82em">週線BB中軌</td></tr><tr><td class="neg">阻力</td><td><strong>4631.7</strong></td><td style="color:var(--muted);font-size:.82em">日線BB上軌</td></tr><tr><td class="neg">阻力</td><td><strong>4489.1</strong></td><td style="color:var(--muted);font-size:.82em">日線EMA50</td></tr><tr><td class="neg">阻力</td><td><strong>4422.2</strong></td><td style="color:var(--muted);font-size:.82em">4H BB上軌</td></tr><tr><td class="neg">阻力</td><td><strong>4353.8</strong></td><td style="color:var(--muted);font-size:.82em">日線BB中軌</td></tr><tr><td class="neg">阻力</td><td><strong>4272.4</strong></td><td style="color:var(--muted);font-size:.82em">4H EMA50</td></tr><tr><td class="neg">阻力</td><td><strong>4268.5</strong></td><td style="color:var(--muted);font-size:.82em">4H BB中軌</td></tr><tr><td class="neg">阻力</td><td><strong>4212.5</strong></td><td style="color:var(--muted);font-size:.82em">1H BB上軌</td></tr><tr style="background:#fffbeb"><td class="pos">阻力/支撐</td><td><strong>4165.5</strong> <span style="color:#d97706;font-weight:700">← 現價附近</span></td><td style="color:var(--muted);font-size:.82em">1H BB中軌</td></tr><tr><td class="pos">支撐</td><td><strong>4118.5</strong></td><td style="color:var(--muted);font-size:.82em">1H BB下軌</td></tr><tr><td class="pos">支撐</td><td><strong>4114.9</strong></td><td style="color:var(--muted);font-size:.82em">4H BB下軌</td></tr><tr><td class="pos">支撐★</td><td><strong>4096.0</strong></td><td style="color:var(--muted);font-size:.82em">4H Bullish FVG</td></tr><tr><td class="pos">支撐</td><td><strong>4075.9</strong></td><td style="color:var(--muted);font-size:.82em">日線BB下軌</td></tr><tr><td class="pos">支撐</td><td><strong>4017.6</strong></td><td style="color:var(--muted);font-size:.82em">週線BB下軌</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="part-label"><span class="part-badge">PART 3</span>三大劇本 · W26 Scenarios</div>
+    <div class="grid-3">
+      <div class="insight info">
+        <strong>📈 劇本一：V型反彈（20%）</strong>
+        DXY 回落 → 站回 1H 中軌 4165.5 → S1 啟動<br>
+        目標：4268.5（4H 中軌）
+      </div>
+      <div class="insight warn">
+        <strong>😴 劇本二：震盪尋底（57.5%）⭐主情境</strong>
+        下探 4114.9-4118.5 → SSL Sweep → 錘頭 → S2 A+<br>
+        TP：4165.5 → 4212（1H 上軌）
+      </div>
+      <div class="insight bad">
+        <strong>📉 劇本三：跌破支撐（22.5%）</strong>
+        跌破 4075.9 日線下軌 → 往 4018（週線下軌）<br>
+        此劇本下暫停操作
+      </div>
+    </div>
+  </div><!-- /wk-now -->
+
+  <!-- 近5週走勢 -->
+  <div id="wk-history" class="tab-panel">
+    <div class="part-label"><span class="part-badge">近5週</span>週線走勢</div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>週次</th><th>開盤</th><th>最高</th><th>最低</th><th>收盤</th><th>漲跌</th></tr></thead>
+          <tbody><tr>
+          <td class="td-date">🔴 05/26</td>
+          <td>4569.1</td><td>4595.4</td><td>4366.7</td>
+          <td><strong>4538.2</strong></td>
+          <td class="neg">-30.9 (-0.7%)</td>
+        </tr><tr>
+          <td class="td-date">🔴 06/01</td>
+          <td>4537.9</td><td>4546.1</td><td>4311.8</td>
+          <td><strong>4328.9</strong></td>
+          <td class="neg">-208.9 (-4.6%)</td>
+        </tr><tr>
+          <td class="td-date">🔴 06/08</td>
+          <td>4328.9</td><td>4363.5</td><td>4023.9</td>
+          <td><strong>4219.0</strong></td>
+          <td class="neg">-109.9 (-2.5%)</td>
+        </tr><tr>
+          <td class="td-date">🟢 06/15</td>
+          <td>4219.0</td><td>4382.4</td><td>4201.5</td>
+          <td><strong>4219.5</strong></td>
+          <td class="pos">+0.5 (+0.0%)</td>
+        </tr><tr>
+          <td class="td-date">🔴 06/22</td>
+          <td>4210.1</td><td>4213.4</td><td>4121.8</td>
+          <td><strong>4155.6</strong></td>
+          <td class="neg">-54.5 (-1.3%)</td>
+        </tr></tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px;font-size:.84em;color:var(--muted)">
+        ★ 已連跌三週（W22-W25），總跌幅約 -9.6%（4595→4155）。週線 RSI 36.9，接近超賣但未見反彈信號。
+      </div>
+    </div>
+
+    <div class="part-label"><span class="part-badge">技術指標</span>多時間框架</div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title">📊 布林通道位置</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>TF</th><th>上軌</th><th>中軌</th><th>下軌</th><th>%B</th></tr></thead>
+          <tbody>
+            <tr><td>日線</td><td>4631.7</td><td>4353.8</td><td class="pos">4075.9</td><td class="neg">0.14</td></tr>
+            <tr><td>4H</td><td>4422.2</td><td>4268.5</td><td class="pos">4114.9</td><td>—</td></tr>
+            <tr><td>1H</td><td>—</td><td>4165.5</td><td class="pos">4118.5</td><td>—</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📊 RSI 狀態</div>
+        <div style="display:grid;gap:10px;margin-top:8px">
+          <div class="metric-card"><div class="metric-label">日線 RSI</div><div class="metric-val red">32.5</div><div class="metric-sub">接近超賣（&lt;35）</div></div>
+          <div class="metric-card"><div class="metric-label">4H RSI</div><div class="metric-val red">30.7</div><div class="metric-sub">超賣區（&lt;32）</div></div>
+          <div class="metric-card"><div class="metric-label">1H RSI</div><div class="metric-val yellow">44.3</div><div class="metric-sub">中性</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">💵 DXY 美元 / 黃金壓力</div>
+        <div style="margin-top:8px">
+          <div class="metric-card"><div class="metric-label">DXY 現價</div><div class="metric-val yellow">100.76</div><div class="metric-sub">RSI=73.0 超買，黃金承壓</div></div>
+          <div style="margin-top:10px;font-size:.84em;color:var(--text2)">DXY RSI > 70 = 黃金短期難反彈<br>需等 DXY RSI 回落 65 以下再看多</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /wk-history -->
+
+  <!-- 報告歸檔 -->
+  <div id="wk-archive" class="tab-panel">
+    <div class="part-label"><span class="part-badge">歸檔</span>週報 + Combine 報告</div>
+    <div class="card">
+      <div style="font-size:.84em;color:var(--muted);margin-bottom:12px">
+        HTML 可直接在瀏覽器查看 · DOCX 下載後用 Word/Pages 開啟 · Combine = Claude + Gemini 三種風格整合版
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>週次</th><th>日期</th><th>Claude 週報</th><th>Style A</th><th>Style B</th><th>Style C</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>W25</strong></td>
+              <td class="td-date">2026-06-21 (Sun)</td>
+              <td><a class="report-link" href="claude/reports/XAUUSD_Weekly_Report_2026W25_Sun_Claude.docx">📥 DOCX</a></td>
+              <td><a class="report-link" href="claude/reports/XAUUSD_W25_Combine_StyleA.docx">📥 量化風控</a></td>
+              <td><a class="report-link" href="claude/reports/XAUUSD_W25_Combine_StyleB.docx">📥 老鳥拍板</a></td>
+              <td><a class="report-link" href="claude/reports/XAUUSD_W25_Combine_StyleC.docx">📥 委員會</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:16px;padding:12px;background:var(--surface2);border-radius:8px;font-size:.84em;color:var(--text2)">
+        💡 新增週報：執行 <code>python3.12 claude/generate_weekly_html.py --week W26 --day Wed ...</code> 後 index.html 自動更新
+      </div>
+    </div>
+  </div><!-- /wk-archive -->
+</div><!-- /main-weekly -->
+<!-- WEEKLY_SECTION_END -->
 </body>
 </html>

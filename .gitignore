@@ -6,6 +6,7 @@ __pycache__/
 .venv/
 venv/
 reports/
+!xauusd/claude/reports/
 .claude/worktrees/
 **/.claude/settings.local.json
 xauusd/pipeline/config.py
