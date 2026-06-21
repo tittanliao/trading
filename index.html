@@ -795,7 +795,7 @@ tbody tr:hover td{background:#f8fafc}
     <div id="xauusd-opt-improve" class="tab-panel">
       <div class="part-label"><span class="part-badge">改善追蹤</span>策略系統研究發現 × 行動項目 × 驗證進度</div>
       <div style="font-size:.84em;color:var(--muted);margin-bottom:16px">
-        每次深度分析後記錄於此。狀態：<span style="background:#374151;padding:2px 8px;border-radius:10px">🔲 待處理</span> <span style="background:#1d4ed8;color:white;padding:2px 8px;border-radius:10px">🔄 進行中</span> <span style="background:#166534;color:white;padding:2px 8px;border-radius:10px">✅ 完成</span>
+        每次深度分析後記錄於此。狀態：<span style="border:1px solid #475569;color:#94a3b8;background:rgba(100,116,139,.12);padding:2px 8px;border-radius:10px">🔲 待處理</span> <span style="background:#1d4ed8;color:white;padding:2px 8px;border-radius:10px">🔄 進行中</span> <span style="background:#166534;color:white;padding:2px 8px;border-radius:10px">✅ 完成</span>
       </div>
 
       <!-- ── 2026-06-21 ─────────────────────────────────────── -->
@@ -845,42 +845,42 @@ tbody tr:hover td{background:#f8fafc}
               <td><strong>修正 S1 WAIT 規則</strong>：Score 0-1 不執行，Score=2 解禁（現在設定錯誤）</td>
               <td>+13.4% 淨盈虧（122 筆）</td>
               <td>低（改規則文字）</td>
-              <td><span style="background:#374151;padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
+              <td><span style="border:1px solid #22c55e;color:#4ade80;background:rgba(34,197,94,.12);padding:2px 8px;border-radius:10px;font-size:.82em">✅ 完成</span><br><span style="font-size:.75em;color:#64748b">2026-06-21 已更新 ANALYSIS_SKILL / MERGE / TRADING_PROFILE</span></td>
             </tr>
             <tr>
               <td style="font-weight:700;color:var(--red)">P2</td>
               <td><strong>修正 GVZ 規則</strong>：Extreme 時 S1 不縮倉，S2 縮倉（現在是統一縮倉）</td>
               <td>S1 估 +5-8%</td>
               <td>低（改規則文字）</td>
-              <td><span style="background:#374151;padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
+              <td><span style="border:1px solid #22c55e;color:#4ade80;background:rgba(34,197,94,.12);padding:2px 8px;border-radius:10px;font-size:.82em">✅ 完成</span><br><span style="font-size:.75em;color:#64748b">2026-06-21 已更新 ANALYSIS_SKILL / MERGE / TRADING_PROFILE</span></td>
             </tr>
             <tr>
               <td style="font-weight:700;color:var(--yellow)">P3</td>
               <td><strong>驗證 V2.3 時間止損修正</strong>：TradingView 重跑 S2A/S2B，重新匯出 CSV，確認 avg_hold 是否降至 &lt; 50 bars</td>
               <td>改變所有 S2 數據基礎</td>
               <td>中（需 TV 操作）</td>
-              <td><span style="background:#374151;padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
+              <td><span style="border:1px solid #475569;color:#94a3b8;background:rgba(100,116,139,.12);padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
             </tr>
             <tr>
               <td style="font-weight:700;color:var(--yellow)">P4</td>
               <td><strong>S2B 深度分析</strong>：補 DXY RSI 分組、BB %B 分析、GVZ NORMAL vs Extreme 分層（S2B 是最高淨盈虧策略）</td>
               <td>可能找到更強過濾條件</td>
               <td>中（寫分析腳本）</td>
-              <td><span style="background:#374151;padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
+              <td><span style="border:1px solid #475569;color:#94a3b8;background:rgba(100,116,139,.12);padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
             </tr>
             <tr>
               <td style="font-weight:700;color:var(--yellow)">P5</td>
               <td><strong>DXY RSI + Macro Score 組合過濾器</strong>：測試「NEUTRAL + DXY RSI &lt; 40」對 S2A 的 WR 影響</td>
               <td>未知，潛力高</td>
               <td>低（修改現有腳本）</td>
-              <td><span style="background:#374151;padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
+              <td><span style="border:1px solid #475569;color:#94a3b8;background:rgba(100,116,139,.12);padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
             </tr>
             <tr>
               <td style="font-weight:700;color:var(--muted)">P6</td>
               <td><strong>考慮 WAIT 期啟用空單</strong>：當 Score 0-1 連續 4 週，以 S19 Bearish Engulf 作為對衝，避免系統空轉</td>
               <td>擴展市場適應性</td>
               <td>高（需建立空單 SOP）</td>
-              <td><span style="background:#374151;padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
+              <td><span style="border:1px solid #475569;color:#94a3b8;background:rgba(100,116,139,.12);padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
             </tr>
           </tbody>
         </table>
