@@ -601,6 +601,7 @@ tbody tr:hover td{background:#f8fafc}
       <button class="sub-tab" onclick="showTab('xauusd-opt','s1',this)">S1-AweWithBB</button>
       <button class="sub-tab" onclick="showTab('xauusd-opt','s2a',this)">S2A-RSI</button>
       <button class="sub-tab" onclick="showTab('xauusd-opt','s2b',this)">S2B-Hammer</button>
+      <button class="sub-tab" onclick="showTab('xauusd-opt','improve',this)">🔬 改善追蹤</button>
     </div>
 
     <!-- Overview -->
@@ -790,6 +791,112 @@ tbody tr:hover td{background:#f8fafc}
         <a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/XAUUSD-Long-S2B-Hammer-V2.2.pine">🧪 V2.2</a>
       </div>
     </div>
+    <!-- 改善追蹤 Tab ─────────────────────────────────── -->
+    <div id="xauusd-opt-improve" class="tab-panel">
+      <div class="part-label"><span class="part-badge">改善追蹤</span>策略系統研究發現 × 行動項目 × 驗證進度</div>
+      <div style="font-size:.84em;color:var(--muted);margin-bottom:16px">
+        每次深度分析後記錄於此。狀態：<span style="background:#374151;padding:2px 8px;border-radius:10px">🔲 待處理</span> <span style="background:#1d4ed8;color:white;padding:2px 8px;border-radius:10px">🔄 進行中</span> <span style="background:#166534;color:white;padding:2px 8px;border-radius:10px">✅ 完成</span>
+      </div>
+
+      <!-- ── 2026-06-21 ─────────────────────────────────────── -->
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <div style="font-size:1.1em;font-weight:700;color:var(--primary)">2026-06-21</div>
+          <div style="background:#1e3a5f;color:#93c5fd;padding:3px 10px;border-radius:12px;font-size:.8em;font-weight:700">Opus 深度分析</div>
+          <div style="color:var(--muted);font-size:.82em">來源：Claude Opus 讀取全部策略檔案 + 真實回測 JSON</div>
+        </div>
+
+        <h3 style="color:var(--text2);font-size:.85em;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:12px">🔍 新發現（尚未被系統化處理的盲點）</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+          <div class="insight bad" style="font-size:.86em">
+            <strong>盲點 A：S2 的時間止損在 Pine Script 裡幾乎沒作用（avg_hold 140 bars = 70 小時）</strong><br>
+            S2A avg_hold 140 bars，S2B 135 bars——是回測引擎 48-bar 時間止損的 3 倍。V2.3 的 <code>strategy.close()</code> 修正是否有效，尚未用新匯出 CSV 驗證。這是目前最重要的未驗證環節，所有現有 S2 宏觀數據基礎可能需要重做。
+          </div>
+          <div class="insight warn" style="font-size:.86em">
+            <strong>盲點 B：Score=2（WAIT 邊界）對 S1 是獲利環境，但被錯誤禁止</strong><br>
+            Score=2 時 S1 WR 54.9%、PF 1.481、avg_hold 23.4 bars（最乾淨）——均優於 STRONG BUY。目前「Score ≤ 2 = 不執行 S1」的規則讓 122 筆、約 +13.4% 淨盈虧白白流失。
+          </div>
+          <div class="insight warn" style="font-size:.86em">
+            <strong>盲點 C：GVZ Extreme 對 S1 是正面環境（PF 1.60），對 S2 才是負面</strong><br>
+            GVZ Extreme 時 S1 PF 1.60 &gt; NORMAL 1.47，且持倉僅 14.4 bars（最快）。目前「GVZ Extreme → S1 縮倉」的規則在懲罰一個表現良好的環境。應改為：GVZ Extreme = S2 縮倉，S1 不縮。
+          </div>
+          <div class="insight info" style="font-size:.86em">
+            <strong>盲點 D：S2A 的 NEUTRAL 樣本只有 21 筆（兩年！），不應作為主要依據</strong><br>
+            66.7% WR 的 95% 信賴區間是 [45%, 83%]。整個 NEUTRAL 最佳環境的結論建立在極稀少的樣本上，應視為方向參考，不能作為積極執行的理由。
+          </div>
+          <div class="insight info" style="font-size:.86em">
+            <strong>盲點 E：DXY RSI × Macro Score 組合過濾器從未測試，可能是最強未開採 alpha</strong><br>
+            DXY RSI &lt; 30 時 S2A WR 75%（動量），Macro NEUTRAL 時 S2A WR 66.7%（趨勢）。兩者互補，組合條件「NEUTRAL + DXY RSI &lt; 40」的 WR 從未被量化。腳本基礎已就位。
+          </div>
+          <div class="insight info" style="font-size:.86em">
+            <strong>盲點 F：S2B 是三策略中淨盈虧最高的（+77.6%），但分析投資最少</strong><br>
+            S2B 缺乏 DXY RSI 分組、BB %B 分析、GVZ 分層。S2B 在 GVZ NORMAL 環境 PF 1.95 是三策略最高，值得深挖但尚未被系統化。
+          </div>
+        </div>
+
+        <h3 style="color:var(--text2);font-size:.85em;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:12px">📋 行動項目</h3>
+        <table class="results-table" style="font-size:.86em">
+          <thead>
+            <tr><th style="width:40px">優先</th><th>行動項目</th><th>改善潛力</th><th>執行難度</th><th style="width:90px">狀態</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:700;color:var(--red)">P1</td>
+              <td><strong>修正 S1 WAIT 規則</strong>：Score 0-1 不執行，Score=2 解禁（現在設定錯誤）</td>
+              <td>+13.4% 淨盈虧（122 筆）</td>
+              <td>低（改規則文字）</td>
+              <td><span style="background:#374151;padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;color:var(--red)">P2</td>
+              <td><strong>修正 GVZ 規則</strong>：Extreme 時 S1 不縮倉，S2 縮倉（現在是統一縮倉）</td>
+              <td>S1 估 +5-8%</td>
+              <td>低（改規則文字）</td>
+              <td><span style="background:#374151;padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;color:var(--yellow)">P3</td>
+              <td><strong>驗證 V2.3 時間止損修正</strong>：TradingView 重跑 S2A/S2B，重新匯出 CSV，確認 avg_hold 是否降至 &lt; 50 bars</td>
+              <td>改變所有 S2 數據基礎</td>
+              <td>中（需 TV 操作）</td>
+              <td><span style="background:#374151;padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;color:var(--yellow)">P4</td>
+              <td><strong>S2B 深度分析</strong>：補 DXY RSI 分組、BB %B 分析、GVZ NORMAL vs Extreme 分層（S2B 是最高淨盈虧策略）</td>
+              <td>可能找到更強過濾條件</td>
+              <td>中（寫分析腳本）</td>
+              <td><span style="background:#374151;padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;color:var(--yellow)">P5</td>
+              <td><strong>DXY RSI + Macro Score 組合過濾器</strong>：測試「NEUTRAL + DXY RSI &lt; 40」對 S2A 的 WR 影響</td>
+              <td>未知，潛力高</td>
+              <td>低（修改現有腳本）</td>
+              <td><span style="background:#374151;padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight:700;color:var(--muted)">P6</td>
+              <td><strong>考慮 WAIT 期啟用空單</strong>：當 Score 0-1 連續 4 週，以 S19 Bearish Engulf 作為對衝，避免系統空轉</td>
+              <td>擴展市場適應性</td>
+              <td>高（需建立空單 SOP）</td>
+              <td><span style="background:#374151;padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="insight good" style="margin-top:12px;font-size:.84em">
+          <strong>更新狀態方式</strong>：完成某個 P 項目後，請告訴 Claude「把 P1 標為完成並說明結果」，會自動更新此表格並記錄驗證結果。
+        </div>
+      </div>
+
+      <!-- 未來新增欄位的說明（空白佔位） -->
+      <div style="text-align:center;color:var(--muted);font-size:.82em;padding:20px 0">
+        ↑ 最新研究記錄 ｜ 未來分析將繼續新增於上方 ↑
+      </div>
+
+    </div><!-- /xauusd-opt-improve -->
+
   </div><!-- /xauusd-main-opt -->
 
 
