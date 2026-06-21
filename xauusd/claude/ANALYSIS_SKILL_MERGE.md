@@ -1,5 +1,5 @@
 # XAUUSD 合併週報技術文件
-# 版本：20260622 | 觸發指令：「合併週報」
+# 版本：20260621-v2 | 觸發指令：「合併週報」
 # 本文件在「合併週報」觸發時讀取。日常分析請使用 ANALYSIS_SKILL.md。
 
 ---
@@ -52,9 +52,20 @@ ls "/Users/tittan/googledrive/XAUUSD/weekly report/macro/" | sort | tail -1
 | Gold MA趨勢 | Macro Bull（黃金日線 > MA50）| +1 |
 | **滿分** | | **6分** |
 
-- 5–6 分 → **STRONG BUY**：宏觀順風，全力執行技術信號
-- 3–4 分 → **NEUTRAL**：宏觀混合，依技術信號正常執行
-- 0–2 分 → **WAIT**：宏觀逆風，縮倉或暫停
+- 5–6 分 → **STRONG BUY**：宏觀順風，S1 正常執行；S2A 縮倉（見下方）
+- 3–4 分 → **NEUTRAL**：**S1 和 S2A 表現最佳的黃金環境**，依技術信號正常執行
+- 0–2 分 → **WAIT**：宏觀逆風，S1 完全不做，S2 縮倉
+
+**各策略宏觀最佳環境（2024-01 → 2026-04，真實交易回測，N=504/160/199）：**
+| 策略 | STRONG BUY | NEUTRAL | WAIT | 結論 |
+|------|-----------|---------|------|------|
+| S1-AweWithBB | WR 52.1% PF 1.46 | **WR 58.7% PF 2.08 ★** | WR 51.8% PF 1.39 | NEUTRAL 最佳；WAIT 過濾有效（PF +0.12）|
+| S2A-RSI | **WR 34.4% PF 1.26 ⚠️** | **WR 66.7% PF 4.71 ★** | WR 41.3% PF 1.58 | STRONG BUY 最危險；NEUTRAL 最佳 |
+| S2B-Hammer | WR 44.4% PF 1.71 | WR 46.2% PF 1.80 | WR 42.0% PF 1.59 | 各環境均穩，宏觀敏感度最低 |
+
+> **S2A-RSI 反直覺發現**：STRONG BUY（黃金宏觀順風）反而是 S2A 最差的進場環境。
+> 原因：趨勢強勁上漲時，RSI 逆勢信號頻繁假突破，進場即被洗出。
+> **結論：STRONG BUY 環境應縮 S2A 倉位，而非積極執行。**
 
 **GVZ 狀態 → 操作含義：**
 | GVZ 狀態 | 門檻 | 含義 | 操作調整 |
@@ -63,14 +74,14 @@ ls "/Users/tittan/googledrive/XAUUSD/weekly report/macro/" | sort | tail -1
 | 🌊 Normal | 13–20 | 標準波動環境 | S1 / S2 皆可正常執行 |
 | 🔥 Extreme | > 20 | 事件驅動高波動 | 縮倉 50%，S2 為主，S1 慎用 |
 
-**宏觀 × 技術面衝突裁決：**
-| 宏觀 | 技術面 | 裁決 |
-|------|--------|------|
-| WAIT | 技術看多 | S2 只用 0.02 手（極限縮倉），完全不做 S1 |
-| WAIT | 技術看空 | 確認不做多，等宏觀好轉 |
-| NEUTRAL | 技術看多 | 正常執行，S2 A+ 0.05手，S2 A 0.03手 |
-| STRONG BUY | 技術看多 | 積極執行，S1 也可參與 |
-| STRONG BUY | 技術看空 | 等技術面確認，偏向做多但不強搶 |
+**宏觀 × 技術面衝突裁決（依 2024-2026 真實回測更新）：**
+| 宏觀 | 技術面 | S1-AweWithBB | S2A-RSI | S2B-Hammer |
+|------|--------|-------------|---------|-----------|
+| WAIT | 技術看多 | ⛔ 不執行 | 0.02 手（極限縮倉）| 0.02 手（縮倉）|
+| WAIT | 技術看空 | — | 確認不做多，等宏觀好轉 | — |
+| NEUTRAL | 技術看多 | ✅ 正常執行（最佳）| ✅ 0.05 手正常執行（最佳）| ✅ 正常執行 |
+| STRONG BUY | 技術看多 | 正常執行（略遜 NEUTRAL）| ⚠️ 縮倉 0.01 手（回測最差）| ✅ 正常執行 |
+| STRONG BUY | 技術看空 | 等確認，偏向看多不強搶 | 同上 | 同上 |
 
 **Real Rate 是核心驅動（雙倍權重的意義）：**
 - Real Rate Bear + DXY Bear = 最強多頭組合（即使 VIX 低也有支撐）
@@ -82,8 +93,8 @@ ls "/Users/tittan/googledrive/XAUUSD/weekly report/macro/" | sort | tail -1
 
 範例：
 - `宏觀 2/6（WAIT）：實質利率2.2高位+DXY未見回落 → 本週S2縮0.02手，不追S1`
-- `宏觀 5/6（STRONG BUY）：實質利率轉跌+DXY破支撐 → 全倉位執行，S1 S2 皆有效`
-- `宏觀 3/6（NEUTRAL）：VIX低+DXY混沌，GVZ Extreme → 縮倉50%，等事件落地`
+- `宏觀 5/6（STRONG BUY）：實質利率轉跌+DXY破支撐 → S1正常執行，S2A縮0.01手（STRONG BUY期S2A回測最差）`
+- `宏觀 3/6（NEUTRAL）：VIX低+DXY混沌，GVZ Extreme → S1/S2A黃金環境，縮倉50%（GVZ）但信號品質高`
 
 **若找不到截圖：**
 - 在 Combine 報告中標注「宏觀截圖未提供，跳過 Macro 段落」
