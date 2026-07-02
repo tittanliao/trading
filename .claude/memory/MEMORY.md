@@ -4,3 +4,4 @@
 - [Project Context](project_context.md) — trading hub 目標、多商品架構、各商品關鍵數據
 - [Feedback & Preferences](feedback.md) — 工作習慣與偏好
 - [Completion Checklist](feedback_completion_checklist.md) — 每次任務結束前必須完成的 6 步驟（index.html、sitemap、memory、共同sheet、驗證、commit）
+- [Index Update Rule](feedback_index_update.md) — 每次新增 index.html 功能，必須同步更新網站地圖＋對話記錄，不需用戶提醒
