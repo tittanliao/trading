@@ -21,6 +21,7 @@ import pandas as pd
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
+matplotlib.rcParams['font.family'] = ['Heiti TC', 'Arial Unicode MS', 'sans-serif']
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
