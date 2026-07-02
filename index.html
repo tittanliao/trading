@@ -1496,6 +1496,154 @@ tbody tr:hover td{background:#f8fafc}
         </div>
         <div class="insight bad" style="margin:0">若無這 7 筆，累積會是 <strong>+28.83R</strong>。違紀吃掉 28% 獲利。H1 最長連續虧損：5筆（跨5/14~5/18），單日最多虧4次，全年15天單日虧2次以上。</div>
       </div>
+      <!-- ── Regime 四象限量化分析 ── -->
+      <div class="part-label" style="margin-top:24px"><span class="part-badge">REGIME ANALYSIS</span>2026 H1 真實交易 × 4H Regime 四象限量化驗證</div>
+
+      <div class="insight info" style="margin-bottom:16px">
+        <strong>方法：</strong>4H EMA20 斜率（10根）× BBW 百分位（60根滾動）定義四象限；
+        用 <code>merge_asof</code> 將 188 筆進場時間對齊最近 4H 收盤，自動標記 Regime。
+        門檻：斜率 ±0.15%、BBW rank ≥65% = 趨勢帶。
+      </div>
+
+      <!-- Regime 分佈 -->
+      <div class="card" style="margin-bottom:20px">
+        <div style="font-weight:700;font-size:15px;margin-bottom:12px;color:var(--text)">📊 Regime 分佈（S1/S2 有效筆數，排除 FOMO）</div>
+        <table style="width:100%;border-collapse:collapse;font-size:14px">
+          <thead>
+            <tr style="background:var(--bg2);font-weight:700">
+              <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border)">Regime</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border)">含義</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border)">筆數</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border)">佔比</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span style="color:#16a34a;font-weight:700">🟢 BULL_TREND</span></td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">高波動 + 上升斜率</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;font-weight:700">20</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">11%</td></tr>
+            <tr style="background:var(--bg2)"><td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span style="color:#dc2626;font-weight:700">🔴 BEAR_TREND</span></td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">高波動 + 下降斜率</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;font-weight:700">19</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">11%</td></tr>
+            <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span style="color:#2563eb;font-weight:700">🔵 RANGE_UP</span></td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">低波動 + 上升斜率</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;font-weight:700">47</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">26%</td></tr>
+            <tr style="background:var(--bg2)"><td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span style="color:#d97706;font-weight:700">🟡 RANGE_DOWN</span></td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">低波動 + 下降斜率</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;font-weight:700">87</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">49%</td></tr>
+            <tr><td style="padding:8px 12px"><span style="color:#6b7280;font-weight:700">⬜ CONSOLIDATION</span></td><td style="padding:8px 12px;text-align:center">低波動 + 中性斜率</td><td style="padding:8px 12px;text-align:center;font-weight:700">6</td><td style="padding:8px 12px;text-align:center">3%</td></tr>
+          </tbody>
+        </table>
+        <div class="insight warn" style="margin-top:12px">H1 有 49% 的交易都在 RANGE_DOWN（低波動下跌修正），S1 在此環境期望值偏低</div>
+      </div>
+
+      <!-- Regime × 策略 勝率 -->
+      <div class="card" style="margin-bottom:20px">
+        <div style="font-weight:700;font-size:15px;margin-bottom:12px;color:var(--text)">🎯 Regime × 策略 勝率</div>
+        <table style="width:100%;border-collapse:collapse;font-size:14px">
+          <thead>
+            <tr style="background:var(--bg2);font-weight:700">
+              <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border)">Regime</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border)">總筆</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border)">S1</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border)">S1-Fail</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border)">S2</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border)">S2-Fail</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:700;color:#16a34a">🟢 BULL_TREND</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">20</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;background:#dcfce7;font-weight:700;color:#15803d">100% (n=10)</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#9ca3af">—</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;background:#dcfce7;font-weight:700;color:#15803d">80% (n=10)</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#9ca3af">—</td></tr>
+            <tr style="background:var(--bg2)"><td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:700;color:#dc2626">🔴 BEAR_TREND</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">19</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;background:#fee2e2;color:#dc2626">57% (n=7)</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;background:#dcfce7;font-weight:700;color:#15803d">100% (n=3)</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">56% (n=9)</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#9ca3af">—</td></tr>
+            <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:700;color:#2563eb">🔵 RANGE_UP</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">47</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;background:#dbeafe;font-weight:700;color:#1d4ed8">77% (n=30)</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">50% (n=2)</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">71% (n=14)</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#dc2626">0% (n=1)</td></tr>
+            <tr style="background:var(--bg2)"><td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:700;color:#d97706">🟡 RANGE_DOWN</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">87</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">64% (n=44)</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">67% (n=9)</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">53% (n=30)</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center">50% (n=4)</td></tr>
+            <tr><td style="padding:8px 12px;font-weight:700;color:#6b7280">⬜ CONSOLIDATION</td><td style="padding:8px 12px;text-align:center">6</td><td style="padding:8px 12px;text-align:center">75% (n=4)</td><td style="padding:8px 12px;text-align:center;background:#fee2e2;color:#dc2626">0% (n=1)</td><td style="padding:8px 12px;text-align:center;background:#fee2e2;color:#dc2626">0% (n=1)</td><td style="padding:8px 12px;text-align:center;color:#9ca3af">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Regime × 平均R -->
+      <div class="card" style="margin-bottom:20px">
+        <div style="font-weight:700;font-size:15px;margin-bottom:12px;color:var(--text)">💰 Regime × 策略 平均 Net R</div>
+        <table style="width:100%;border-collapse:collapse;font-size:14px">
+          <thead>
+            <tr style="background:var(--bg2);font-weight:700">
+              <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--border)">Regime</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border)">S1</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border)">S1-Fail</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border)">S2</th>
+              <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--border)">S2-Fail</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:700;color:#16a34a">🟢 BULL_TREND</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;background:#dcfce7;font-weight:700;color:#15803d">+1.06R</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#9ca3af">—</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.25R</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#9ca3af">—</td></tr>
+            <tr style="background:var(--bg2)"><td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:700;color:#dc2626">🔴 BEAR_TREND</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;background:#fee2e2;color:#dc2626">-0.28R</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.72R</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.15R</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#9ca3af">—</td></tr>
+            <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:700;color:#2563eb">🔵 RANGE_UP</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.19R</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#dc2626">-0.36R</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.02R</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#dc2626">-0.62R</td></tr>
+            <tr style="background:var(--bg2)"><td style="padding:8px 12px;border-bottom:1px solid var(--border);font-weight:700;color:#d97706">🟡 RANGE_DOWN</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.17R</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.20R</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.03R</td><td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:center;color:#dc2626">-0.27R</td></tr>
+            <tr><td style="padding:8px 12px;font-weight:700;color:#6b7280">⬜ CONSOLIDATION</td><td style="padding:8px 12px;text-align:center;color:#16a34a">+0.03R</td><td style="padding:8px 12px;text-align:center;background:#fee2e2;font-weight:700;color:#dc2626">-1.88R</td><td style="padding:8px 12px;text-align:center;background:#fee2e2;color:#dc2626">-0.98R</td><td style="padding:8px 12px;text-align:center;color:#9ca3af">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Z-Score × S2 + BBW × S1 並排 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+        <div class="card">
+          <div style="font-weight:700;font-size:15px;margin-bottom:12px;color:var(--text)">📉 Z-Score × S2 勝率<br><span style="font-size:12px;font-weight:400;color:var(--text2)">均值回歸驗證</span></div>
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead>
+              <tr style="background:var(--bg2);font-weight:700">
+                <th style="padding:6px 10px;text-align:left;border-bottom:2px solid var(--border)">Z-Score</th>
+                <th style="padding:6px 10px;text-align:center;border-bottom:2px solid var(--border)">n</th>
+                <th style="padding:6px 10px;text-align:center;border-bottom:2px solid var(--border)">勝率</th>
+                <th style="padding:6px 10px;text-align:center;border-bottom:2px solid var(--border)">avg R</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:6px 10px;border-bottom:1px solid var(--border)">&lt; -2.5 極度超賣</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center">5</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center;background:#fee2e2;font-weight:700;color:#dc2626">20%</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center;color:#dc2626">-0.41R</td></tr>
+              <tr style="background:var(--bg2)"><td style="padding:6px 10px;border-bottom:1px solid var(--border)">-2.5 ~ -1.5</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center">7</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center">43%</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center;color:#dc2626">-0.46R</td></tr>
+              <tr><td style="padding:6px 10px;border-bottom:1px solid var(--border)">-1.5 ~ -0.5</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center">11</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center;background:#dbeafe;color:#1d4ed8;font-weight:700">73%</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.34R</td></tr>
+              <tr style="background:var(--bg2)"><td style="padding:6px 10px;border-bottom:1px solid var(--border)">-0.5 ~ +0.5</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center">28</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center">57%</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.09R</td></tr>
+              <tr><td style="padding:6px 10px">&gt; +0.5 偏高</td><td style="padding:6px 10px;text-align:center">13</td><td style="padding:6px 10px;text-align:center;background:#dcfce7;font-weight:700;color:#15803d">85%</td><td style="padding:6px 10px;text-align:center;color:#16a34a">+0.25R</td></tr>
+            </tbody>
+          </table>
+          <div class="insight bad" style="margin-top:10px;font-size:12px">⚠️ Z &lt; -2.5 極度超賣反而是陷阱（20%），極端偏移 = 趨勢延伸</div>
+        </div>
+        <div class="card">
+          <div style="font-weight:700;font-size:15px;margin-bottom:12px;color:var(--text)">🚀 BBW Rank × S1 勝率<br><span style="font-size:12px;font-weight:400;color:var(--text2)">Momentum 突破驗證</span></div>
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead>
+              <tr style="background:var(--bg2);font-weight:700">
+                <th style="padding:6px 10px;text-align:left;border-bottom:2px solid var(--border)">BBW 百分位</th>
+                <th style="padding:6px 10px;text-align:center;border-bottom:2px solid var(--border)">n</th>
+                <th style="padding:6px 10px;text-align:center;border-bottom:2px solid var(--border)">勝率</th>
+                <th style="padding:6px 10px;text-align:center;border-bottom:2px solid var(--border)">avg R</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:6px 10px;border-bottom:1px solid var(--border)">0–30% 超級收縮</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center">61</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center;background:#fee2e2;color:#dc2626;font-weight:700">64%</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.05R</td></tr>
+              <tr style="background:var(--bg2)"><td style="padding:6px 10px;border-bottom:1px solid var(--border)">30–50%</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center">9</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center;background:#dcfce7;font-weight:700;color:#15803d">89%</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.44R</td></tr>
+              <tr><td style="padding:6px 10px;border-bottom:1px solid var(--border)">50–70%</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center">9</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center;background:#dcfce7;font-weight:700;color:#15803d">89%</td><td style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:center;color:#16a34a">+0.70R</td></tr>
+              <tr style="background:var(--bg2)"><td style="padding:6px 10px">70–100% 高波動</td><td style="padding:6px 10px;text-align:center">16</td><td style="padding:6px 10px;text-align:center;background:#dbeafe;font-weight:700;color:#1d4ed8">81%</td><td style="padding:6px 10px;text-align:center;color:#16a34a">+0.52R</td></tr>
+            </tbody>
+          </table>
+          <div class="insight bad" style="margin-top:10px;font-size:12px">⚠️ BBW &lt; 30% 佔 S1 的 64%（61/95）— 超級收縮期假突破是勝率拖累主因</div>
+        </div>
+      </div>
+
+      <!-- 三條過濾規則 -->
+      <div class="card" style="margin-bottom:20px">
+        <div style="font-weight:700;font-size:15px;margin-bottom:12px;color:var(--text)">🛡️ 數據驅動過濾規則（待決策是否寫入 ANALYSIS_SKILL）</div>
+        <div style="display:grid;gap:10px">
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--bg2);border-radius:8px;border-left:4px solid #16a34a">
+            <span style="font-size:20px;flex-shrink:0">①</span>
+            <div><div style="font-weight:700;margin-bottom:4px">S1 進場前確認 BBW rank &gt; 30%</div><div style="font-size:13px;color:var(--text2)">BBW &lt; 30% 勝率僅 64%、R+0.05；≥30% 勝率 89%、R+0.44~+0.70。大量假突破發生在 BB 超級收縮期。</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--bg2);border-radius:8px;border-left:4px solid #dc2626">
+            <span style="font-size:20px;flex-shrink:0">②</span>
+            <div><div style="font-weight:700;margin-bottom:4px">BEAR_TREND 禁止 S1 多單</div><div style="font-size:13px;color:var(--text2)">S1 在 BEAR_TREND 勝率 57%、平均 -0.28R，是負期望值策略。BEAR_TREND 應優先考慮 S1-Fail 空頭（100% / +0.72R，n=3 樣本小）。</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--bg2);border-radius:8px;border-left:4px solid #d97706">
+            <span style="font-size:20px;flex-shrink:0">③</span>
+            <div><div style="font-weight:700;margin-bottom:4px">S2 避免 Z-Score &lt; -2.5（極度超賣）</div><div style="font-size:13px;color:var(--text2)">Z &lt; -2.5 勝率僅 20%（-0.41R）；-1.5~-0.5 才是最佳 S2 區間（73% / +0.34R）。極端超賣 = 趨勢延伸，不是均值回歸機會。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight info" style="margin-bottom:16px">
+        <strong>下一步：</strong>確認上述規則是否符合直覺與實盤經驗，再決定是否寫入 ANALYSIS_SKILL.md。
+        原始打標資料：<code>xauusd/csv/XAUUSD_2026H1_regime.csv</code>
+      </div>
+
       <div class="report-links">
         <a class="report-link" href="xauusd/xauusd_h2_dashboard.html" style="border-color:var(--purple);color:var(--purple)">📱 手機版完整 Dashboard →</a>
       </div>
