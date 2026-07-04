@@ -1499,10 +1499,205 @@ tbody tr:hover td{background:#f8fafc}
       <!-- ── Regime 四象限量化分析 ── -->
       <div class="part-label" style="margin-top:24px"><span class="part-badge">REGIME ANALYSIS</span>2026 H1 真實交易 × 4H Regime 四象限量化驗證</div>
 
-      <div class="insight info" style="margin-bottom:16px">
-        <strong>方法：</strong>4H EMA20 斜率（10根）× BBW 百分位（60根滾動）定義四象限；
-        用 <code>merge_asof</code> 將 188 筆進場時間對齊最近 4H 收盤，自動標記 Regime。
-        門檻：斜率 ±0.15%、BBW rank ≥65% = 趨勢帶。
+      <!-- ── 公式說明 ── -->
+      <div class="card" style="margin-bottom:20px">
+        <div style="font-weight:700;font-size:15px;margin-bottom:14px;color:var(--text)">📐 三個核心公式</div>
+        <div style="display:grid;gap:12px">
+
+          <div style="background:var(--bg2);border-radius:8px;padding:12px 16px;border-left:4px solid var(--primary)">
+            <div style="font-weight:700;margin-bottom:6px;font-size:14px">① EMA20 斜率 — 判斷<em>方向</em></div>
+            <div style="font-family:monospace;font-size:13px;background:var(--surface2);padding:6px 10px;border-radius:6px;margin-bottom:8px">
+              slope = ( EMA20<sub>現在</sub> − EMA20<sub>10根前</sub> ) / EMA20<sub>10根前</sub> × 100%
+            </div>
+            <div style="font-size:12px;color:var(--text2)">
+              slope ≥ <strong>+0.15%</strong> → 上升趨勢 &nbsp;|&nbsp;
+              slope ≤ <strong>-0.15%</strong> → 下降趨勢 &nbsp;|&nbsp;
+              中間 → 中性
+            </div>
+          </div>
+
+          <div style="background:var(--bg2);border-radius:8px;padding:12px 16px;border-left:4px solid #d97706">
+            <div style="font-weight:700;margin-bottom:6px;font-size:14px">② BBW 百分位 — 判斷<em>波動大小</em></div>
+            <div style="font-family:monospace;font-size:13px;background:var(--surface2);padding:6px 10px;border-radius:6px;margin-bottom:4px">
+              BBW = ( BB上軌 − BB下軌 ) / BB中軌
+            </div>
+            <div style="font-family:monospace;font-size:13px;background:var(--surface2);padding:6px 10px;border-radius:6px;margin-bottom:8px">
+              bbw_rank = BBW 在過去 60 根 4H 的百分位排名（0–100%）
+            </div>
+            <div style="font-size:12px;color:var(--text2)">
+              bbw_rank ≥ <strong>65%</strong> → 趨勢帶（波動大）&nbsp;|&nbsp;
+              &lt; 65% → 盤整帶（波動小）
+            </div>
+          </div>
+
+          <div style="background:var(--bg2);border-radius:8px;padding:12px 16px;border-left:4px solid #7c3aed">
+            <div style="font-weight:700;margin-bottom:6px;font-size:14px">③ Z-Score — 判斷<em>現價離均線多遠</em>（S2 專用）</div>
+            <div style="font-family:monospace;font-size:13px;background:var(--surface2);padding:6px 10px;border-radius:6px;margin-bottom:8px">
+              Z = ( 現價 − EMA20 ) / ATR14
+            </div>
+            <div style="font-size:12px;color:var(--text2)">
+              ATR14 = 近 14 根 4H 的平均真實波幅（波動單位）<br>
+              Z = −1.5 代表「現價在均線下方 1.5 個波動單位」；Z 越負 = 越偏低
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── 四象限圖 ── -->
+      <div class="card" style="margin-bottom:20px">
+        <div style="font-weight:700;font-size:15px;margin-bottom:14px;color:var(--text)">🗺 Regime 四象限圖（公式①② 組合）</div>
+
+        <!-- 軸說明 -->
+        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:8px;gap:8px;font-size:12px;color:var(--text2)">
+          <span style="border-left:3px solid #d97706;padding-left:6px">Y軸 = BBW rank（波動大小）</span>
+          <span style="border-left:3px solid var(--primary);padding-left:6px">X軸 = EMA20 斜率（方向）</span>
+        </div>
+
+        <!-- 四象限格線 -->
+        <div style="display:grid;grid-template-columns:80px 1fr 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:3px;font-size:13px">
+
+          <!-- 標頭列 -->
+          <div></div>
+          <div style="text-align:center;padding:6px;font-size:11px;color:var(--text2);background:var(--bg2);border-radius:6px">
+            ← slope ≤ -0.15%<br><strong>下降</strong>
+          </div>
+          <div style="text-align:center;padding:6px;font-size:11px;color:var(--text2);background:var(--bg2);border-radius:6px">
+            -0.15% ~ +0.15%<br><strong>中性</strong>
+          </div>
+          <div style="text-align:center;padding:6px;font-size:11px;color:var(--text2);background:var(--bg2);border-radius:6px">
+            slope ≥ +0.15% →<br><strong>上升</strong>
+          </div>
+
+          <!-- 高波動列 -->
+          <div style="display:flex;align-items:center;justify-content:center;writing-mode:vertical-lr;transform:rotate(180deg);font-size:11px;color:#d97706;font-weight:700;padding:4px;text-align:center">
+            BBW ≥65%<br>趨勢帶
+          </div>
+          <div style="padding:12px;background:#fee2e2;border-radius:8px;border:2px solid #dc2626">
+            <div style="font-weight:700;color:#dc2626;font-size:14px">🔴 BEAR_TREND</div>
+            <div style="font-size:12px;color:#7f1d1d;margin-top:4px">高波動 + 下降</div>
+            <div style="margin-top:8px;font-size:12px">
+              <span style="color:#dc2626">S1: -0.28R ❌</span><br>
+              <span style="color:#16a34a">S1-Fail: +0.72R ✅</span><br>
+              <span style="font-size:11px;color:var(--text2)">→ 適合 S1-Fail 空頭，禁止 S1 多單</span>
+            </div>
+          </div>
+          <div style="padding:12px;background:var(--bg2);border-radius:8px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center;color:var(--text2);font-size:12px">
+              HIGH_VOL_RANGE<br><span style="font-size:11px">（H1 樣本極少，略）</span>
+            </div>
+          </div>
+          <div style="padding:12px;background:#dcfce7;border-radius:8px;border:2px solid #16a34a">
+            <div style="font-weight:700;color:#15803d;font-size:14px">🟢 BULL_TREND</div>
+            <div style="font-size:12px;color:#14532d;margin-top:4px">高波動 + 上升</div>
+            <div style="margin-top:8px;font-size:12px">
+              <span style="color:#16a34a">S1: +1.06R ✅✅</span><br>
+              <span style="color:#16a34a">S2: +0.25R ✅</span><br>
+              <span style="font-size:11px;color:var(--text2)">→ S1/S2 最佳環境</span>
+            </div>
+          </div>
+
+          <!-- 低波動列 -->
+          <div style="display:flex;align-items:center;justify-content:center;writing-mode:vertical-lr;transform:rotate(180deg);font-size:11px;color:var(--text2);font-weight:700;padding:4px;text-align:center">
+            BBW &lt;65%<br>盤整帶
+          </div>
+          <div style="padding:12px;background:#fef9c3;border-radius:8px;border:2px solid #d97706">
+            <div style="font-weight:700;color:#92400e;font-size:14px">🟡 RANGE_DOWN</div>
+            <div style="font-size:12px;color:#78350f;margin-top:4px">低波動 + 下降</div>
+            <div style="margin-top:8px;font-size:12px">
+              <span style="color:#16a34a">S1: +0.17R ✅</span><br>
+              <span style="color:#16a34a">S2: +0.03R ≈</span><br>
+              <span style="font-size:11px;color:#dc2626">⚠ H1 最多！49% 交易在此</span>
+            </div>
+          </div>
+          <div style="padding:12px;background:var(--bg2);border-radius:8px;border:1px solid var(--border)">
+            <div style="font-weight:700;color:var(--text2);font-size:14px">⬜ CONSOLIDATION</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px">低波動 + 中性</div>
+            <div style="margin-top:8px;font-size:12px">
+              <span style="color:#16a34a">S1: +0.03R ≈</span><br>
+              <span style="color:#dc2626">S2: -0.98R ❌</span><br>
+              <span style="font-size:11px;color:var(--text2)">→ 雙策略迴避</span>
+            </div>
+          </div>
+          <div style="padding:12px;background:#dbeafe;border-radius:8px;border:2px solid #2563eb">
+            <div style="font-weight:700;color:#1e40af;font-size:14px">🔵 RANGE_UP</div>
+            <div style="font-size:12px;color:#1e3a8a;margin-top:4px">低波動 + 上升</div>
+            <div style="margin-top:8px;font-size:12px">
+              <span style="color:#16a34a">S1: +0.19R ✅</span><br>
+              <span style="color:#16a34a">S2: +0.02R ≈</span><br>
+              <span style="font-size:11px;color:var(--text2)">→ S1 可進，S2 觀望</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="margin-top:12px;padding:10px 14px;background:var(--bg2);border-radius:8px;font-size:12px;color:var(--text2)">
+          <strong>讀圖方式：</strong>看 TradingView 截圖時，先判斷 BB 是否擴張（BBW rank 高低）→ 再判斷 EMA20 是否向上傾斜 → 找到對應格子 → 決定 S1 / S2 適合與否。
+        </div>
+      </div>
+
+      <!-- ── Z-Score 數線（S2 專用）── -->
+      <div class="card" style="margin-bottom:20px">
+        <div style="font-weight:700;font-size:15px;margin-bottom:14px;color:var(--text)">📉 Z-Score 分區（S2 均值回歸判斷，公式③）</div>
+
+        <!-- 數線 -->
+        <div style="position:relative;padding:0 12px;margin-bottom:8px">
+          <!-- 底線 -->
+          <div style="height:6px;background:linear-gradient(to right,#dc2626 0%,#f97316 15%,#fbbf24 30%,#4ade80 50%,#22c55e 75%,#16a34a 100%);border-radius:3px;margin-bottom:0"></div>
+          <!-- 刻度標籤 -->
+          <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--text2)">
+            <span style="color:#dc2626;font-weight:700">−∞</span>
+            <span>−2.5</span>
+            <span>−1.5</span>
+            <span>−0.5</span>
+            <span>0</span>
+            <span>+0.5</span>
+            <span style="color:#16a34a;font-weight:700">+∞</span>
+          </div>
+        </div>
+
+        <!-- 分區說明格 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:6px;margin-top:10px;font-size:12px;text-align:center">
+          <div style="background:#fee2e2;border-radius:8px;padding:10px 6px;border:2px solid #dc2626">
+            <div style="font-weight:700;color:#dc2626">Z &lt; −2.5</div>
+            <div style="font-size:11px;color:var(--text2);margin:4px 0">極度超賣</div>
+            <div style="font-size:18px;font-weight:700;color:#dc2626">20%</div>
+            <div style="font-size:11px;color:#dc2626">−0.41R ❌</div>
+            <div style="font-size:10px;margin-top:4px;color:#7f1d1d">⚠ 趨勢延伸<br>不是均值回歸</div>
+          </div>
+          <div style="background:#fef9c3;border-radius:8px;padding:10px 6px">
+            <div style="font-weight:700;color:#92400e">−2.5 ~ −1.5</div>
+            <div style="font-size:11px;color:var(--text2);margin:4px 0">深度超賣</div>
+            <div style="font-size:18px;font-weight:700;color:#d97706">43%</div>
+            <div style="font-size:11px;color:#d97706">−0.46R</div>
+            <div style="font-size:10px;margin-top:4px;color:var(--text2)">仍不建議</div>
+          </div>
+          <div style="background:#dcfce7;border-radius:8px;padding:10px 6px;border:2px solid #16a34a">
+            <div style="font-weight:700;color:#15803d">−1.5 ~ −0.5</div>
+            <div style="font-size:11px;color:var(--text2);margin:4px 0">輕度超賣</div>
+            <div style="font-size:22px;font-weight:700;color:#15803d">73%</div>
+            <div style="font-size:11px;color:#16a34a">+0.34R ✅</div>
+            <div style="font-size:10px;margin-top:4px;color:#14532d">⭐ S2 最佳進場區<br>真正的均值回歸</div>
+          </div>
+          <div style="background:var(--bg2);border-radius:8px;padding:10px 6px">
+            <div style="font-weight:700">−0.5 ~ +0.5</div>
+            <div style="font-size:11px;color:var(--text2);margin:4px 0">均線附近</div>
+            <div style="font-size:18px;font-weight:700">57%</div>
+            <div style="font-size:11px;color:var(--text2)">+0.09R</div>
+            <div style="font-size:10px;margin-top:4px;color:var(--text2)">可進但優先級低</div>
+          </div>
+          <div style="background:#dbeafe;border-radius:8px;padding:10px 6px">
+            <div style="font-weight:700;color:#1e40af">Z &gt; +0.5</div>
+            <div style="font-size:11px;color:var(--text2);margin:4px 0">偏高</div>
+            <div style="font-size:18px;font-weight:700;color:#1e40af">85%</div>
+            <div style="font-size:11px;color:#1e40af">+0.25R</div>
+            <div style="font-size:10px;margin-top:4px;color:var(--text2)">價高但趨勢強<br>S1 方向更適合</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;padding:10px 14px;background:var(--bg2);border-radius:8px;font-size:12px;color:var(--text2)">
+          <strong>關鍵洞見：</strong>極度超賣（Z &lt; −2.5）勝率只有 20% — 不是「跌夠了要彈」，是「趨勢出問題要逃」。S2 進場要找<strong>輕度偏離均線</strong>，不是越超賣越好。
+        </div>
       </div>
 
       <!-- Regime 分佈 -->
