@@ -205,7 +205,7 @@ Step 1 輸出必須包含：
 
 **1a. 讀取 context.md（人工判斷部分）**
 ```
-讀取：/Users/tittan/program/github/trading/xauusd/claude/context.md
+讀取：/Users/tittan/googledrive/Github/trading/xauusd/claude/context.md
 取得：當前偏向、帳戶狀態、週報狀態、關鍵位階、最新 Alerts
 ```
 
@@ -388,7 +388,7 @@ Step 1 輸出必須包含：
 - 若檔案不存在 → 建立新檔，內容為含單筆記錄的 JSON array
 ```
 
-**2. 更新 /Users/tittan/program/github/trading/xauusd/claude/context.md**
+**2. 更新 /Users/tittan/googledrive/Github/trading/xauusd/claude/context.md**
 ```
 規則：
 - 「近 5 筆」表格：shift 掉最舊一筆，在最上方插入本次記錄
@@ -404,7 +404,7 @@ Step 1 輸出必須包含：
 
 寫入完成後，提醒用戶在 Terminal 執行：
 ```bash
-cd /Users/tittan/program/github/trading && git add xauusd/claude/ && git commit -m "daily analysis: $(date +%Y-%m-%d)" && git push
+cd /Users/tittan/googledrive/Github/trading && git add xauusd/claude/ && git commit -m "daily analysis: $(date +%Y-%m-%d)" && git push
 ```
 
 ---

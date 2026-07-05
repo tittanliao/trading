@@ -12,4 +12,4 @@ metadata:
 - 能看懂 pandas/matplotlib 程式碼，熟悉 Pine Script v6
 - 偏好繁體中文溝通
 
-相關專案：[[xauusd-project]] — `/Users/tittan/program/github/xauusd`
+相關專案：[[xauusd-project]] — `/Users/tittan/googledrive/Github/trading/xauusd`

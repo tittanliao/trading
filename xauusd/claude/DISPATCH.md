@@ -8,9 +8,9 @@
 ```
 請依序讀取以下檔案，恢復黃金分析工作流：
 
-1. /Users/tittan/program/github/trading/xauusd/claude/ANALYSIS_SKILL.md
-2. /Users/tittan/program/github/trading/xauusd/claude/TRADING_PROFILE.md
-3. /Users/tittan/program/github/trading/xauusd/claude/context.md
+1. /Users/tittan/googledrive/Github/trading/xauusd/claude/ANALYSIS_SKILL.md
+2. /Users/tittan/googledrive/Github/trading/xauusd/claude/TRADING_PROFILE.md
+3. /Users/tittan/googledrive/Github/trading/xauusd/claude/context.md
 
 讀完後回覆「工作流已恢復，等待指令」，不需要額外說明。
 ```
@@ -22,10 +22,10 @@
 ```
 請依序讀取以下檔案，恢復黃金分析工作流：
 
-1. /Users/tittan/program/github/trading/xauusd/claude/ANALYSIS_SKILL.md
-2. /Users/tittan/program/github/trading/xauusd/claude/ANALYSIS_SKILL_WEEKLY.md
-3. /Users/tittan/program/github/trading/xauusd/claude/TRADING_PROFILE.md
-4. /Users/tittan/program/github/trading/xauusd/claude/context.md
+1. /Users/tittan/googledrive/Github/trading/xauusd/claude/ANALYSIS_SKILL.md
+2. /Users/tittan/googledrive/Github/trading/xauusd/claude/ANALYSIS_SKILL_WEEKLY.md
+3. /Users/tittan/googledrive/Github/trading/xauusd/claude/TRADING_PROFILE.md
+4. /Users/tittan/googledrive/Github/trading/xauusd/claude/context.md
 
 讀完後回覆「工作流已恢復，等待指令」，不需要額外說明。
 ```
@@ -37,11 +37,11 @@
 ```
 請依序讀取以下檔案，恢復黃金分析工作流：
 
-1. /Users/tittan/program/github/trading/xauusd/claude/ANALYSIS_SKILL.md
-2. /Users/tittan/program/github/trading/xauusd/claude/ANALYSIS_SKILL_WEEKLY.md
-3. /Users/tittan/program/github/trading/xauusd/claude/ANALYSIS_SKILL_MERGE.md
-4. /Users/tittan/program/github/trading/xauusd/claude/TRADING_PROFILE.md
-5. /Users/tittan/program/github/trading/xauusd/claude/context.md
+1. /Users/tittan/googledrive/Github/trading/xauusd/claude/ANALYSIS_SKILL.md
+2. /Users/tittan/googledrive/Github/trading/xauusd/claude/ANALYSIS_SKILL_WEEKLY.md
+3. /Users/tittan/googledrive/Github/trading/xauusd/claude/ANALYSIS_SKILL_MERGE.md
+4. /Users/tittan/googledrive/Github/trading/xauusd/claude/TRADING_PROFILE.md
+5. /Users/tittan/googledrive/Github/trading/xauusd/claude/context.md
 
 讀完後回覆「工作流已恢復，等待指令」，不需要額外說明。
 ```
@@ -57,7 +57,7 @@
 | `合併週報` | 三份週報合併（Claude / Gemini / Dispatch），需先載入 ANALYSIS_SKILL_MERGE.md |
 | `請比對周報` | 周報①（Gemini）vs 周報②（Claude），輸出差異 |
 | `更新 profile` | 更新 TRADING_PROFILE.md |
-| `signal scanner` | 執行 /Users/tittan/program/github/trading/xauusd/signal_scanner.py |
+| `signal scanner` | 執行 /Users/tittan/googledrive/Github/trading/xauusd/signal_scanner.py |
 
 ---
 
@@ -65,11 +65,11 @@
 
 - **Git commit/push**：分析後提醒用戶在 Terminal 手動執行：
   ```bash
-  cd /Users/tittan/program/github/trading && git add xauusd/claude/ && git commit -m "daily analysis: $(date +%Y-%m-%d)" && git push
+  cd /Users/tittan/googledrive/Github/trading && git add xauusd/claude/ && git commit -m "daily analysis: $(date +%Y-%m-%d)" && git push
   ```
 - **CSV 資料**：存放於 /Users/tittan/googledrive/XAUUSD/weekly report/csv/
 - **Gemini 周報**：讀 .gdoc（唯一來源），不接受 PNG 或 txt 替代
-- **daily JSON**：歷史存檔用，啟動時不讀，路徑 /Users/tittan/program/github/trading/xauusd/claude/daily/
+- **daily JSON**：歷史存檔用，啟動時不讀，路徑 /Users/tittan/googledrive/Github/trading/xauusd/claude/daily/
 
 ---
 

@@ -37,7 +37,7 @@ metadata:
 **Why:** 用戶明確要求「只要有紀錄的動作，一併更新到 git」，避免 skill/memory/daily_log 改動丟失。
 **How to apply:** 凡是修改了 trading repo 內任何檔案（skill/、.claude/memory/、xauusd/、tx/ 等），完成後提醒用戶執行：
 ```bash
-cd ~/program/github/trading && git add -A && git commit -m "update: [描述]" && git push
+cd ~/googledrive/Github/trading && git add -A && git commit -m "update: [描述]" && git push
 ```
 
 ## SMC 是輔助工具，S1/S2 是主策略，不替換
@@ -71,7 +71,7 @@ cd ~/program/github/trading && git add -A && git commit -m "update: [描述]" &&
 - 三份週報路徑：
   - Claude：`~/googledrive/XAUUSD/claude/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx`
   - Gemini：`~/googledrive/XAUUSD/weekly report/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}.txt`
-  - Dispatch：`~/program/github/trading/xauusd/daily_log/weekly_report_W{週次}_{YYYYMMDD}.txt`
+  - Dispatch：`~/googledrive/Github/trading/xauusd/daily_log/weekly_report_W{週次}_{YYYYMMDD}.txt`
 - 三份差距 < 7 天才合併，否則提示用戶等齊
 - 輸出：3 個 .docx → `~/googledrive/XAUUSD/claude/XAUUSD_W{N}_Combine_Style{A/B/C}.docx`
 - 詳細格式見 ANALYSIS_SKILL.md「合併週報流程」章節

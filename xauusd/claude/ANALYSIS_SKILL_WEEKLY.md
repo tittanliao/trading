@@ -11,7 +11,7 @@
 #### Step -1 — 更新 MGC 期貨資料（週報前必做）
 ```
 1. 執行 launch.sh 抓取 MGC 最新資料（自動寫入 Google Drive）：
-   /Users/tittan/program/github/trading/xauusd/fetcher/launch.sh
+   /Users/tittan/googledrive/Github/trading/xauusd/fetcher/launch.sh
 
    執行完畢後，5 個 MGC 檔案已直接寫入：
    /Users/tittan/googledrive/XAUUSD/weekly report/csv/
@@ -226,7 +226,7 @@ S1 品質：[✅ 突破清掉 BSL / ⚠️ 在 FVG 內突破 / ❌ FVG 阻力未
 
 ### 週報輸出路徑
 ```
-/Users/tittan/program/github/trading/xauusd/claude/reports/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx
+/Users/tittan/googledrive/Github/trading/xauusd/claude/reports/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx
 ```
 
 ### 參考提示詞（生成週報前必讀）

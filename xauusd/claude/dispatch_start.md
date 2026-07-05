@@ -8,9 +8,9 @@
 ```
 請依序讀取以下檔案，恢復黃金分析工作流：
 
-1. /Users/tittan/program/github/trading/xauusd/claude/ANALYSIS_SKILL.md
-2. /Users/tittan/program/github/trading/xauusd/claude/TRADING_PROFILE.md
-3. /Users/tittan/program/github/trading/xauusd/claude/daily/（讀最新的 YYYY-MM-DD.json）
+1. /Users/tittan/googledrive/Github/trading/xauusd/claude/ANALYSIS_SKILL.md
+2. /Users/tittan/googledrive/Github/trading/xauusd/claude/TRADING_PROFILE.md
+3. /Users/tittan/googledrive/Github/trading/xauusd/claude/daily/（讀最新的 YYYY-MM-DD.json）
 
 4. 【周報①：Gemini 版】
    在以下路徑找 7 天內最新的 XAUUSD_Weekly_Report_*.gdoc：
@@ -19,10 +19,10 @@
 
 5. 【周報②：Claude 版】
    在以下路徑找最新的 weekly_report_*.txt：
-   /Users/tittan/program/github/trading/xauusd/daily_log/
+   /Users/tittan/googledrive/Github/trading/xauusd/daily_log/
 
 6. 讀取指令手冊：
-   /Users/tittan/program/github/trading/xauusd/claude/dispatch_recovery.md
+   /Users/tittan/googledrive/Github/trading/xauusd/claude/dispatch_recovery.md
 
 讀完後回覆「工作流已恢復，等待指令」，不需要額外說明。
 ```
@@ -46,7 +46,7 @@
 
 - **Git commit/push**：沙盒無 .git 寫入權限，分析後提醒用戶在 Terminal 手動執行：
   ```bash
-  cd /Users/tittan/program/github/trading && git add xauusd/claude/ && git commit -m "daily analysis: $(date +%Y-%m-%d)" && git push
+  cd /Users/tittan/googledrive/Github/trading && git add xauusd/claude/ && git commit -m "daily analysis: $(date +%Y-%m-%d)" && git push
   ```
 - **CSV 資料**：目前最新至 2026-04-27，截圖分析為主
 - **Gemini 周報**：若 Chrome 無法開啟 .gdoc，改讀同路徑的 .txt 備份

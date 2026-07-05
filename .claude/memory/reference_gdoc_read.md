@@ -44,4 +44,4 @@ if r.status_code == 200:
 - `export?format=txt` 直接瀏覽器開 → 會觸發下載，不回傳 HTML
 
 ### 已更新的 Skill 檔案
-`/Users/tittan/program/github/trading/xauusd/claude/ANALYSIS_SKILL_MERGE.md`（Gemini 讀取段落）
+`/Users/tittan/googledrive/Github/trading/xauusd/claude/ANALYSIS_SKILL_MERGE.md`（Gemini 讀取段落）

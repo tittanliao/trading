@@ -10,7 +10,7 @@
 
 **Step 0：確認 Claude 當週報告存在**
 ```
-路徑：/Users/tittan/program/github/trading/xauusd/claude/reports/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx
+路徑：/Users/tittan/googledrive/Github/trading/xauusd/claude/reports/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx
 ```
 - 若不存在 → 先執行「週日黃金工作流」生成 Claude 版本，再合併
 - 若存在但日期差 > 7 天（舊週）→ 同上，重新生成當週報告
@@ -103,7 +103,7 @@ ls "/Users/tittan/googledrive/XAUUSD/weekly report/macro/" | sort | tail -1
 ### 三份週報來源
 ```
 ① Claude 週報（本次生成）
-   路徑：/Users/tittan/program/github/trading/xauusd/claude/reports/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx
+   路徑：/Users/tittan/googledrive/Github/trading/xauusd/claude/reports/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx
    讀取：python-docx（見下方）
 
 ② Gemini 週報（用戶手動生成，Google Drive 存為 .gdoc）
@@ -112,7 +112,7 @@ ls "/Users/tittan/googledrive/XAUUSD/weekly report/macro/" | sort | tail -1
    ⚠ 格式是 .gdoc（190 bytes JSON 指標），不是真正文件
 
 ③ Dispatch 週報（分析生成）
-   路徑：/Users/tittan/program/github/trading/xauusd/daily_log/weekly_report_W{週次}_{YYYYMMDD}.txt
+   路徑：/Users/tittan/googledrive/Github/trading/xauusd/daily_log/weekly_report_W{週次}_{YYYYMMDD}.txt
    讀取：Read 工具或 bash cat
 ```
 
@@ -162,7 +162,7 @@ r = requests.get(url, cookies=cj, allow_redirects=True, timeout=15,
 
 ### Combine 輸出格式（三個 Style，各一份）
 ```
-輸出路徑：/Users/tittan/program/github/trading/xauusd/claude/reports/
+輸出路徑：/Users/tittan/googledrive/Github/trading/xauusd/claude/reports/
 命名：XAUUSD_W{週次}_Combine_Style{A/B/C}.docx
 
 每份檔案結構：
@@ -247,7 +247,7 @@ consensus = {
     "macro_date": "2026-06-20"      # ← 從截圖檔名提取
 }
 
-reports_dir = "/Users/tittan/program/github/trading/xauusd/claude/reports"
+reports_dir = "/Users/tittan/googledrive/Github/trading/xauusd/claude/reports"
 json_path = f"{reports_dir}/weekly_consensus_{consensus['week']}_{consensus['day']}.json"
 with open(json_path, 'w', encoding='utf-8') as f:
     json.dump(consensus, f, ensure_ascii=False, indent=2)
@@ -255,7 +255,7 @@ print(f"✅ 儲存 {json_path}")
 
 result = subprocess.run(
     ['python3.12', 'xauusd/claude/generate_weekly_html.py', '--from-json', json_path],
-    cwd='/Users/tittan/program/github/trading',
+    cwd='/Users/tittan/googledrive/Github/trading',
     capture_output=True, text=True
 )
 print(result.stdout)

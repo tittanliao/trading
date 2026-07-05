@@ -8,7 +8,7 @@
 **方案①**：若只是 context 滿了，想快速回血
 ```
 1. 用瀏覽器開啟本檔案位置：
-   /Users/tittan/program/github/trading/xauusd/claude/dispatch_recovery.md
+   /Users/tittan/googledrive/Github/trading/xauusd/claude/dispatch_recovery.md
 2. 把「👇 貼下方文字給 Claude」那段複製出來
 3. 新對話中貼給 Claude，自動恢復工作流
 ```
@@ -16,7 +16,7 @@
 **方案②**：完整恢復（推薦）
 ```
 直接貼 dispatch_start.md 的「貼給 Claude 的指令」段落給 Claude
-路徑：/Users/tittan/program/github/trading/xauusd/claude/dispatch_start.md
+路徑：/Users/tittan/googledrive/Github/trading/xauusd/claude/dispatch_start.md
 ```
 
 ---
@@ -26,10 +26,10 @@
 ```
 你好，請依序讀取以下檔案，恢復黃金分析工作流：
 
-1. /Users/tittan/program/github/trading/xauusd/claude/ANALYSIS_SKILL.md
-2. /Users/tittan/program/github/trading/xauusd/claude/TRADING_PROFILE.md
-3. /Users/tittan/program/github/trading/xauusd/claude/daily/（讀最新的 YYYY-MM-DD.json）
-4. /Users/tittan/program/github/trading/xauusd/claude/context.md
+1. /Users/tittan/googledrive/Github/trading/xauusd/claude/ANALYSIS_SKILL.md
+2. /Users/tittan/googledrive/Github/trading/xauusd/claude/TRADING_PROFILE.md
+3. /Users/tittan/googledrive/Github/trading/xauusd/claude/daily/（讀最新的 YYYY-MM-DD.json）
+4. /Users/tittan/googledrive/Github/trading/xauusd/claude/context.md
 
 讀完後回覆「工作流已恢復，等待指令」，不需要額外說明。
 ```
