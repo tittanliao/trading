@@ -229,6 +229,24 @@ S1 品質：[✅ 突破清掉 BSL / ⚠️ 在 FVG 內突破 / ❌ FVG 阻力未
 /Users/tittan/googledrive/Github/trading/xauusd/claude/reports/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx
 ```
 
+### Step 最終 — 自動接續「合併週報」（20260705 新增，不需使用者再下指令）
+
+Claude 版週報 docx 產出並驗證通過後，**自動接續執行「合併週報」流程**（見
+`ANALYSIS_SKILL_MERGE.md`），不需使用者額外輸入「合併週報」指令：
+
+1. 直接進入 `ANALYSIS_SKILL_MERGE.md` 的 Step 0.5（讀取 Macro Dashboard，
+   優先讀當天的 `macro-YYYYMMDD.txt`）
+2. 20260705 起固定兩方比對：**交易員 A = Gemini、交易員 B = Claude**（本次剛
+   產出的獨立版）。不再有交易員C/Dispatch，已從流程移除。
+3. 只產出 **Style C 一份** Combine docx + `weekly_consensus_W{週次}_{Sun/Wed}.json`
+   + 更新 `index.html`（沿用 MERGE 文件既有 Step 6）。
+4. 完成後回報使用者：Claude 週報、Combine（Style C）皆已產出，並附上
+   Gemini × Claude 的共識/分歧摘要。
+
+> 目的：讓「週日黃金工作流」一次做到底——產生 Claude 獨立版之後不用等使用者
+> 再喊一次「合併週報」，Combine 版本才會存在，這也是「請分析」流程 Step 4.5
+> 要用到的比對底材。
+
 ### 參考提示詞（生成週報前必讀）
 ```
 提示詞（Google Doc）：

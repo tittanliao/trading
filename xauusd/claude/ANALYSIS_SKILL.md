@@ -1,5 +1,5 @@
 # XAUUSD 黃金分析技術文件
-# 版本：20260701 | 策略：黃金劍盾（S1 V3.4 / S2 V1.9 / S1-Fail）+ SMC 輔助參考
+# 版本：20260705 | 策略：黃金劍盾（S1 V3.4 / S2 V1.9 / S1-Fail）+ SMC 輔助參考
 
 ## ⚠️ 系統注意事項
 - 系統注入的 `currentDate` 為 **UTC 時間**，用戶在 **UTC+8（台灣）**
@@ -199,6 +199,34 @@ Step 1 輸出必須包含：
 > 「⛔ 分析中止：[Gemini gdoc 週報 / TradingView 截圖] 無法取得。
 >  請確認 [具體原因] 後再輸入「請分析」重試。」
 
+## 🗓️ 週末（週六/週日）特別規則 — 收盤準備型分析（20260705 新增）
+
+**適用時機**：若執行「請分析」當下為台灣時間週六或週日（市場休市，XAUUSD 無新 30m K棒），
+本次分析的性質是「幫週一開盤做準備」，不是「即時訊號判斷」。此時套用以下例外：
+
+1. **條件 2（TradingView 30m 即時截圖）不再是強制中止條件**：
+   - 截圖仍要嘗試截（可能用來確認「Market closed」狀態、確認上週五收盤價一致），
+     但畫面顯示休市／K棒空白／canvas 未渲染時，**不視為失敗、不中止分析**。
+   - 改用「最後一根有效收盤」作為現價基準，來源依序：① 本次截圖若讀得到收盤價
+     → ② CSV（`FX_IDC_XAUUSD, 30.csv` 或 1D）最後一筆 → ③ context.md「近5筆」
+     最新一筆。三者皆需標明是「上週五收盤，非即時報價」。
+   - 條件 1（Gemini gdoc 週報）維持強制，不放寬——週末通常正是週報剛產出的時候，
+     理論上更容易滿足。
+
+2. **Step 4 分析要素改為「展望型」，不強行套用即時觸發判斷**：
+   - Market Regime、S1/S2 狀態不寫「✅觸發／❌不利」，改寫「等待週一開盤首根K棒
+     確認」或「若開盤後符合[條件]則觀察」。
+   - 重點放在：本週劇本 vs 上週五收盤位置的距離、下週一開盤要優先看的關鍵位、
+     NFP/CPI 等本週數據時程提醒。
+
+3. **輸出格式維持①-⑥框架不變**，但需在【週報來源】metadata下方加一行：
+   `【分析性質】週末收盤準備分析（休市中，現價為上週五收盤 XXXX，非即時）`
+   ④技術讀值、⑤策略、⑥主管決策段落內的數值都要延續套用這個「非即時」標註，
+   不得讓用戶誤以為是盤中即時判斷。
+
+4. **Step 6 存檔正常執行**，daily JSON 與 context.md 備註加註「週末準備分析」，
+   避免之後回顧時誤判成「週末盤中訊號」。
+
 ---
 
 ### Step 1 — 讀取 Context 並重建近期走勢
@@ -278,6 +306,18 @@ Step 1 輸出必須包含：
 
 ⛔ 若無法取得 TradingView XAUUSD 30m 截圖 → 停止分析，回覆：
 「TradingView XAUUSD 30m 截圖無法取得，請在 Chrome 開啟後再輸入「請分析」重試。」
+
+4. 【Macro Dashboard 同步擷取，20260705 起每次「請分析」皆執行】
+   同一張截圖（或 zoom 圖表右下角 Asset/Macro/Now/Val/Bias 面板）順便讀取：
+   Real Rate、US 10Y、DXY Index、VIX Index、GVZ(Vol)、XAU(Now/1h/4h)、
+   綜合判定燈號（STRONG BUY/NEUTRAL/WAIT）。
+   - ✅ 讀得到 → 標記來源為「即時」，這次讀值會寫入 daily JSON + context.md（見 Step 6）。
+   - ⚠️ 讀不到（使用者當下沒開這張圖、面板被其他視窗擋住等）→ 不中斷分析，
+     改讀 `/Users/tittan/googledrive/XAUUSD/weekly report/macro/` 內日期最新的
+     `macro-YYYYMMDD.txt`（或備援 `.png`）取值，並標記來源為「非即時，
+     沿用 YYYY-MM-DD 資料」。
+   - 目的：讓 Real Rate / DXY / VIX / GVZ 這些數值逐次記錄進「近5筆」，
+     累積成可觀察的宏觀變化趨勢，不只是單次判斷用完即丟。
 ```
 
 📐 **精確讀值規則（避免誤讀，必讀）**
@@ -296,6 +336,9 @@ Step 1 輸出必須包含：
    → 大值 > 小值 = Bull；小值 > 大值 = Bear
 3. **AO 方向**：讀 Macro Score 面板的 `XAU(Now)` 與 `XAU(1h)` 欄的 +/- 數值
    → + 值 = 正動能，- 值 = 負動能，不需目測 AO 柱體顏色
+   → 同一面板（Asset/Macro/Now/Val/Bias 表格，通常位於圖表右下角）也一併讀
+     Real Rate / US 10Y / DXY Index / VIX Index / GVZ(Vol) / XAU(4h) 與底部
+     綜合判定燈號，作為 Step 3 之 4「Macro Dashboard 同步擷取」的讀值來源
 4. **Bear/Bull 訊號方向**：看最右端最新一根 bar 旁的標籤，忽略歷史 bar 的舊標記
 
 驗證方法：
@@ -349,9 +392,16 @@ Step 1 輸出必須包含：
 4. **盤別時段**：亞盤(07-16)／歐盤(16-22)／美盤(22-06)
 5. **S1 觸發條件**：Fast EMA vs BB Basis 距離、AO 方向
 6. **S2 機會**：是否有關鍵支撐位 + 錘頭型態（本週 S2 次數？）
-7. **宏觀環境快查**（從 context.md 或週報取得，不需重新計算）：
+7. **宏觀環境快查**（20260705 起：每次「請分析」都嘗試即時擷取，見 Step 3 之 4）：
    - Macro Score → 套用下方「宏觀過濾規則」決定各策略是否可執行
    - GVZ 狀態 → 決定是否縮倉
+   - 優先順序：① 本次截圖即時讀值（Step 3 之 4）→ ② 讀不到則退回
+     `/Users/tittan/googledrive/XAUUSD/weekly report/macro/` 下最新日期的
+     `macro-YYYYMMDD.txt`（20260705 起標準格式，computer-use 讀取使用者現有
+     Chrome 畫面產生，不需使用者手動存 PNG）或 `macro-YYYYMMDD.png`（舊版備援
+     格式）→ ③ 皆無則用 context.md 上一筆沿用值，並標註「宏觀資料未更新」。
+     取得方式與欄位定義詳見 ANALYSIS_SKILL_MERGE.md「Step 0.5」（該文件的
+     Step 0.5 是「合併週報」專用的完整版流程，日常分析用本節精簡版即可）。
 
 **宏觀過濾規則（2024-2026 真實回測，20260621 更新）：**
 
@@ -375,6 +425,43 @@ Step 1 輸出必須包含：
 
 > 舊規則「GVZ Extreme → 統一縮倉 50%」已修正：S1 在 Extreme 期表現良好（avg_hold 14.4 bars），縮倉反而流失收益。
 
+### Step 4.5 — Combine 週報比對（主管決策層，20260705 新增）
+
+**目的**：Gemini gdoc 仍是「請分析」唯一的週報底材（Step 2），本步驟不取代它，而是額外把本週的 Combine 週報（「合併週報」流程產出，20260705起固定為 交易員A=Gemini × 交易員B=Claude 雙方比對，Style C 一份，不再有Dispatch）拿來對照，讓用戶看到兩份資料的一致性/分歧，最後以「主管決策」的方式收斂成單一建議。
+
+**前置檢查（找本週 Combine 資料）：**
+```
+路徑：/Users/tittan/googledrive/Github/trading/xauusd/claude/reports/
+檔名：weekly_consensus_W{週次}_{Sun/Wed}.json（優先讀這個，欄位精簡）
+     或 XAUUSD_W{週次}_Combine_Style{A/B/C}.docx（備用，內容較完整）
+
+有效性判斷：
+- 週次需與本次讀到的 Gemini 週報週次一致，或檔案修改時間在 7 天內
+- 兩者皆不符合 → 視為「本週無有效 Combine 資料」
+```
+
+**⛔ 若本週無有效 Combine 資料 → 暫停分析，直接問用戶（不自動 fallback、不自動略過）：**
+```
+「本週尚無有效的 Combine 週報（或已超過 7 天），要怎麼處理？
+ 1) 我現在先跑「週日黃金工作流」+「合併週報」補一份，再繼續今天的分析
+ 2) 這次先只用 Gemini 單一來源分析，略過主管決策比對段落
+ 請告訴我要選哪個，或你有其他想法。」
+```
+等用戶回覆後，依用戶選擇的方向繼續，不自行猜測決定。
+
+**若本週有有效 Combine 資料 → 進行比對：**
+1. 從 Combine JSON 取出：`bias`（仲裁偏向）、`scenario2`（主情境+機率）、`s1`（S1觸發條件）、`s2`（S2 A+進場區）、`scenario1_pct/2_pct/3_pct`、`macro_score`
+2. 與 Step 2 讀到的 Gemini 週報內容逐項比對，列出：
+   - **一致點**：兩份資料方向相同的項目（例如主劇本都偏多、關鍵位相近）
+   - **分歧點**：不同的項目（例如機率分配差異、關鍵位差距 > 20pts、S1/S2觸發條件不同）
+3. **主管裁決**：
+   - 預設以 Gemini 為主要依據（既有信任基礎，6個月track record）
+   - 若 Combine 與 Gemini 高度一致 → 提升本次判斷信心，於輸出中註明「雙重確認」
+   - 若分歧明顯 → 仍以 Gemini 結論為準，但**必須在輸出中明確列出分歧內容**，讓用戶自行判斷是否要覆蓋，不得隱藏分歧或自行選邊站
+   - 不因為 Combine 是「我自己產出的」就偏向採信它；Combine 目前仍在累積信任度階段（見用戶說明）
+
+輸出格式見下方「⑥ 主管決策」段落。
+
 ### Step 5 — 輸出交易建議
 格式見下方「輸出格式」章節
 
@@ -386,6 +473,10 @@ Step 1 輸出必須包含：
 規則：
 - 若檔案已存在 → 讀取後 append 新記錄，寫回（JSON array 格式，最新筆在最後）
 - 若檔案不存在 → 建立新檔，內容為含單筆記錄的 JSON array
+- 20260705 起每筆記錄新增 Macro Dashboard 欄位（來自 Step 3 之 4 的讀值）：
+  macro_score（STRONG BUY/NEUTRAL/WAIT）、macro_real_rate、macro_us10y、
+  macro_dxy_dashboard、macro_vix、macro_gvz_val、macro_source（"live" 或
+  "carried:YYYY-MM-DD"，標記這筆是即時讀值還是沿用舊資料）
 ```
 
 **2. 更新 /Users/tittan/googledrive/Github/trading/xauusd/claude/context.md**
@@ -394,6 +485,11 @@ Step 1 輸出必須包含：
 - 「近 5 筆」表格：shift 掉最舊一筆，在最上方插入本次記錄
   格式：| 月-日 HH:MM | 現價 | RSI主 | RSI信 | 一句決策 |
   決策欄：≤ 10 字，只寫結論（進場多 / 空手觀望 / 等XX確認）
+  note 欄位（表格下方或每筆備註）需附上本次 Macro Dashboard 讀值，格式：
+  「Macro:[STRONG BUY/NEUTRAL/WAIT] RR=X.XXX US10Y=X.XXX DXY=XXX.XXX VIX=XX.X
+    GVZ=XX.X（[即時/沿用YYYY-MM-DD]）」
+  → 目的：讓「近5筆」累積出 Real Rate/DXY/VIX/GVZ 的短期變化軌跡，供後續分析
+    比對「這幾天宏觀是轉強還是轉弱」，不只是單次快照。
 - 「近5日日線摘要」：
   2b. 若為當天第一筆分析，補寫**前一天**的近5日日線摘要（日高/日低/偏向/結構事件）；超過5行刪最舊。
 - 「當前狀態」：更新偏向/決策、帳戶狀態（若有變化）
@@ -423,12 +519,14 @@ cd /Users/tittan/googledrive/Github/trading && git add xauusd/claude/ && git com
 
 ## 輸出格式（日常分析）
 
-> 輸出順序固定：① 週劇本 → ② 週報關鍵位 → ③ 當前位置 → ④ 技術讀值 → ⑤ 策略
+> 輸出順序固定：① 週劇本 → ② 週報關鍵位 → ③ 當前位置 → ④ 技術讀值 → ⑤ 策略 → ⑥ 主管決策 → 💡建議
 > 技術指標（BB/RSI/DXY/GVZ）的角色是「確認週報方向」，不是主要判斷依據。
+> Gemini gdoc 是唯一底材，⑥ 主管決策只是拿 Combine 週報來對照、不覆蓋 Gemini 結論（見 Step 4.5）。
 
 ```
 【黃金即時分析】YYYY-MM-DD HH:MM（盤別）
 【週報來源】Gemini gdoc W__ / PNG W__ / txt W__（依實際讀取來源填入，未使用者留空）
+【Combine對照】W__ Combine（一致 / 分歧，見⑥）/ 本週無有效Combine，已詢問用戶（依 Step 4.5 結果填入）
 
 現價：XXXX.XX
 
@@ -451,6 +549,8 @@ cd /Users/tittan/googledrive/Github/trading && git add xauusd/claude/ && git com
    BB：上軌 XXXX / Basis XXXX / 下軌 XXXX
    RSI(30m)：XX.X | XAU(Now)：±X | XAU(1h)：±X
    DXY：XXX.XXX | GVZ：XX.X（[Squeeze/Normal/Extreme]）
+   Macro：[STRONG BUY/NEUTRAL/WAIT]（Real Rate X.XXX / US10Y X.XXX / VIX XX.X）
+          來源：[即時截圖 / 沿用 YYYY-MM-DD 資料]
    近期趨勢：近 Xh 價格 XXXX→XXXX（±Xpts），RSI [轉強/轉弱/持平]（XX.X→XX.X）
    背離狀態：[無 / ⚠️ 頂背離（XXXX，未/已驗證）/ ⚠️ 底背離（XXXX）]
 
@@ -469,6 +569,12 @@ cd /Users/tittan/googledrive/Github/trading && git add xauusd/claude/ && git com
    位置：XXXX（支撐類型），型態：[錘頭/等待]
 
 ⏰ 重大事件：[NFP 7/X 22:00 → 7/X-1 22:00 前強制全平]
+
+⑥ 主管決策（Gemini vs Combine 對照，見 Step 4.5）
+   一致點：[列出雙方相同的判斷，例如「主劇本皆偏多」「關鍵支撐皆落在XXXX附近」]
+   分歧點：[列出不同之處，例如「Combine機率60/30/10 vs Gemini自身敘述55/35/10」「S2進場位差XXpts」；若完全一致則寫「無明顯分歧」]
+   裁決：[以Gemini為準 / 雙重確認信心提升]，理由：[一句話說明]
+   （若 Step 4.5 判定本週無有效 Combine，此段改寫為：「本週無有效Combine資料，已詢問用戶並依回覆處理：[用戶選擇的方向]」）
 
 💡 建議
    行動：[等待 / A+進場 / 觀望]

@@ -1,6 +1,7 @@
 # XAUUSD 合併週報技術文件
-# 版本：20260621-v2 | 觸發指令：「合併週報」
-# 本文件在「合併週報」觸發時讀取。日常分析請使用 ANALYSIS_SKILL.md。
+# 版本：20260705-v5 | 觸發指令：「合併週報」（20260705起也會被「週日黃金工作流」自動接續觸發，見 ANALYSIS_SKILL_WEEKLY.md「Step 最終」）
+# 20260705-v5：移除交易員C(Dispatch)，交易員A=Gemini／交易員B=Claude固定對應，Combine只產生Style C
+# 本文件在「合併週報」觸發時讀取，或於「週日黃金工作流」產出 Claude 版週報後自動接續執行。日常分析請使用 ANALYSIS_SKILL.md。
 
 ---
 
@@ -12,23 +13,46 @@
 ```
 路徑：/Users/tittan/googledrive/Github/trading/xauusd/claude/reports/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx
 ```
-- 若不存在 → 先執行「週日黃金工作流」生成 Claude 版本，再合併
+- 20260705起若是由「週日黃金工作流」自動接續觸發，此條件在當次對話中天然滿足，可直接跳過此檢查
+- 若是使用者手動下「合併週報」指令觸發、且找不到本週 Claude 報告 → 先執行「週日黃金工作流」生成，再合併
 - 若存在但日期差 > 7 天（舊週）→ 同上，重新生成當週報告
 - ❌ 絕對不能用舊週的 Claude 報告當交易員 A（W24 教訓：用 W23 Wed 導致所有價位過時）
 
-**Step 0.5：讀取宏觀截圖（Macro v3.6 Dashboard）**
+**Step 0.5：讀取 Macro Dashboard（20260705 起改為文字檔記錄，不再依賴使用者手動存 PNG）**
 
 資料夾：`/Users/tittan/googledrive/XAUUSD/weekly report/macro/`
-命名格式：`macro-YYYYMMDD.png`（取最新日期那張）
 
+**標準流程（主要方式，20260705 起）：文字檔 `macro-YYYYMMDD.txt`**
+```
+1. 確認使用者的 Chrome 已開啟 TradingView 圖表（含 Macro Dashboard 面板，
+   通常是同一張存有 S1/S2 指標的個人 chart layout，例如 y23HVHHP）。
+2. 用 computer-use 的 request_access 取得 Google Chrome 唯讀畫面存取權限。
+3. open_application 把 Chrome 帶到前景 → screenshot（必要時 zoom 進 Macro
+   Dashboard 面板區域，通常在圖表右下角，欄位為 Asset / Macro / Now / Val / Bias）。
+
+   ⚠️ 重要限制：不可用 Chrome MCP（mcp__claude-in-chrome__* 自己開的分頁）截圖
+   讀這個面板 —— 該分頁是背景渲染，canvas 內容（K棒、Pine Script overlay 表格）
+   不會畫出來，截圖會是空白。必須用 computer-use 對「使用者已經開啟、正在前景
+   顯示」的真實 Chrome 視窗做原生螢幕截圖，才能讀到即時渲染的畫面。
+4. 讀出以下欄位數值後，寫成文字檔存入 macro/ 資料夾，檔名
+   `macro-YYYYMMDD.txt`（YYYYMMDD 為讀取當天日期）。
+5. 內容需包含：截圖時間（Asia/Taipei）、Real Rate、US 10Y、DXY Index、
+   VIX Index、GVZ(Vol)、XAU(Now)/XAU(1h)/XAU(4h)、綜合判定
+   （STRONG BUY / NEUTRAL / WAIT，若面板只顯示燈號 banner 沒有明確 X/6
+   分數方塊，就記錄燈號判定，不強行推算分數）。可參考
+   `macro/macro-20260705.txt` 的格式。
+```
+
+**備援流程（若使用者仍手動存了截圖，或 computer-use 無法使用）：舊版 PNG 判讀邏輯**
 ```bash
 # 找最新截圖
 ls "/Users/tittan/googledrive/XAUUSD/weekly report/macro/" | sort | tail -1
 ```
-
 → 用 Read 工具讀取該圖片（Claude 有 vision 能力，直接解讀儀表板）
 
-**從截圖提取以下欄位：**
+**讀取優先序：** 每次先找 `macro/` 資料夾裡「日期最新」的檔案，不論是 `.txt` 或 `.png`，只要日期最新就用它；`.txt` 與 `.png` 判讀邏輯共用下方同一套欄位定義。
+
+**從截圖或文字檔提取以下欄位：**
 | 欄位 | Pine Script 列名 | 說明 |
 |------|-----------------|------|
 | `real_rate` | Real Rate / Val | 數值（如 2.205）|
@@ -96,25 +120,29 @@ ls "/Users/tittan/googledrive/XAUUSD/weekly report/macro/" | sort | tail -1
 - `宏觀 5/6（STRONG BUY）：實質利率轉跌+DXY破支撐 → S1正常執行，S2A縮0.01手（STRONG BUY期S2A回測最差）`
 - `宏觀 3/6（NEUTRAL）：VIX低+DXY混沌，GVZ Extreme → S1/S2A黃金環境，縮倉50%（GVZ）但信號品質高`
 
-**若找不到截圖：**
-- 在 Combine 報告中標注「宏觀截圖未提供，跳過 Macro 段落」
+**若找不到任何記錄（.txt 或 .png 皆無）：**
+- 先嘗試 Step 0.5 標準流程（computer-use 讀取使用者 Chrome 現有畫面並寫成 .txt）
+- 仍無法取得時，在 Combine 報告中標注「宏觀資料未提供，跳過 Macro 段落」
 - 繼續執行後續步驟，不強制中斷
 
-### 三份週報來源
-```
-① Claude 週報（本次生成）
-   路徑：/Users/tittan/googledrive/Github/trading/xauusd/claude/reports/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx
-   讀取：python-docx（見下方）
+### 兩份週報來源（20260705 起：移除 Dispatch，只比對 Gemini × Claude）
 
-② Gemini 週報（用戶手動生成，Google Drive 存為 .gdoc）
+**交易員 A = Gemini　交易員 B = Claude**（20260705 起固定這個對應，不再對調）
+
+```
+① 交易員 A — Gemini 週報（用戶手動生成，Google Drive 存為 .gdoc，6個月track record，主要信任來源）
    路徑：/Users/tittan/googledrive/XAUUSD/weekly report/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}.gdoc
-   讀取：browser-cookie3（見下方，已驗證 HTTP 200，不需用戶介入）
+   讀取：browser-cookie3（見下方，已驗證 HTTP 200，不需用戶介入）或 mobilebasic 網頁版
    ⚠ 格式是 .gdoc（190 bytes JSON 指標），不是真正文件
 
-③ Dispatch 週報（分析生成）
-   路徑：/Users/tittan/googledrive/Github/trading/xauusd/daily_log/weekly_report_W{週次}_{YYYYMMDD}.txt
-   讀取：Read 工具或 bash cat
+② 交易員 B — Claude 週報（本次「週日黃金工作流」生成的獨立版）
+   路徑：/Users/tittan/googledrive/Github/trading/xauusd/claude/reports/XAUUSD_Weekly_Report_{年份}W{週次}_{Sun/Wed}_Claude.docx
+   讀取：python-docx（見下方）
 ```
+
+> 20260705 之前的舊版流程還有「交易員 C（Dispatch）」，讀取
+> `xauusd/daily_log/weekly_report_W{週次}_*.txt`。使用者已確認移除，
+> Combine 報告不再產生 Dispatch 相關段落，本節與下方結構皆已同步移除。
 
 ### 讀取技巧
 ```python
@@ -148,49 +176,41 @@ r = requests.get(url, cookies=cj, allow_redirects=True, timeout=15,
 ```
 
 ### 有效性判斷
-- 三份報告日期差距 < 7 天 → 可合併
-- 若有時間差 → 在報告中標注，以較新的 Gemini/Dispatch 為現況基準
+- 兩份報告日期差距 < 7 天 → 可合併
+- 若有時間差 → 在報告中標注，以較新的 Gemini 為現況基準
 - 若缺少某份報告 → 提示用戶，不強行合併
 
 ### 執行步驟
 1. **確認 Claude 當週報告存在**（見 Step 0）
 2. **讀取宏觀截圖**（見 Step 0.5）→ 記錄 Macro Score + 各指標值
-3. **讀取三份報告**，各自提取：主劇本 + 機率、關鍵支撐/阻力、S1/S2 條件、本週最大風險
-4. **製作共識/分歧對照表**（3 欄：Claude / Gemini / Dispatch）
-5. **生成三個 Style Combine .docx**（格式見下方，含宏觀段落）
+3. **讀取兩份報告**，各自提取：主劇本 + 機率、關鍵支撐/阻力、S1/S2 條件、本週最大風險
+4. **製作共識/分歧對照表**（2 欄：交易員A/Gemini vs 交易員B/Claude）
+5. **只生成 Style C 一份 Combine .docx**（20260705 起簡化，格式見下方，含宏觀段落）
 6. **⚡ 自動更新 index.html**（見下方「Step 6」段落，必跑）
 
-### Combine 輸出格式（三個 Style，各一份）
+### Combine 輸出格式（20260705 起只產生 Style C 一份）
 ```
 輸出路徑：/Users/tittan/googledrive/Github/trading/xauusd/claude/reports/
-命名：XAUUSD_W{週次}_Combine_Style{A/B/C}.docx
+命名：XAUUSD_W{週次}_Combine_StyleC.docx
+（不再產生 StyleA / StyleB，舊週次留存的 A/B 檔案可忽略或手動清除）
 
-每份檔案結構：
-1. 標題：【黃金劍盾週報 Combine】W{N} — 三交易員觀點整合
-2. Style 標識 + 審核日期
-3. 宏觀環境摘要（Macro v3.6 Dashboard）← 新增
+檔案結構：
+1. 標題：【黃金劍盾週報 Combine】W{N} — 雙交易員觀點整合
+2. 審核日期
+3. 宏觀環境摘要（Macro Dashboard）
    - Macro Score：STRONG BUY / NEUTRAL / WAIT
    - 關鍵數值：Real Rate {值}（{Bull/Bear}）/ US10Y {值} / DXY {值}（{Now趨勢}）
    - VIX {值} / GVZ {值}（{🧊/🌊/🔥}）/ XAU 4H 乖離 {值}
    - 宏觀結論一句話（對本週操作的影響）
-4. 三份報告概覽表（交易員 / 日期 / 主情境）
-5. 交易員 A（Claude）核心觀點
-6. 交易員 B（Gemini）核心觀點
-7. 交易員 C（Dispatch）核心觀點
-8. 共識與分歧對照表（含仲裁結論）
-9. 主管審核意見（各 Style 風格）
+4. 兩份報告概覽表（交易員 / 日期 / 主情境）
+5. 交易員 A（Gemini）核心觀點
+6. 交易員 B（Claude）核心觀點
+7. 共識與分歧對照表（含仲裁結論）
+8. 主管審核意見（Style C 風格，投資委員會正式審核版）
 ```
 
-### 三個 Style 風格定義
+### Style 風格定義（20260705 起只保留 Style C）
 ```
-Style A — 量化風控主管審核版
-  輸出：共識確認 → 分歧量化仲裁（數字/機率）→ 收斂操作建議 + 倉位上限
-  語氣：精確、量化、冷靜
-
-Style B — 資深老鳥主管拍板版
-  輸出：【好消息】共識 → 【關於分歧】分析 → 【這週怎麼做】執行 → 【最重要一件事】
-  語氣：口語化、大白話、有人情味
-
 Style C — 投資委員會正式審核版
   輸出：一、報告說明 / 二、共識事項 / 三、分歧與決議 / 四、操作決議表格 / 五、下次審核
   語氣：正式會議紀錄，逐條決議
