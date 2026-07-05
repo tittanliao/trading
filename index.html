@@ -623,13 +623,14 @@ tbody tr:hover td{background:#f8fafc}
             <span style="color:#86efac">V3.7（459 筆）：WR 55.12% / PF 1.743 / +$7,577 / MDD $391</span>
           </div>
           <div class="report-links" style="margin-top:10px">
-            <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7.html" style="background:linear-gradient(135deg,#14532d,#16a34a);border-color:#22c55e;color:white">📄 V3.7 完整報告 ★</a>
+            <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7_real.html" style="background:linear-gradient(135deg,#0c4a6e,#0284c7);border-color:#38bdf8;color:white">🔬 V3.4 vs V3.7 真實逐筆歸因 ★</a>
+            <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7.html" style="background:linear-gradient(135deg,#14532d,#16a34a);border-color:#22c55e;color:white">📄 V3.7 完整報告</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report.html">📄 V3.4 完整報告</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v2.html" style="border-color:#38bdf8;color:#38bdf8">📊 深度報告 V2</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_s1_fail_short.html" style="border-color:#f97316;color:#f97316">🔴 Fail空單測試</a>
             <a class="report-link" href="#" onclick="goToMacroBacktest();return false;" style="border-color:var(--purple);color:var(--purple)">📊 宏觀回測 →</a>
           </div>
-          <div style="margin-top:6px;font-size:.8em;color:var(--muted)">回測期間：2024-01-02~2026-07-04 · 過濾器：1H MA ON + BBW High 1H 70% ON</div>
+          <div style="margin-top:6px;font-size:.8em;color:var(--muted)">回測期間：2024-01-02~2026-07-04 · 過濾器：1H MA ON + BBW High 1H 70% ON · 現已取得 V3.7 真實逐筆交易 CSV（非僅回測彙總）</div>
         </div>
         <div class="card">
           <div class="card-title">📊 S2A-RSI <span class="badge badge-yellow">V2.3</span></div>
@@ -706,7 +707,7 @@ tbody tr:hover td{background:#f8fafc}
               <tr><td>S1-AweWithBB</td><td class="ver-confirmed">V3.5</td><td><span class="badge badge-green">確認版</span></td><td>DXY RSI + RSI 動能過濾器</td></tr>
               <tr><td>S1-AweWithBB</td><td class="ver-test">V3.6.2</td><td><span class="badge badge-yellow">測試中</span></td><td>BB %B ≥ 0.6 + 4H HTF RSI + lookahead_off 修正 + S1BB_LE 統一 label</td></tr>
               <tr><td>S1-AweWithBB</td><td class="ver-test">V3.6.3</td><td><span class="badge badge-yellow">測試中</span></td><td>Regime 過濾器：阻擋 BEAR_TREND（-0.28R）+ Low BBW&lt;30%（64% 假突破）</td></tr>
-              <tr style="background:rgba(34,197,94,.06)"><td>S1-AweWithBB</td><td class="ver-test">V3.7 ★</td><td><span class="badge badge-yellow">測試中</span></td><td>精簡版：移除 GC1!/DXY/HTF 模組；Regime 拆 3 組獨立開關；1H MA(3) ON + BBW High 1H ≥70% ON；TP2 3.5R；時間止損 36 根 ｜ <strong>TV 回測 2024-01-02~2026-07-04：WR 55.12%（253/459）· PF 1.743 · +$7,577（+75.78%） · MDD $391（3.04%）</strong></td></tr>
+              <tr style="background:rgba(34,197,94,.06)"><td>S1-AweWithBB</td><td class="ver-test">V3.7 ★</td><td><span class="badge badge-yellow">測試中</span></td><td>精簡版：移除 GC1!/DXY/HTF 模組；Regime 拆 3 組獨立開關；1H MA(3) ON + BBW High 1H ≥70% ON；TP2 3.5R；時間止損 36 根 ｜ <strong>TV 回測 2024-01-02~2026-07-04：WR 55.12%（253/459）· PF 1.743 · +$7,577（+75.78%） · MDD $391（3.04%）</strong> ｜ <strong style="color:#38bdf8">已取得真實逐筆交易 CSV：歸因分析證實時間止損從未觸發、SL 率 46.8%→44.9%、TP2 佔比與均R同步提升</strong></td></tr>
               <tr><td>S2A-RSI</td><td class="ver-confirmed">V2.2</td><td><span class="badge badge-green">確認版</span></td><td>統一 S2A_LE + EMA group + 架構對齊</td></tr>
               <tr><td>S2A-RSI</td><td class="ver-test">V2.3</td><td><span class="badge badge-yellow">測試中</span></td><td>時間止損修正（strategy.close()）+ 4H HTF RSI 過濾器</td></tr>
               <tr><td>S2A-RSI</td><td class="ver-test">V2.4 ★</td><td><span class="badge badge-yellow">測試中</span></td><td>Regime 過濾器：阻擋 CONSOLIDATION（-0.98R）+ Z-Score 過濾器：阻擋 Z&lt;-2.5 陷阱（20% WR）</td></tr>
@@ -816,6 +817,7 @@ tbody tr:hover td{background:#f8fafc}
           <table>
             <thead><tr><th>日期</th><th>對談重點</th><th>產出</th><th>交易備忘錄</th></tr></thead>
             <tbody>
+              <tr><td class="td-date">2026-07-05</td><td><span class="tag tag-analysis">分析</span> S1 V3.7 真實逐筆交易歸因分析</td><td>run_s1_v37_real_attribution.py</td><td class="td-memo"><strong>取得 V3.7 真實 TradingView 逐筆交易 CSV（459筆），與 V3.4（504筆）直接比較，取代先前的模擬推論</strong>。關鍵發現：兩版時間止損從未觸發過一次；SL 觸發率 46.8%→44.9%、TP2 佔比與均R同步提升，證實邊際優勢來自出場結構而非時間止損；immediate_loss 佔虧損比例 30.9%→26.7%</td></tr>
               <tr><td class="td-date">2026-07-04</td><td><span class="tag tag-pine">Pine</span> S1 V3.7 TradingView 回測驗證</td><td>WR 55.12% · PF 1.743 · +75.78%</td><td class="td-memo"><strong>回測 2024-01-02~2026-07-04（459筆）：WR 55.12%、PF 1.743、PnL +$7,577（+75.78%）、MDD $391（3.04%）</strong>。vs V3.4：WR+2pp、PF+14%、PnL+23%、MDD改善21%</td></tr>
               <tr><td class="td-date">2026-07-04</td><td><span class="tag tag-pine">Pine</span> Regime + Z-Score 過濾器（三策略全升版）</td><td>S1 V3.6.3 / S2A V2.4 / S2B V2.3</td><td class="td-memo"><strong>S1 阻擋 BEAR_TREND + Low BBW；S2 阻擋 CONSOLIDATION + Z&lt;-2.5 陷阱</strong>。過濾器預設 OFF，不影響現有回測</td></tr>
               <tr><td class="td-date">2026-05-02</td><td><span class="tag tag-pine">Pine</span> 策略命名重構 + lookahead 修正</td><td>S1 V3.6.2 / S2A V2.2 / S2B V2.1</td><td class="td-memo"><strong>重繪修正後回測數字可能改變</strong>，全歷史驗證前不算確認版</td></tr>
@@ -1140,7 +1142,8 @@ tbody tr:hover td{background:#f8fafc}
       <!-- ══ END HANDBOOK ══════════════════════════════════════════ -->
 
       <div class="report-links">
-        <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7.html" style="background:linear-gradient(135deg,#14532d,#16a34a);border-color:#22c55e;color:white">📄 V3.7 完整報告 ★</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7_real.html" style="background:linear-gradient(135deg,#0c4a6e,#0284c7);border-color:#38bdf8;color:white">🔬 V3.4 vs V3.7 真實逐筆歸因 ★</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7.html" style="background:linear-gradient(135deg,#14532d,#16a34a);border-color:#22c55e;color:white">📄 V3.7 完整報告</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report.html">📄 V3.4 完整報告</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v2.html" style="border-color:#38bdf8;color:#38bdf8">📊 深度分析 V2</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_s1_fail_short.html" style="border-color:#f97316;color:#f97316">🔴 Fail 空單測試</a>
