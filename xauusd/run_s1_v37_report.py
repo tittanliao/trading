@@ -27,6 +27,15 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
+import matplotlib.font_manager as fm
+
+def _set_cjk_font():
+    for name in ("PingFang HK", "Arial Unicode MS", "STHeiti", "Heiti TC"):
+        if any(f.name == name for f in fm.fontManager.ttflist):
+            plt.rcParams["font.family"] = name
+            plt.rcParams["axes.unicode_minus"] = False
+            return
+_set_cjk_font()
 import numpy as np
 import pandas as pd
 

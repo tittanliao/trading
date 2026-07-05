@@ -20,8 +20,18 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib.ticker as mticker
 from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
+import matplotlib.font_manager as fm
 import numpy as np
 import pandas as pd
+
+# CJK 字型設定（Mac 優先用 PingFang HK，備用 Arial Unicode MS）
+def _set_cjk_font():
+    for name in ("PingFang HK", "Arial Unicode MS", "STHeiti", "Heiti TC"):
+        if any(f.name == name for f in fm.fontManager.ttflist):
+            plt.rcParams["font.family"] = name
+            plt.rcParams["axes.unicode_minus"] = False
+            return
+_set_cjk_font()
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "xauusd"))
