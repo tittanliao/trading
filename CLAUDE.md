@@ -147,10 +147,16 @@ Claude 的專案記憶存在 `.claude/memory/`（**git 追蹤**）。
 
 ```bash
 PROJ=$(pwd)
-SYSTEM_KEY=$(echo "$PROJ" | sed 's|^/||' | sed 's|/|-|g')
+SYSTEM_KEY=$(echo "$PROJ" | sed 's|/|-|g')
 rm -rf ~/.claude/projects/${SYSTEM_KEY}/memory
 ln -s "${PROJ}/.claude/memory" ~/.claude/projects/${SYSTEM_KEY}/memory
 ```
+
+> **注意**：`SYSTEM_KEY` 必須保留路徑開頭那個 `/` 轉成的前導 `-`（例如 `/Users/x/trading` → `-Users-x-trading`），
+> 這是 Claude Code 實際使用的專案 key 格式。舊版指令用 `sed 's|^/||'` 先去掉開頭斜線，
+> 少了前導 `-`，會建到錯誤的資料夾，導致 symlink 沒接上、記憶各自為政（2026-07-05 發現並修正此問題）。
+> 換路徑後可用這個指令確認 key 是否正確：`echo "$PROJ" | sed 's|/|-|g'`，
+> 應該要跟 `ls ~/.claude/projects/` 底下對應的資料夾名稱一致。
 
 ### Windows（PowerShell，在 trading/ 目錄執行）
 

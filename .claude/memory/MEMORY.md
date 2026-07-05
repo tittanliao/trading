@@ -5,3 +5,4 @@
 - [Feedback & Preferences](feedback.md) — 工作習慣與偏好
 - [Completion Checklist](feedback_completion_checklist.md) — 每次任務結束前必須完成的 6 步驟（index.html、sitemap、memory、共同sheet、驗證、commit）
 - [Index Update Rule](feedback_index_update.md) — 每次新增 index.html 功能，必須同步更新網站地圖＋對話記錄，不需用戶提醒
+- [Google Doc 自動讀取](reference_gdoc_read.md) — 用 browser-cookie3 讀 Chrome cookies 存取 .gdoc 週報，不需用戶介入，2026-06-21 驗證成功

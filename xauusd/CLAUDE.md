@@ -325,10 +325,12 @@ Claude 的專案記憶存在 `.claude/memory/`（git 追蹤）。新電腦 `git 
 
 ```bash
 PROJ=$(pwd)
-SYSTEM_KEY=$(echo "$PROJ" | sed 's|^/||' | sed 's|/|-|g')
+SYSTEM_KEY=$(echo "$PROJ" | sed 's|/|-|g')
 rm -rf ~/.claude/projects/${SYSTEM_KEY}/memory
 ln -s "${PROJ}/.claude/memory" ~/.claude/projects/${SYSTEM_KEY}/memory
 ```
+
+> 注意：`SYSTEM_KEY` 需保留前導 `-`（見根目錄 CLAUDE.md 的說明），舊指令會去掉它導致 symlink 建錯位置。
 
 ### Windows（PowerShell，在專案根目錄執行）
 
