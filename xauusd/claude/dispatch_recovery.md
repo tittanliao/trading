@@ -1,23 +1,6 @@
-# Claude Dispatch 恢復指令
-# 當 context 爆掉或清掉對話後使用
+# Claude Dispatch 恢復指令（已併入 DISPATCH.md，本檔為相容重導向頁）
 
----
-
-## 快速恢復步驟
-
-**方案①**：若只是 context 滿了，想快速回血
-```
-1. 用瀏覽器開啟本檔案位置：
-   /Users/tittan/googledrive/Github/trading/xauusd/claude/dispatch_recovery.md
-2. 把「👇 貼下方文字給 Claude」那段複製出來
-3. 新對話中貼給 Claude，自動恢復工作流
-```
-
-**方案②**：完整恢復（推薦）
-```
-直接貼 dispatch_start.md 的「貼給 Claude 的指令」段落給 Claude
-路徑：/Users/tittan/googledrive/Github/trading/xauusd/claude/dispatch_start.md
-```
+⚠️ 本檔內容已於 20260619 併入 `DISPATCH.md`。若你是透過書籤/捷徑找到這裡，內容一律以 `DISPATCH.md` 為準。
 
 ---
 
@@ -28,26 +11,16 @@
 
 1. /Users/tittan/googledrive/Github/trading/xauusd/claude/ANALYSIS_SKILL.md
 2. /Users/tittan/googledrive/Github/trading/xauusd/claude/TRADING_PROFILE.md
-3. /Users/tittan/googledrive/Github/trading/xauusd/claude/daily/（讀最新的 YYYY-MM-DD.json）
-4. /Users/tittan/googledrive/Github/trading/xauusd/claude/context.md
+3. /Users/tittan/googledrive/Github/trading/xauusd/claude/context.md
 
 讀完後回覆「工作流已恢復，等待指令」，不需要額外說明。
 ```
 
----
-
-## 工作流指令速查表
-
-| 指令 | 說明 |
-|------|------|
-| `請分析` | 即時分析：讀 daily JSON → 最新周報 → TV 截圖 → 輸出交易建議 + 更新 context |
-| `週日黃金工作流` | 完整周報生成（CFTC + CSV + 周報） |
-| `請比對周報` | 周報①（Gemini）vs 周報②（Claude），輸出差異 |
-| `更新 profile` | 更新 TRADING_PROFILE.md |
-| `signal scanner` | 執行 signal_scanner.py |
+完整的工作流指令對照表、版本記錄請見 `/Users/tittan/googledrive/Github/trading/xauusd/claude/DISPATCH.md`。
 
 ---
 
 ## 版本記錄
 - 20260609：初版建立
 - 20260619：簡化版本，指向 dispatch_start.md 做完整恢復
+- 20260705：改為指向 DISPATCH.md 的相容重導向頁（daily JSON 已不在啟動時讀取，避免與 ANALYSIS_SKILL.md 現行規則衝突）

@@ -3,8 +3,8 @@
 FVG (Fair Value Gap) 策略參數最佳化
 對應 Pine Script: XAUUSD-FVG-V1.0.pine
 
-用法:
-    python3.12 xauusd/run_fvg_experiments.py
+用法（20260705 移至 scripts/ 子資料夾，仍需在 trading/ 根目錄執行）:
+    python3.12 xauusd/scripts/run_fvg_experiments.py
 
 輸出:
     xauusd/XAUUSD-FVG-Strategy/optimization_results.json

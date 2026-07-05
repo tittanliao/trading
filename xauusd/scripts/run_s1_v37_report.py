@@ -13,8 +13,8 @@ run_s1_v37_report.py — S1-AweWithBB V3.7 完整分析報告
   - PART 3：以 V3.4 資料做失敗模式分析（V3.7 過濾器設計的依據）
   - PART 4：書面洞察與建議
 
-執行方式（在 trading/ 根目錄）：
-    python3.12 xauusd/run_s1_v37_report.py
+執行方式（在 trading/ 根目錄，20260705 移至 scripts/ 子資料夾）：
+    python3.12 xauusd/scripts/run_s1_v37_report.py
 """
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ _set_cjk_font()
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent.parent.parent  # 20260705 移至 scripts/ 子資料夾，多一層 .parent
 sys.path.insert(0, str(ROOT / "xauusd"))
 
 from analysis import loader, fail_patterns, metrics

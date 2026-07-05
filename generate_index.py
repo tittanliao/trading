@@ -891,7 +891,7 @@ def _xauusd_fvg_html() -> str:
   <div id="xauusd-main-fvg" class="main-section">
     <div class="tab-panel active"><div class="card">
       <div class="card-title">FVG 策略</div>
-      <p style="color:var(--muted)">請先執行 <code>python3 xauusd/run_fvg_experiments.py</code> 生成資料。</p>
+      <p style="color:var(--muted)">請先執行 <code>python3 xauusd/scripts/run_fvg_experiments.py</code> 生成資料。</p>
     </div></div>
   </div>"""
 

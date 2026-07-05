@@ -18,13 +18,19 @@ metadata:
 - `trading/tx/` — TX 所有程式碼和資料
 - `trading/.claude/memory/` — **git 追蹤的記憶**，新電腦 clone 後需執行 symlink（見 CLAUDE.md）
 
-## XAUUSD 現況（2026-06-14）
-- 三個已開發策略（S1-AweWithBB / S2A-RSI / S2B-Hammer），均在測試新版本
-- S1 V3.6.2：修正 lookahead 重繪 + BB %B 過濾 + 4H HTF 過濾
-- S2A V2.3 / S2B V2.2：時間止損修正（strategy.close()）+ 4H HTF 過濾
-- 20 多單實驗：E03 MACD Signal 最佳（PF 1.643, +9.0%）
-- 20 空單實驗：S19 Bearish Engulf 最佳（PF 1.507, +12.4%）
-- 關鍵發現：DXY RSI < 30 → 三策略勝率 60–75%；HTF alignment=3/3 → S1 WR ~69%
+## 記憶架構（三套獨立 .claude/memory，20260705 釐清）
+這個 repo 有三套各自獨立的 Claude 記憶，各自 symlink 到不同的系統路徑（見各自 CLAUDE.md 的換電腦說明）：
+- `trading/.claude/memory/`（本檔所在）— 跨商品協作偏好、repo 整體架構、新增商品流程。在 `trading/` 根目錄開 Claude Code 時載入。
+- `trading/xauusd/.claude/memory/` — XAUUSD 專屬記憶（策略績效快照、xauusd 使用者偏好）。在 `trading/xauusd/` 子目錄開 Claude Code 時載入。
+- `trading/tx/.claude/memory/` — TX 專屬記憶，同上但對象是 tx/。
+
+**邊界原則**：跨商品的協作習慣、repo 整體結構寫在根目錄這套；單一商品的策略細節/績效數字寫在該商品自己那套，且都只是**快照**，實際數字以該商品的 `claude/ANALYSIS_SKILL.md`（或 tx 對應文件）為單一事實來源，記憶過時時以該文件為準，不要三處各自維護。
+
+## XAUUSD 現況
+策略版本/績效持續迭代中，這裡不重複列數字（避免和其他三處打架）。
+最新狀態請看 `xauusd/claude/ANALYSIS_SKILL.md`（單一事實來源，每次「請分析」都會讀取更新）
+或 `xauusd/CLAUDE.md`「現有策略最新績效」表。截至 2026-07-05：S1-AweWithBB 已升級到 V3.7（確認版），
+S2A-RSI / S2B-Hammer 仍在測試新的 Regime+Z-Score 過濾器版本（V2.4 / V2.3，尚未做真實逐筆歸因）。
 
 ## FVG 策略（2026-06-14 完成）
 - **FVG V1.0**：單 FVG 追蹤，Pine Script v6，Long/Short 可設定，Profit Flyer 出場

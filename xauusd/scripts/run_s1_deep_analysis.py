@@ -4,8 +4,8 @@ run_s1_deep_analysis.py — S1-AweWithBB 深度分析報告 V2
 輸出：xauusd/XAUUSD-Long-S1-AweWithBB/report_v2.html
 V1 原始報告 (report.html) 不受影響。
 
-執行方式（在 trading/ 根目錄）：
-    python3 xauusd/run_s1_deep_analysis.py
+執行方式（在 trading/ 根目錄，20260705 移至 scripts/ 子資料夾）：
+    python3 xauusd/scripts/run_s1_deep_analysis.py
 """
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ def _set_cjk_font():
             return
 _set_cjk_font()
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent.parent.parent  # 20260705 移至 scripts/ 子資料夾，多一層 .parent
 sys.path.insert(0, str(ROOT / "xauusd"))
 
 from analysis import loader, fail_patterns

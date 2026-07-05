@@ -4,7 +4,7 @@ XAUUSD Real Strategy Macro-Filtered Backtest
 用真實策略交易 CSV（S1-AweWithBB / S2A-RSI / S2B-Hammer）搭配
 每日 Macro Score（v3.7 邏輯），分析宏觀過濾對各策略真實績效的影響。
 
-執行：python3.12 xauusd/run_real_strategy_macro_backtest.py
+執行（20260705 移至 scripts/ 子資料夾，仍需在 trading/ 根目錄執行）：python3.12 xauusd/scripts/run_real_strategy_macro_backtest.py
 輸出：xauusd/XAUUSD-Macro/real_macro_backtest_report.html
       xauusd/XAUUSD-Macro/real_macro_backtest_results.json
 """
@@ -18,7 +18,7 @@ import numpy as np
 import pandas as pd
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
-ROOT    = Path(__file__).parent
+ROOT    = Path(__file__).parent.parent  # 20260705 移至 scripts/ 子資料夾，多一層 .parent
 CSV_DIR = ROOT / "csv"
 OUT_DIR = ROOT / "XAUUSD-Macro"
 OUT_DIR.mkdir(exist_ok=True)

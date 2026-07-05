@@ -21,9 +21,9 @@
 若有新分析腳本（e.g., `run_s1_deep_analysis.py`, `run_s1_fail_short.py`）：
 
 ```bash
-# 在 trading/ 根目錄執行
-python3.12 xauusd/run_s1_deep_analysis.py
-python3.12 xauusd/run_s1_fail_short.py
+# 在 trading/ 根目錄執行（20260705 起腳本已移至 xauusd/scripts/ 子資料夾）
+python3.12 xauusd/scripts/run_s1_deep_analysis.py
+python3.12 xauusd/scripts/run_s1_fail_short.py
 ```
 
 確認輸出 HTML 成功生成（沒有 exit code 1）。
@@ -100,8 +100,8 @@ CJK 字體 UserWarning 可忽略，不影響輸出。
 
 **第一次 commit**（腳本 + 生成的 HTML 報告 + Pine Script）：
 ```bash
-git add xauusd/run_s1_deep_analysis.py \
-        xauusd/run_s1_fail_short.py \
+git add xauusd/scripts/run_s1_deep_analysis.py \
+        xauusd/scripts/run_s1_fail_short.py \
         xauusd/XAUUSD-Long-S1-AweWithBB/report_v2.html \
         xauusd/XAUUSD-Long-S1-AweWithBB/report_s1_fail_short.html
 git commit -m "feat: {說明}"

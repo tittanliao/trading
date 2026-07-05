@@ -54,7 +54,7 @@
 |------|------|
 | `請分析` | 即時分析：讀 context → Gemini gdoc 週報 → TV 截圖 → 輸出交易建議 + 更新 context |
 | `週日黃金工作流` | 完整周報生成（CFTC + CSV + 周報），需先載入 ANALYSIS_SKILL_WEEKLY.md |
-| `合併週報` | 三份週報合併（Claude / Gemini / Dispatch），需先載入 ANALYSIS_SKILL_MERGE.md |
+| `合併週報` | 交易員A=Gemini × 交易員B=Claude 雙方比對（20260705 起不再有 Dispatch 第三方），需先載入 ANALYSIS_SKILL_MERGE.md |
 | `請比對周報` | 周報①（Gemini）vs 周報②（Claude），輸出差異 |
 | `更新 profile` | 更新 TRADING_PROFILE.md |
 | `signal scanner` | 執行 /Users/tittan/googledrive/Github/trading/xauusd/signal_scanner.py |
@@ -77,3 +77,4 @@
 - 20260609：初版建立
 - 20260619：dispatch_start + dispatch_recovery 合併為本檔
 - 20260621：整合三種啟動情境；移除啟動時讀 daily JSON（近5筆已移入 context.md）
+- 20260705：修正「合併週報」說明仍寫「Dispatch 第三方」的過期措辭（現行為 Gemini×Claude 雙方比對）；`dispatch_start.md`／`dispatch_recovery.md` 已改為指向本檔的相容重導向頁，本檔為唯一事實來源

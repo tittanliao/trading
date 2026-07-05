@@ -4,9 +4,8 @@ SMC (Smart Money Concepts) strategy experiment runner.
 Runs 10 long + 10 short SMC strategies on XAUUSD 30-min data and prints
 a ranked comparison table. Results saved to XAUUSD-SMC-Experiments/results.json.
 
-Usage:
-    python3 xauusd/run_smc_experiments.py          # from trading/ root
-    python3 run_smc_experiments.py                  # from xauusd/ directory
+Usage（20260705 移至 scripts/ 子資料夾）:
+    python3 xauusd/scripts/run_smc_experiments.py   # from trading/ root
 """
 from __future__ import annotations
 
@@ -17,12 +16,10 @@ from pathlib import Path
 
 import pandas as pd
 
-# ── Path setup: support running from trading/ root or xauusd/ directory ──────
+# ── Path setup: 找出 xauusd/ 目錄（本檔可能在 xauusd/ 或 xauusd/scripts/ 下）──
 _here = Path(__file__).parent
-if (_here / "experiments").exists():
-    sys.path.insert(0, str(_here))
-else:
-    sys.path.insert(0, str(_here.parent / "xauusd"))
+_xauusd_dir = _here if (_here / "experiments").exists() else _here.parent
+sys.path.insert(0, str(_xauusd_dir))
 
 from analysis.config import PRICE_CSV, PRICE_CSV_4H
 from analysis import loader
@@ -32,7 +29,7 @@ from experiments.runner import score
 from experiments.smc_indicators import precompute, describe
 from experiments.strategies_smc import make_strategies
 
-OUT_DIR = Path(__file__).parent / "XAUUSD-SMC-Experiments"
+OUT_DIR = _xauusd_dir / "XAUUSD-SMC-Experiments"
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────

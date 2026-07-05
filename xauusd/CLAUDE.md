@@ -68,7 +68,22 @@ xauusd/
 ├── main.py                 # Fail-pattern 分析入口
 ├── run_experiments.py      # 多單 20 策略實驗入口
 ├── run_short_experiments.py # 空單 20 策略實驗入口
+├── signal_scanner.py       # 訊號掃描（DISPATCH.md「signal scanner」指令會執行這支，需留在此路徑）
 ├── index.html              # 整合報告（多空 + DXY + MTF + Next Action）
+│
+├── scripts/                 # 一次性/半一次性分析腳本（20260705 從 xauusd/ 根目錄整理進來）
+│   ├── analyze_h1_regime.py
+│   ├── macro_analysis.py    # 需在 xauusd/ 下執行：cd xauusd && python3 scripts/macro_analysis.py
+│   ├── run_fvg_experiments.py
+│   ├── run_macro_backtest.py
+│   ├── run_real_strategy_macro_backtest.py
+│   ├── run_s1_deep_analysis.py
+│   ├── run_s1_fail_short.py
+│   ├── run_s1_v37_real_attribution.py
+│   ├── run_s1_v37_report.py
+│   └── run_smc_experiments.py
+│   （以上皆在 trading/ 根目錄執行，例：python3.12 xauusd/scripts/run_s1_v37_report.py；
+│    macro_analysis.py 例外，見上方註記）
 │
 ├── XAUUSD-Long-S1-AweWithBB/    # S1 右側突破：交易 CSV + report.html + Pine scripts
 ├── XAUUSD-Long-S2A-RSI/         # S2A 左側回測（指標）：原 S2-Hybrid，RSI 超賣/背離
@@ -161,13 +176,17 @@ Regular Bullish, Regular Bullish Label, Regular Bearish, Regular Bearish Label
 
 **版本命名規則**：`VX.Y`（確認版）→ `VX.Y+1.1`（測試版）→ `VX.Y+1`（確認後升版）
 
-## 現有策略最新績效（2026-04-27）
+## 現有策略最新績效（S1 為 2026-07-05 真實逐筆歸因；S2A/S2B 仍為 2026-04-27 基準數據，尚未做同等歸因）
 
 | ID | 策略名稱 | 版本 | 交易筆數 | 勝率 | 獲利因子 | 淨盈虧 | 最大回撤 | 主要問題 |
 |----|---------|------|---------|------|---------|--------|---------|---------|
-| S1-AweWithBB | AweWithBB | V3.4 | 504 | 53.2% | 1.525 | +$6,137 | -$494 | immediate_loss 31% |
-| S2A-RSI | RSI Reversion | V2.0 | 161 | 42.2% | 1.679 | +$6,212 | -$1,177 | time_bleed 52% |
-| S2B-Hammer | Hammer Pullback | V1.9 | 200 | 44.0% | 1.681 | +$7,722 | -$1,431 | time_bleed 54% |
+| S1-AweWithBB | AweWithBB | **V3.7（已確認）** | 459 | 55.1% | 1.743 | +$7,578 | -$346 | immediate_loss 27%（V3.4為31%，已改善） |
+| S2A-RSI | RSI Reversion | V2.0（基準，V2.4測試中） | 161 | 42.2% | 1.679 | +$6,212 | -$1,177 | time_bleed 52% |
+| S2B-Hammer | Hammer Pullback | V1.9（基準，V2.3測試中） | 200 | 44.0% | 1.681 | +$7,722 | -$1,431 | time_bleed 54% |
+
+> S1 V3.4→V3.7 真實逐筆歸因結論：淨利改善主因是出場結構（SL觸發率↓、TP2佔比↑），時間止損縮短(48→36 bars)從未觸發、非貢獻來源；進場過濾器確實降低immediate_loss。詳見 `XAUUSD-Long-S1-AweWithBB/report_v3.7_real.html` 與 `xauusd/claude/ANALYSIS_SKILL.md`「V3.7 真實逐筆歸因結論」。
+
+> **單一事實來源（20260705 起）**：策略版本/參數/績效數字以 `xauusd/claude/ANALYSIS_SKILL.md` 為準（每次「請分析」都會讀取，更新最頻繁）。本檔（CLAUDE.md）與 `xauusd/index.html`、`xauusd/.claude/memory/project_context.md` 的對應數字都應該「從 ANALYSIS_SKILL.md 抄過來」，不要三處各自維護；發現三處數字不一致時，以 ANALYSIS_SKILL.md 為準並回頭修正其他兩處。
 
 ---
 
@@ -253,8 +272,10 @@ BB %B = (close - lower) / (upper - lower)；7 個分區（below_lower → above_
 |------|------|---------|
 | V3.4 | 原始版 | 基礎 AweWithBB 策略 |
 | V3.5 | 已確認 | 洞察濾網（DXY RSI + RSI Momentum 動能確認） |
-| V3.6.1 | 測試中 | BB %B 位置過濾器（%B ≥ 0.6）+ 4H HTF RSI 過濾器 |
-| V3.6.2 | 測試中 | 修正 lookahead_on 重繪 bug + EMA 趨勢過濾器 group（架構統一） |
+| V3.6.1 | 已取代 | BB %B 位置過濾器（%B ≥ 0.6）+ 4H HTF RSI 過濾器 |
+| V3.6.2 | 已取代 | 修正 lookahead_on 重繪 bug + EMA 趨勢過濾器 group（架構統一） |
+| V3.6.3 | 已取代 | 新增 Regime 過濾器（BEAR_TREND + 低BBW假突破阻擋，皆預設OFF）+ 右上角 Regime 狀態表格 |
+| **V3.7** | **已確認（現行版）** | 精簡重構：移除期貨對應/趨勢EMA/洞察濾網/4H HTF RSI 過濾器；Regime 過濾器拆為3組獨立開關（斜率/BBW高檔預設ON/BBW低檔）；時間出場 48→36 bars；真實逐筆歸因見上方績效表 |
 
 **S2A-RSI（左側回測，指標）— 原 S2-Hybrid**
 
@@ -263,7 +284,8 @@ BB %B = (close - lower) / (upper - lower)；7 個分區（below_lower → above_
 | V2.0 | 原始版 | RSI crossover / 背離兩種模式 |
 | V2.1 | 已確認 | 洞察濾網（DXY RSI + EMA200 + ATR 波動度） |
 | V2.2 | 已確認 | 重命名架構統一：entry S2A_LE，補 TP 顯示，加過濾訊號視覺化 |
-| V2.3 | 測試中 | **時間止損修正**（strategy.close() 保證市價平倉）+ 4H HTF RSI 過濾器（同 S1 V3.6.2） |
+| V2.3 | 測試中未確認 | **時間止損修正**（strategy.close() 保證市價平倉）+ 4H HTF RSI 過濾器（同 S1 V3.6.2，該approach後來被V2.4的Regime方案取代） |
+| V2.4 | 測試中未確認 | 新增 Regime 過濾器（阻擋CONSOLIDATION）+ Z-Score 過濾器（阻擋Z<-2.5陷阱區，甜蜜區-1.5~-0.5）+ 右上角狀態表格，皆預設OFF。**S2 尚未做真實逐筆歸因驗證**（S1 V3.7 已做，這是S2的NEXT優先方向） |
 
 **S2B-Hammer（左側回測，型態）— 原 S2-Pullback**
 
@@ -272,7 +294,8 @@ BB %B = (close - lower) / (upper - lower)；7 個分區（below_lower → above_
 | V1.9 | 原始版 | 錘頭線 + ATR 濾網 |
 | V2.0 | 已確認 | 洞察濾網（DXY RSI + EMA200 + RSI 情境區間） |
 | V2.1 | 已確認 | 重命名架構統一：entry S2B_LE，加趨勢 EMA group |
-| V2.2 | 測試中 | **時間止損修正**（strategy.close() 保證市價平倉）+ 4H HTF RSI 過濾器（同 S1 V3.6.2） |
+| V2.2 | 測試中未確認 | **時間止損修正**（strategy.close() 保證市價平倉）+ 4H HTF RSI 過濾器（同 S1 V3.6.2，該approach後來被V2.3的Regime方案取代） |
+| V2.3 | 測試中未確認 | 新增 Regime 過濾器（阻擋CONSOLIDATION）+ Z-Score 過濾器（阻擋Z<-2.5陷阱區，甜蜜區-1.5~-0.5）+ 右上角狀態表格，皆預設OFF。**S2 尚未做真實逐筆歸因驗證**（S1 V3.7 已做，這是S2的NEXT優先方向） |
 
 ### 合併 Pine Script（下拉選單版）
 

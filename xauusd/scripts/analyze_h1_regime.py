@@ -17,7 +17,7 @@ import numpy as np
 from pathlib import Path
 
 # ── 路徑 ─────────────────────────────────────────────────────────
-ROOT = Path(__file__).parent
+ROOT = Path(__file__).parent.parent  # 20260705 移至 scripts/ 子資料夾，多一層 .parent
 TRADE_CSV = ROOT / "csv" / "XAUUSD_2026H1.csv"
 OHLC_4H   = ROOT / "csv" / "FX_IDC_XAUUSD, 240.csv"
 OUT_CSV   = ROOT / "csv" / "XAUUSD_2026H1_regime.csv"

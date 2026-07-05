@@ -15,8 +15,8 @@ report_v3.7.html 的 PART 2-4 只能用「V3.4 交易資料 + 模擬 V3.7 過濾
 
 不再需要任何「覆蓋率」但書 —— 兩份資料都是全樣本、真實成交結果。
 
-執行方式（在 trading/ 根目錄）：
-    python3.12 xauusd/run_s1_v37_real_attribution.py
+執行方式（在 trading/ 根目錄，20260705 移至 scripts/ 子資料夾）：
+    python3.12 xauusd/scripts/run_s1_v37_real_attribution.py
 """
 from __future__ import annotations
 
@@ -41,7 +41,7 @@ _set_cjk_font()
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent.parent.parent  # 20260705 移至 scripts/ 子資料夾，多一層 .parent
 sys.path.insert(0, str(ROOT / "xauusd"))
 
 from analysis import loader, fail_patterns, metrics

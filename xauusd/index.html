@@ -230,19 +230,19 @@ tbody tr:hover td{background:#f8fafc}
 
     <div class="grid-3">
       <div class="card">
-        <div class="card-title">📊 S1-AweWithBB <span class="badge badge-yellow">V3.6.2</span></div>
+        <div class="card-title">📊 S1-AweWithBB <span class="badge badge-green">V3.7 確認版</span></div>
         <div class="grid-2" style="gap:10px">
-          <div class="metric-card"><div class="metric-label">勝率</div><div class="metric-val green">53.2%</div></div>
-          <div class="metric-card"><div class="metric-label">獲利因子</div><div class="metric-val">1.525</div></div>
-          <div class="metric-card"><div class="metric-label">淨盈虧</div><div class="metric-val green">+$6,137</div></div>
-          <div class="metric-card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$494</div></div>
+          <div class="metric-card"><div class="metric-label">勝率</div><div class="metric-val green">55.1%</div></div>
+          <div class="metric-card"><div class="metric-label">獲利因子</div><div class="metric-val">1.743</div></div>
+          <div class="metric-card"><div class="metric-label">淨盈虧</div><div class="metric-val green">+$7,578</div></div>
+          <div class="metric-card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$346</div></div>
         </div>
-        <div style="margin-top:12px;font-size:.82em;color:var(--muted)">主要問題：immediate_loss 31% · 504 筆交易</div>
+        <div style="margin-top:12px;font-size:.82em;color:var(--muted)">主要問題：immediate_loss 27%（V3.4為31%，已改善）· 459 筆交易 · 真實逐筆歸因見 <a class="report-link" href="XAUUSD-Long-S1-AweWithBB/report_v3.7_real.html" style="display:inline">report_v3.7_real.html</a></div>
         <div class="report-links"><a class="report-link" href="XAUUSD-Long-S1-AweWithBB/report.html">完整報告 →</a></div>
       </div>
 
       <div class="card">
-        <div class="card-title">📊 S2A-RSI <span class="badge badge-yellow">V2.3</span></div>
+        <div class="card-title">📊 S2A-RSI <span class="badge badge-blue">V2.0 確認版</span> <span class="badge badge-yellow">V2.4 測試中</span></div>
         <div class="grid-2" style="gap:10px">
           <div class="metric-card"><div class="metric-label">勝率</div><div class="metric-val yellow">42.2%</div></div>
           <div class="metric-card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.679</div></div>
@@ -254,7 +254,7 @@ tbody tr:hover td{background:#f8fafc}
       </div>
 
       <div class="card">
-        <div class="card-title">📊 S2B-Hammer <span class="badge badge-yellow">V2.2</span></div>
+        <div class="card-title">📊 S2B-Hammer <span class="badge badge-blue">V1.9 確認版</span> <span class="badge badge-yellow">V2.3 測試中</span></div>
         <div class="grid-2" style="gap:10px">
           <div class="metric-card"><div class="metric-label">勝率</div><div class="metric-val yellow">44.0%</div></div>
           <div class="metric-card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.681</div></div>
@@ -287,7 +287,7 @@ tbody tr:hover td{background:#f8fafc}
               <td>趨勢確認後順勢進場（突破 BB 上軌）</td>
               <td>Awesome Oscillator + Bollinger Bands 突破</td>
               <td><code>S1BB_LE</code></td>
-              <td class="ver-test">V3.6.2 🧪</td>
+              <td class="ver-confirmed">V3.7 ✓</td>
             </tr>
             <tr>
               <td rowspan="2"><span class="badge badge-blue">S2 左側跌深</span></td>
@@ -295,20 +295,21 @@ tbody tr:hover td{background:#f8fafc}
               <td>超賣區逆勢進場（指標觸發）</td>
               <td>RSI 交叉 / 背離信號</td>
               <td><code>S2A_LE</code></td>
-              <td class="ver-test">V2.3 🧪</td>
+              <td class="ver-test">V2.4 🧪</td>
             </tr>
             <tr>
               <td><strong>S2B-Hammer</strong></td>
               <td>超賣區逆勢進場（K 線觸發）</td>
               <td>Hammer 錘形蠟燭型態</td>
               <td><code>S2B_LE</code></td>
-              <td class="ver-test">V2.2 🧪</td>
+              <td class="ver-test">V2.3 🧪</td>
             </tr>
           </tbody>
         </table>
       </div>
       <div style="margin-top:10px;font-size:.82em;color:var(--muted)">
         命名規則：VX.Y = 確認版 &nbsp;·&nbsp; VX.Y.Z 或 VX.(Y+1) 測試中 = 待 TradingView 全歷史驗證 &nbsp;·&nbsp; Exit labels: {prefix}_TP1 / _TP2 / _SL / _TimeWin / _TimeLoss
+        <br>版本/績效數字單一事實來源：<code>xauusd/claude/ANALYSIS_SKILL.md</code>（更新最頻繁），本頁數字應從那裡同步，不要獨立維護。
       </div>
     </div>
 
@@ -320,21 +321,24 @@ tbody tr:hover td{background:#f8fafc}
           <tbody>
             <tr><td>S1-AweWithBB</td><td>V3.4</td><td><span class="badge badge-blue">原始基準</span></td><td>原始版本</td><td>—</td></tr>
             <tr><td>S1-AweWithBB</td><td class="ver-confirmed">V3.5</td><td><span class="badge badge-green">確認版</span></td><td>DXY RSI + RSI 動能過濾器（insight toggle）</td><td>V3.6.1</td></tr>
-            <tr><td>S1-AweWithBB</td><td class="ver-test">V3.6.2</td><td><span class="badge badge-yellow">測試中</span></td><td>BB %B ≥ 0.6 過濾器 + 4H HTF RSI 過濾器 + <strong>lookahead_off 重繪修正</strong> + EMA 群組 + 統一 entry label（S1BB_LE）</td><td>→ V3.6（確認後）</td></tr>
+            <tr><td>S1-AweWithBB</td><td>V3.6.1 / V3.6.2 / V3.6.3</td><td><span class="badge badge-blue">已取代</span></td><td>BB %B、4H HTF RSI、lookahead_off 重繪修正、Regime 過濾器等中間迭代，已被 V3.7 精簡重構取代</td><td>V3.7</td></tr>
+            <tr><td>S1-AweWithBB</td><td class="ver-confirmed">V3.7</td><td><span class="badge badge-green">確認版（現行）</span></td><td>移除期貨對應/趨勢EMA/舊洞察濾網/4H HTF RSI；Regime 過濾器拆為3組獨立開關（斜率OFF/BBW高檔ON 70%/BBW低檔OFF）；時間出場48→36bars；真實逐筆歸因：WR55.1%/PF1.743/淨利+$7,578（見 report_v3.7_real.html）</td><td>—（A/B/C/D 變體回測待做）</td></tr>
             <tr><td>S2A-RSI</td><td class="ver-confirmed">V2.1</td><td><span class="badge badge-green">確認版</span></td><td>DXY RSI + RSI 動能過濾器（原 S2-Hybrid）</td><td>V2.2</td></tr>
             <tr><td>S2A-RSI</td><td class="ver-confirmed">V2.2</td><td><span class="badge badge-green">確認版</span></td><td>統一 entry label（S2A_LE） + TP1/TP2 顯示 + EMA 群組 + 架構對齊 S1</td><td>V2.3</td></tr>
-            <tr><td>S2A-RSI</td><td class="ver-test">V2.3</td><td><span class="badge badge-yellow">測試中</span></td><td><strong>時間止損修正</strong>（strategy.close() 保證市價平倉）+ 4H HTF RSI 過濾器（同 S1 V3.6.2）</td><td>→ V2.3（確認後）</td></tr>
+            <tr><td>S2A-RSI</td><td>V2.3</td><td><span class="badge badge-yellow">測試中未確認</span></td><td>時間止損修正 + 4H HTF RSI 過濾器（同 S1 V3.6.2 approach，後被 V2.4 的 Regime 方案取代）</td><td>V2.4</td></tr>
+            <tr><td>S2A-RSI</td><td class="ver-test">V2.4</td><td><span class="badge badge-yellow">測試中未確認</span></td><td>Regime 過濾器（阻擋CONSOLIDATION）+ Z-Score 過濾器（阻擋Z&lt;-2.5陷阱區）+ 狀態表格，皆預設OFF。<strong>尚無真實逐筆歸因驗證</strong>（S1 已做，這是 S2 的 NEXT 優先方向）</td><td>待 TradingView 全歷史驗證</td></tr>
             <tr><td>S2B-Hammer</td><td class="ver-confirmed">V2.0</td><td><span class="badge badge-green">確認版</span></td><td>原始 + Insight Filters（原 S2-Pullback）</td><td>V2.1</td></tr>
             <tr><td>S2B-Hammer</td><td class="ver-confirmed">V2.1</td><td><span class="badge badge-green">確認版</span></td><td>統一 entry label（S2B_LE） + EMA 群組 + 架構對齊 S1</td><td>V2.2</td></tr>
-            <tr><td>S2B-Hammer</td><td class="ver-test">V2.2</td><td><span class="badge badge-yellow">測試中</span></td><td><strong>時間止損修正</strong>（strategy.close() 保證市價平倉）+ 4H HTF RSI 過濾器（同 S1 V3.6.2）</td><td>→ V2.2（確認後）</td></tr>
+            <tr><td>S2B-Hammer</td><td>V2.2</td><td><span class="badge badge-yellow">測試中未確認</span></td><td>時間止損修正 + 4H HTF RSI 過濾器（同 S1 V3.6.2 approach，後被 V2.3 的 Regime 方案取代）</td><td>V2.3</td></tr>
+            <tr><td>S2B-Hammer</td><td class="ver-test">V2.3</td><td><span class="badge badge-yellow">測試中未確認</span></td><td>Regime 過濾器（阻擋CONSOLIDATION）+ Z-Score 過濾器（阻擋Z&lt;-2.5陷阱區）+ 狀態表格，皆預設OFF。<strong>尚無真實逐筆歸因驗證</strong></td><td>待 TradingView 全歷史驗證</td></tr>
           </tbody>
         </table>
       </div>
       <div class="report-links">
-        <a class="report-link" href="XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.6.2.pine">S1 V3.6.2.pine 🧪</a>
+        <a class="report-link" href="XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.7.pine">S1 V3.7.pine ✅ 現行</a>
         <a class="report-link" href="XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.5.pine">S1 V3.5.pine ✅</a>
-        <a class="report-link" href="XAUUSD-Long-S2A-RSI/XAUUSD-Long-S2A-RSI-V2.3.pine">S2A-RSI V2.3.pine 🧪</a>
-        <a class="report-link" href="XAUUSD-Long-S2B-Hammer/XAUUSD-Long-S2B-Hammer-V2.2.pine">S2B-Hammer V2.2.pine 🧪</a>
+        <a class="report-link" href="XAUUSD-Long-S2A-RSI/XAUUSD-Long-S2A-RSI-V2.4.pine">S2A-RSI V2.4.pine 🧪</a>
+        <a class="report-link" href="XAUUSD-Long-S2B-Hammer/XAUUSD-Long-S2B-Hammer-V2.3.pine">S2B-Hammer V2.3.pine 🧪</a>
       </div>
     </div>
 
@@ -440,7 +444,8 @@ tbody tr:hover td{background:#f8fafc}
 
     <div class="report-links">
       <a class="report-link" href="XAUUSD-Long-S1-AweWithBB/report.html">📄 完整分析報告</a>
-      <a class="report-link" href="XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.6.2.pine">🧪 V3.6.2 測試版 Pine Script</a>
+      <a class="report-link" href="XAUUSD-Long-S1-AweWithBB/report_v3.7_real.html">📄 V3.4 vs V3.7 真實逐筆歸因報告</a>
+      <a class="report-link" href="XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.7.pine">✅ V3.7 確認版（現行）Pine Script</a>
       <a class="report-link" href="XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.5.pine">✅ V3.5 確認版 Pine Script</a>
     </div>
 
@@ -456,7 +461,10 @@ tbody tr:hover td{background:#f8fafc}
             <tr><td class="td-date">2026-04-29</td><td>MTF 分析：alignment score 0–3</td><td>align=3 → 69% WR；4H bearish = 危險訊號</td><td>—</td></tr>
             <tr><td class="td-date">2026-05-01</td><td>BB %B 分析：7 zone 勝率</td><td>above_upper 77.8%；中軌以下 &lt;20%</td><td>—</td></tr>
             <tr><td class="td-date">2026-05-01</td><td>V3.6.1：BB %B filter + 4H HTF filter（雙 toggle）</td><td>作為中間步驟</td><td class="ver-test">V3.6.1</td></tr>
-            <tr><td class="td-date">2026-05-02</td><td>V3.6.2：修復 lookahead_on 重繪 bug + 統一 label（S1BB_LE）+ EMA 群組</td><td>重繪修正後回測結果可能改變，需全歷史驗證</td><td class="ver-test">V3.6.2 🧪</td></tr>
+            <tr><td class="td-date">2026-05-02</td><td>V3.6.2：修復 lookahead_on 重繪 bug + 統一 label（S1BB_LE）+ EMA 群組</td><td>重繪修正後回測結果可能改變，需全歷史驗證</td><td>已取代</td></tr>
+            <tr><td class="td-date">2026-07-04</td><td>V3.6.3：新增 Regime 過濾器（阻擋BEAR_TREND + 低BBW假突破）+ 右上角狀態表格，預設OFF</td><td>中間步驟，後被 V3.7 精簡重構取代</td><td>已取代</td></tr>
+            <tr><td class="td-date">2026-07-04</td><td>V3.7：精簡重構（移除期貨對應/趨勢EMA/舊洞察濾網/4H HTF RSI）+ Regime拆為3組獨立開關 + 時間出場48→36bars</td><td>TradingView 全歷史驗證通過，正式確認</td><td class="ver-confirmed">V3.7 ✓</td></tr>
+            <tr><td class="td-date">2026-07-05</td><td>V3.4 vs V3.7 真實逐筆歸因分析（459筆真實成交）</td><td>確認淨利改善來自出場結構（SL↓/TP2佔比↑），非時間止損；進場過濾器確實降低immediate_loss</td><td>—</td></tr>
           </tbody>
         </table>
       </div>
@@ -483,7 +491,7 @@ tbody tr:hover td{background:#f8fafc}
 
     <div class="report-links">
       <a class="report-link" href="XAUUSD-Long-S2A-RSI/report.html">📄 完整分析報告</a>
-      <a class="report-link" href="XAUUSD-Long-S2A-RSI/XAUUSD-Long-S2A-RSI-V2.3.pine">🧪 V2.3 測試版 Pine Script</a>
+      <a class="report-link" href="XAUUSD-Long-S2A-RSI/XAUUSD-Long-S2A-RSI-V2.4.pine">🧪 V2.4 測試中 Pine Script（尚無真實逐筆歸因）</a>
     </div>
 
     <div class="part-label" style="margin-top:28px"><span class="part-badge">PART 2</span>S2A-RSI 分析紀錄</div>
@@ -498,7 +506,8 @@ tbody tr:hover td{background:#f8fafc}
             <tr><td class="td-date">2026-04-29</td><td>MTF 分析：4H bearish → time_bleed 升高</td><td>4H bearish + 超時 = 死亡組合</td><td>—</td></tr>
             <tr><td class="td-date">2026-05-01</td><td>BB 分析：大部分進場在 lower zone（WR 25–38%）</td><td>策略邏輯與 BB 位置呈逆勢</td><td>—</td></tr>
             <tr><td class="td-date">2026-05-02</td><td>重命名（S2-Hybrid → S2A-RSI）+ 架構統一</td><td>統一 entry label S2A_LE；加入 EMA 群組；TP 顯示於 label</td><td class="ver-confirmed">V2.2 ✓</td></tr>
-            <tr><td class="td-date">2026-05-02</td><td>時間止損修正 + 4H HTF 過濾器</td><td>strategy.close() 保證市價平倉；4H bearish 跳過進場（同 S1 V3.6.2）</td><td class="ver-test">V2.3 🧪</td></tr>
+            <tr><td class="td-date">2026-05-02</td><td>時間止損修正 + 4H HTF 過濾器</td><td>strategy.close() 保證市價平倉；4H bearish 跳過進場（同 S1 V3.6.2）</td><td>已取代（同approach後被V2.4取代）</td></tr>
+            <tr><td class="td-date">2026-07-04</td><td>V2.4：Regime 過濾器（阻擋CONSOLIDATION）+ Z-Score 過濾器（阻擋Z&lt;-2.5陷阱區）+ 狀態表格，皆預設OFF</td><td>尚無真實逐筆歸因驗證，S2 是目前 NEXT 優先方向</td><td class="ver-test">V2.4 🧪</td></tr>
           </tbody>
         </table>
       </div>
@@ -525,7 +534,7 @@ tbody tr:hover td{background:#f8fafc}
 
     <div class="report-links">
       <a class="report-link" href="XAUUSD-Long-S2B-Hammer/report.html">📄 完整分析報告</a>
-      <a class="report-link" href="XAUUSD-Long-S2B-Hammer/XAUUSD-Long-S2B-Hammer-V2.2.pine">🧪 V2.2 測試版 Pine Script</a>
+      <a class="report-link" href="XAUUSD-Long-S2B-Hammer/XAUUSD-Long-S2B-Hammer-V2.3.pine">🧪 V2.3 測試中 Pine Script（尚無真實逐筆歸因）</a>
     </div>
 
     <div class="part-label" style="margin-top:28px"><span class="part-badge">PART 2</span>S2B-Hammer 分析紀錄</div>
@@ -540,7 +549,8 @@ tbody tr:hover td{background:#f8fafc}
             <tr><td class="td-date">2026-04-29</td><td>MTF 分析：4H bearish → time_bleed 最嚴重</td><td>需要 4H 過濾器</td><td>—</td></tr>
             <tr><td class="td-date">2026-05-01</td><td>BB 分析：near_upper WR 只有 14.3%</td><td>趨勢末端進場危險</td><td>—</td></tr>
             <tr><td class="td-date">2026-05-02</td><td>重命名（S2-Pullback → S2B-Hammer）+ 架構統一</td><td>統一 entry label S2B_LE；加入 EMA 群組；架構對齊 S1/S2A</td><td class="ver-confirmed">V2.1 ✓</td></tr>
-            <tr><td class="td-date">2026-05-02</td><td>時間止損修正 + 4H HTF 過濾器</td><td>strategy.close() 保證市價平倉；4H bearish 跳過進場（同 S1/S2A 架構）</td><td class="ver-test">V2.2 🧪</td></tr>
+            <tr><td class="td-date">2026-05-02</td><td>時間止損修正 + 4H HTF 過濾器</td><td>strategy.close() 保證市價平倉；4H bearish 跳過進場（同 S1/S2A 架構）</td><td>已取代（同approach後被V2.3取代）</td></tr>
+            <tr><td class="td-date">2026-07-04</td><td>V2.3：Regime 過濾器（阻擋CONSOLIDATION）+ Z-Score 過濾器（阻擋Z&lt;-2.5陷阱區）+ 狀態表格，皆預設OFF</td><td>尚無真實逐筆歸因驗證，S2 是目前 NEXT 優先方向</td><td class="ver-test">V2.3 🧪</td></tr>
           </tbody>
         </table>
       </div>

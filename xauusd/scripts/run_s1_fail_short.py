@@ -13,8 +13,8 @@ run_s1_fail_short.py — S1 虧損進場點反向做空測試
 
 輸出：xauusd/XAUUSD-Long-S1-AweWithBB/report_s1_fail_short.html
 
-執行方式（在 trading/ 根目錄）：
-    python3 xauusd/run_s1_fail_short.py
+執行方式（在 trading/ 根目錄，20260705 移至 scripts/ 子資料夾）：
+    python3 xauusd/scripts/run_s1_fail_short.py
 """
 from __future__ import annotations
 
@@ -40,7 +40,7 @@ _set_cjk_font()
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent.parent.parent  # 20260705 移至 scripts/ 子資料夾，多一層 .parent
 sys.path.insert(0, str(ROOT / "xauusd"))
 
 from analysis import loader, fail_patterns
