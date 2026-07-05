@@ -43,6 +43,18 @@ def load_trades(csv_path: Path) -> pd.DataFrame:
     raw = pd.read_csv(csv_path, encoding="utf-8-sig")
     raw.columns = raw.columns.str.strip()
 
+    # Newer TradingView exports use different header names for the same fields
+    # (e.g. "Trade number" instead of "Trade #", "Net PnL USD" instead of
+    # "Net P&L USD", "Return %" instead of "Net P&L %"). Normalize here so
+    # both formats work.
+    raw = raw.rename(columns={
+        "Trade number": "Trade #",
+        "Net PnL USD": "Net P&L USD",
+        "Return %": "Net P&L %",
+        "Cumulative PnL USD": "Cumulative P&L USD",
+        "Cumulative PnL %": "Cumulative P&L %",
+    })
+
     entries = raw[raw["Type"] == "Entry long"].rename(columns={
         "Date and time": "entry_time",
         "Signal": "entry_signal",
