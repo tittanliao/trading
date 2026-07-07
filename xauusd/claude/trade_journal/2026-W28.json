@@ -1,0 +1,33 @@
+[
+  {
+    "schema_version": "1.1",
+    "timestamp": "2026-07-06T07:00:00+08:00",
+    "week": "W28",
+    "session": "亞盤",
+    "direction": "long",
+    "strategy": "S1",
+    "strategy_version": "v3.7",
+    "entry": 4189,
+    "sl": "H2預設：Lot1 TP1=1R出場拿利潤，Lot2 SL移保本後跑2R（使用者未回報實際數字）",
+    "tp1": "H2預設：1R",
+    "tp2": "H2預設：2R（Lot1出場後SL移保本）",
+    "status": "closed",
+    "exit_price": 4162,
+    "exit_timestamp": null,
+    "exit_reason": "SL觸發",
+    "result": "loss",
+    "pnl": null,
+    "pnl_points": -27,
+    "mfe": 4200.64,
+    "mfe_time_approx": "09:38左右（daily/2026-07-06.json 09:38記錄的當日高點，之後未再分析，實際峰值可能發生在09:38之前或當時，無更細顆粒度的tick資料）",
+    "mfe_points": 11.64,
+    "emotion_score": 4,
+    "emotion_label": "冷靜但有期待：SOP走完，但心裡有「這單應該會贏」的期待感",
+    "user_note": "S1在30分鐘BB 0.6-0.8的位置勝率較高，但很可惜是在亞盤",
+    "trade_note": "v3.7版本第一單。出場覆盤：MFE僅+11.64pts，未達到本單1R距離(以entry4189/exit4162反推R=27pts計算，1R≈4216)，Lot1的1R停利點從未被觸及，因此這不是「浮盈到1R卻沒依H2規則出場」的紀律問題，而是這筆交易本身最有利時只到過+11.64pts就反轉，最終回落到SL的一般虧損交易。",
+    "related_signal_ref": "使用者回報進場時間07:00/進場價4189，與同日分析(daily/2026-07-06.json)記錄的S1訊號觸發時間06:30、訊號entry 4184.47略有落差，如實記錄使用者原話，未強行對齊。",
+    "scenario_context": "劇本一",
+    "scenario_probability": 57.5,
+    "aligned_with_weekly_report": "順勢"
+  }
+]
