@@ -1,4 +1,7 @@
 # 交易日誌 & 情緒評分標準（20260706 建立）
+# 20260707 更新（schema v1.1→v1.2）：拆分`emotion_score`為`entry_emotion_score`/
+# `exit_emotion_score`（各自搭配對應的_label欄位），分別追蹤進場情緒與出場決策情緒，
+# 見下方「二、交易日誌檔案機制」欄位說明。舊資料（W28前2筆記錄）已retroactive改名。
 
 > 本檔案記錄「使用者實際下單」的交易日誌機制，與 `daily/YYYY-MM-DD.json`（Claude的
 > 每日分析建議）完全分開——daily json 是「分析當下我建議什麼」，這裡是「使用者實際
@@ -54,7 +57,7 @@ SL/TP，一律預設套用「H2」結構：
 
 ```json
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "timestamp": "2026-07-06T07:00:00+08:00",
   "week": "W28",
   "session": "亞盤/歐盤/美盤",
@@ -69,8 +72,10 @@ SL/TP，一律預設套用「H2」結構：
   "exit_price": null,
   "exit_timestamp": null,
   "pnl": null,
-  "emotion_score": 4,
-  "emotion_label": "冷靜但有期待：SOP走完，但心裡有「這單應該會贏」的期待感",
+  "entry_emotion_score": 4,
+  "entry_emotion_label": "冷靜但有期待：SOP走完，但心裡有「這單應該會贏」的期待感",
+  "exit_emotion_score": null,
+  "exit_emotion_label": null,
   "user_note": "使用者自己的原話備註，逐字記錄",
   "trade_note": "額外備註，例如版本標記、與分析訊號的落差說明",
   "related_signal_ref": "可選，若能對應到某次daily分析的訊號，簡短標註方便交叉查閱，但不強行對齊時間/價格",
@@ -84,14 +89,33 @@ SL/TP，一律預設套用「H2」結構：
 - `timestamp`／`entry`：一律照使用者回報的原始數字記錄，即使跟同時段daily json的
   分析訊號時間/價格有落差，也不強行修改對齊，落差可以寫在`related_signal_ref`裡
   當作備註，但主欄位保留使用者原話。
-- `emotion_score`＋`emotion_label`：兩個一起存，分數對照的定義文字每次都完整帶入，
-  避免以後只看到數字忘記當初對照的行為特徵。
+- **`entry_emotion_score`＋`entry_emotion_label` / `exit_emotion_score`＋`exit_emotion_label`
+  （20260707 schema v1.2 拆分，重要變更）**：原本只有單一組`emotion_score`／
+  `emotion_label`記錄「進場當下」的情緒，20260707發現同一筆交易裡「進場」跟「出場
+  決策」的情緒狀態可能完全不同（例如進場時很冷靜(4分)，但持倉到停利點後卻因為
+  貪心/猶豫沒有依SOP出場(屬於2分的行為特徵)），單一欄位無法呈現這種落差，因此
+  拆成兩組獨立欄位分別追蹤：
+  - `entry_emotion_score`／`entry_emotion_label`：進場當下的情緒評分（原
+    `emotion_score`／`emotion_label`改名而來，欄位定義與使用方式完全不變，只是
+    改名以跟出場情緒做區分，避免以後看到單一`emotion_score`不知道指的是哪個時間點）
+  - `exit_emotion_score`／`exit_emotion_label`：出場「決策當下」的情緒評分，適用
+    情境包含但不限於：到達停利點卻猶豫不出場、還沒到停損點就自己提前砍倉、停損
+    被觸發時的心理狀態等。分數對照標準與進場情緒共用同一套1-5分定義（見本檔案
+    第一節），只是評分對象從「要不要進場」換成「出場這個決策執行得如何」。若交易
+    尚未出場（`status`為open），這兩個欄位保持null，出場時才回填。
+  - **舊資料相容性說明**：20260706～20260707建立的前2筆交易記錄，原本用的是
+    `emotion_score`／`emotion_label`這組舊欄位名稱，20260707已retroactive改名為
+    `entry_emotion_score`／`entry_emotion_label`（欄位值本身不變，只改名），確保
+    整份檔案欄位命名一致，不會有新舊兩種寫法同時存在造成之後查詢/比對困難。
+  - 兩組評分都要「分數＋白話定義文字」一起存，理由同原規則：避免以後只看到數字
+    忘記當初對照的行為特徵。
 - `sl`/`tp1`/`tp2`：使用者進場只報「策略、點位、情緒、原因」、沒特別說SL/TP時，
   一律記錄為採用「H2預設」（見上方一之二節：Lot1 TP1=1R拿利潤，Lot2 SL移保本後
   跑2R），不留空、不亂猜數字；若使用者之後回報實際下的數字，才用實際數字取代。
 - `exit_price`/`pnl`：使用者沒提供就留null，之後回報停利/停損時再更新同一筆記錄
   （或append一筆對應的出場記錄，視情況決定）。
-- `status`：open（尚未出場）/ closed（已出場，此時應補上exit_price/exit_timestamp/pnl）
+- `status`：open（尚未出場）/ closed（已出場，此時應補上exit_price/exit_timestamp/pnl/
+  exit_emotion_score/exit_emotion_label）
 - `scenario_context`／`scenario_probability`（20260706新增）：這筆交易進場當下，
   對應本週週報／Combine的哪個劇本、當時給的機率是多少，方便之後回顧交易跟週報
   劇本的對應關係
