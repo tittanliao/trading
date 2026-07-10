@@ -45,6 +45,32 @@ COMMODITIES = [
 # ─── Session Logs ────────────────────────────────────────────────────
 XAUUSD_LOG = [
     {
+        "date": "2026-07-10",
+        "title": "S1 樣本外驗證 + Regime參數掃描 + FVG敏感度測試 + 出場結構歸因修正",
+        "items": [
+            "<b>S1 V3.7 Out-of-Sample 測試</b>：459筆真實成交按時間切70/30（切點2025-11-20），"
+            "IS 321筆 WR55.8%/PF1.742，OOS 138筆 WR53.6%/PF<b>1.747</b>——三項轉向門檻全數通過，"
+            "edge 不是靠大多頭期過擬合出來的假象。"
+            "<a href='xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7_oos.html' target='_blank'>OOS報告 →</a>",
+            "<b>S1 V3.8.1</b>：Regime 三組過濾器（斜率/BBW高檔/BBW低檔）回看根數從寫死改為可調 input，"
+            "供 TradingView Strategy Tester 手動掃描。"
+            "<a href='xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.8.1.pine' target='_blank'>V3.8.1 Pine →</a>",
+            "<b>Regime 回看根數 Python 掃描</b>（3個月本機資料，相對排名參考）：BBW高檔20根 > 現行60根；"
+            "斜率過濾器打開後全面變差，維持OFF；BBW低檔過濾器打開＋90-120根意外是最強組合，值得後續在TradingView驗證。"
+            "<a href='xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.8_regime_sweep.html' target='_blank'>掃描報告 →</a>",
+            "<b>FVG 最佳參數 ±20% 鄰域敏感度測試</b>：Short 全部穩健（12個擾動無一崩潰）；"
+            "Long 的 SL% 與 TP1R 兩個維度是脆弱點，放寬 20% 就讓 PF 跌破 1.2，過擬合風險較高，實盤不宜放鬆這兩個數字。"
+            "<a href='xauusd/XAUUSD-FVG-Strategy/report_sensitivity.html' target='_blank'>敏感度報告 →</a>",
+            "<b>重大文件修正</b>：查真實成交CSV發現 ANALYSIS_SKILL.md 記載的「V3.4 TP2=2:1，V3.7拉長至3.5R」是錯的"
+            "——兩版TP1/TP2/SL中位數完全相同，出場結構從未改變。真正被混在一起的是兩個入場端改動："
+            "①1H濾網從 lookahead_on（V3.4，repainting bug）修正為 lookahead_off（V3.7）②新增BBW高檔過濾器。"
+            "已建立 A/B/C/D 診斷版 Pine（雙開關切換四種組合）待 TradingView 實測拆解各自貢獻。"
+            "<a href='xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.7-ABCD-Diagnostic.pine' target='_blank'>ABCD診斷 Pine →</a>",
+            "決策品質四合一報告（重大決策複盤/知識體系/唱反調壓力測試/一年後失敗預演）+ 每月自檢清單建立。"
+            "<a href='xauusd/claude/reports/decision_review_20260710.md' target='_blank'>報告 →</a>",
+        ],
+    },
+    {
         "date": "2026-06-14",
         "title": "FVG-V2 多單回測 + Pine Script V2.0 完成",
         "items": [
