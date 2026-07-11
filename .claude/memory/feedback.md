@@ -21,9 +21,12 @@ metadata:
 **Why:** 用戶的最終目標是在 TradingView 上跑策略，Python 分析只是前期篩選。
 **How to apply:** 每次分析完找到 insight，優先提供可在 TradingView 測試的 Pine Script 版本。
 
-## generate_index.py 是 index.html 的唯一來源
-**Why:** index.html 有動態部分（實驗結果），直接手改 HTML 不如改 generate_index.py 後重跑。
-**How to apply:** 需更新 index.html 的靜態文字（策略備忘、對話記錄）時，改 generate_index.py 的對應字串再執行。
+## generate_site.py 是 6 個網站頁面的唯一來源（20260711 拆頁後）
+**Why:** 舊 generate_index.py 與手改過的 index.html 脫節，20260710 重新生成時誤刪 2000+ 行。
+20260711 重構：網站拆為 6 頁，手寫內容隔離到 content/ fragment、對話記錄進 data/logs.json，
+生成器可安全重跑。
+**How to apply:** 生成的 6 個 .html 禁止手改。手寫內容改 `content/`、記錄改 `data/logs.json`、
+動態數據改 data 檔，然後 `python3.12 generate_site.py`。完整規則見根目錄 `DEVELOPMENT.md`。
 
 ## 每次「請分析」必須讀取週報（不得跳過）
 **Why:** 曾多次跳過週報導致大格局背景缺失。即使部分關鍵位過期，仍有劇本、CFTC、DXY 等有效資訊。

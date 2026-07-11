@@ -82,12 +82,12 @@ S2A-RSI / S2B-Hammer 仍在測試新的 Regime+Z-Score 過濾器版本（V2.4 / 
 - 宏觀分析：月勝率 63.9%，九月唯一偏空月，四月期望值最大（+518pts avg）
 - 下一步：NQ 相關性過濾 + MTF 4H 過濾；在 TradingView 驗證 E07/E09/E12
 
-## 對話記錄架構（2026-05-15）
-- **統一對話記錄**：所有 XAUUSD / TX / 跨商品 的 log 集中在「📋 對話記錄」Top-Level Tab
-- Log 資料結構：`XAUUSD_LOG` / `TX_LOG` / `CROSS_LOG`（在 generate_index.py）
-- 每筆 entry 有商品 tag（🟡 XAUUSD / 🔵 TX / 📊 跨商品），按日期降序顯示
-- 個別商品的「對話記錄」子 tab 已移除，不再有重複內容
-- 新增對話記錄時：在對應 LOG 清單加一個 dict（date, title, items）即可，重跑 generate_index.py 生效
+## 對話記錄架構（2026-07-11 更新：拆頁後）
+- **統一對話記錄**：獨立頁面 `history.html`，Hub 首頁顯示最新 5 筆摘要
+- Log 唯一來源：`data/logs.json`（每筆：date / tag / title / items）
+- 每筆 entry 有商品 tag（🟡 xauusd / 🔵 tx / 📊 cross），按日期降序顯示，「共 N 筆」自動計算
+- 新增對話記錄：append `data/logs.json` 一筆，重跑 `python3.12 generate_site.py` 生效
+- （舊制 generate_index.py 的 XAUUSD_LOG/TX_LOG/CROSS_LOG 已於 20260711 廢除）
 
 ## 跨商品共同分析（2026-05-15）
 - 新增 `shared/run_shared_analysis.py`，對 XAUUSD + TX 共同執行：

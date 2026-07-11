@@ -24,8 +24,13 @@ trading/
 │   ├── user_profile.md
 │   ├── project_context.md
 │   └── feedback.md
-├── index.html                   # 多商品 Hub（主入口）
-├── generate_index.py            # 重新生成 index.html（更新實驗結果後執行）
+├── DEVELOPMENT.md               # ★ 開發規範（改任何網站內容前必讀）
+├── generate_site.py             # ★ 網站生成器（6 頁；舊 generate_index.py 已於 20260711 刪除）
+├── assets/                      # 共用 site.css + site.js
+├── content/                     # 手寫內容 fragment（唯一合法手寫處）
+├── data/logs.json               # 對話記錄唯一來源
+├── index.html                   # Hub 首頁（⚠️ 生成物，禁止手改）
+├── xauusd.html / tx.html / shared.html / history.html / sitemap.html  # 同上，皆為生成物
 ├── requirements.txt
 │
 ├── xauusd/                      # XAUUSD 黃金策略分析
@@ -64,13 +69,16 @@ trading/
 python3.12 shared/run_shared_analysis.py
 
 # 結果存於 shared/shared_results.json（含 base64 heatmap 圖）
-# 執行後需再跑 python generate_index.py 更新 index.html
+# 執行後需再跑 python3.12 generate_site.py --page shared 更新頁面
 ```
 
-### 更新 index.html（更新任一商品實驗結果後）
+### 更新網站頁面（更新任一商品實驗結果後）
 
 ```bash
-python generate_index.py
+python3.12 generate_site.py                # 全部 6 頁
+python3.12 generate_site.py --page xauusd  # 只生成單頁
+# ⚠️ 生成的 6 個 .html 禁止手改；手寫內容改 content/、對話記錄改 data/logs.json
+# 詳細規則見 DEVELOPMENT.md（含常見任務 checklist 與 commit 前檢查）
 ```
 
 ### XAUUSD（在 trading/ 根目錄執行）
@@ -104,10 +112,10 @@ python3 tx/run_experiments.py --sl 40 --tp 80   # 自訂 SL/TP
 
 1. 在 `trading/` 下建立新商品資料夾（e.g., `nq/`）
 2. 複製 `tx/experiments/` 架構，調整 SL/TP 單位和相關性指標
-3. 在 `generate_index.py` 的 `COMMODITIES` 清單中新增一筆
-4. 在 `SESSION_LOGS` 中新增對應的 key
-5. 視需要新增 `_<商品>_exp_html()` 函式或共用現有的
-6. 執行 `python generate_index.py` 更新 index.html
+3. 在 `generate_site.py` 的 `COMMODITIES` 清單中新增一筆，並新增 `build_<商品>()` 頁面函式 + `PAGES` 登記 + `NAV_LINKS` 加連結
+4. 視需要新增 `_<商品>_exp_html()` 函式或共用現有的；手寫區塊放 `content/<商品>/`
+5. `content/sitemap.html` 登記新頁面
+6. 執行 `python3.12 generate_site.py` 生成（後續 checklist 見 DEVELOPMENT.md §4-C）
 
 ---
 

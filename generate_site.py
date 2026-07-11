@@ -1,22 +1,39 @@
 #!/usr/bin/env python3
 """
-Generate root index.html for the multi-commodity trading project.
-Run after updating any commodity's experiment results.
+generate_site.py — Trading Strategy Hub 靜態多頁生成器（20260711 拆頁重構）
+==============================================================================
+取代舊的 generate_index.py（單頁版，已於同日刪除；歷史見 git log）。
 
-Usage:
-    python generate_index.py
+架構原則（詳見 DEVELOPMENT.md）：
+  1. 六個頁面全部由本檔生成，生成的 HTML 檔案一律不得手改
+     （每頁開頭都有 DO NOT EDIT banner）。
+  2. 內容分三類，各有唯一的修改入口：
+     - 動態數據區塊：改 data 檔（results.json 等）→ 重跑本檔
+     - 手寫編輯內容：改 content/ 下的 fragment → 重跑本檔
+     - 對話記錄：append data/logs.json → 重跑本檔（「共 N 筆」自動計算）
+  3. 單頁重生成：python3 generate_site.py --page xauusd（省略 --page 則全部）
+
+頁面清單：
+  index.html    Hub 首頁（商品卡 + 最新動態）
+  xauusd.html   XAUUSD 主頁（宏觀/已確認/實驗/FVG/筆記驗證/週報/H2）
+  tx.html       TX 主頁（宏觀/已確認/實驗/筆記驗證/正二）
+  shared.html   跨商品分析
+  history.html  對話記錄（全量，計數自動）
+  sitemap.html  網站地圖（fragment: content/sitemap.html）
 """
+import argparse
 import json
 import re
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
 import numpy as np
 
-ROOT = Path(__file__).parent
+ROOT    = Path(__file__).parent
+CONTENT = ROOT / "content"
+LOGS_PATH = ROOT / "data" / "logs.json"
 
-# ─── Commodity Registry ─────────────────────────────────────────────
-# To add a new commodity: append a new dict here.
 COMMODITIES = [
     {
         "id":        "xauusd",
@@ -42,199 +59,6 @@ COMMODITIES = [
     },
 ]
 
-# ─── Session Logs ────────────────────────────────────────────────────
-XAUUSD_LOG = [
-    {
-        "date": "2026-07-10",
-        "title": "S1 樣本外驗證 + Regime參數掃描 + FVG敏感度測試 + 出場結構歸因修正",
-        "items": [
-            "<b>S1 V3.7 Out-of-Sample 測試</b>：459筆真實成交按時間切70/30（切點2025-11-20），"
-            "IS 321筆 WR55.8%/PF1.742，OOS 138筆 WR53.6%/PF<b>1.747</b>——三項轉向門檻全數通過，"
-            "edge 不是靠大多頭期過擬合出來的假象。"
-            "<a href='xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7_oos.html' target='_blank'>OOS報告 →</a>",
-            "<b>S1 V3.8.1</b>：Regime 三組過濾器（斜率/BBW高檔/BBW低檔）回看根數從寫死改為可調 input，"
-            "供 TradingView Strategy Tester 手動掃描。"
-            "<a href='xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.8.1.pine' target='_blank'>V3.8.1 Pine →</a>",
-            "<b>Regime 回看根數 Python 掃描</b>（3個月本機資料，相對排名參考）：BBW高檔20根 > 現行60根；"
-            "斜率過濾器打開後全面變差，維持OFF；BBW低檔過濾器打開＋90-120根意外是最強組合，值得後續在TradingView驗證。"
-            "<a href='xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.8_regime_sweep.html' target='_blank'>掃描報告 →</a>",
-            "<b>FVG 最佳參數 ±20% 鄰域敏感度測試</b>：Short 全部穩健（12個擾動無一崩潰）；"
-            "Long 的 SL% 與 TP1R 兩個維度是脆弱點，放寬 20% 就讓 PF 跌破 1.2，過擬合風險較高，實盤不宜放鬆這兩個數字。"
-            "<a href='xauusd/XAUUSD-FVG-Strategy/report_sensitivity.html' target='_blank'>敏感度報告 →</a>",
-            "<b>重大文件修正</b>：查真實成交CSV發現 ANALYSIS_SKILL.md 記載的「V3.4 TP2=2:1，V3.7拉長至3.5R」是錯的"
-            "——兩版TP1/TP2/SL中位數完全相同，出場結構從未改變。真正被混在一起的是兩個入場端改動："
-            "①1H濾網從 lookahead_on（V3.4，repainting bug）修正為 lookahead_off（V3.7）②新增BBW高檔過濾器。"
-            "已建立 A/B/C/D 診斷版 Pine（雙開關切換四種組合）待 TradingView 實測拆解各自貢獻。"
-            "<a href='xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.7-ABCD-Diagnostic.pine' target='_blank'>ABCD診斷 Pine →</a>",
-            "決策品質四合一報告（重大決策複盤/知識體系/唱反調壓力測試/一年後失敗預演）+ 每月自檢清單建立。"
-            "<a href='xauusd/claude/reports/decision_review_20260710.md' target='_blank'>報告 →</a>",
-        ],
-    },
-    {
-        "date": "2026-06-14",
-        "title": "FVG-V2 多單回測 + Pine Script V2.0 完成",
-        "items": [
-            "建立 XAUUSD-FVG-Strategy/ 資料夾，FVG V1.0（單 FVG 追蹤）與 V2.0（多 FVG 陣列追蹤）Pine Script",
-            "V2.0 特色：最多 5 個 FVG 同時追蹤、FVG box 視覺化（extend.right）、最新 FVG 優先進場",
-            "run_fvg_experiments.py：Python 回測引擎，7,560 參數組合優化（8.9 秒完成）",
-            "最佳多單參數：fvg_min=0.20%、fvg_max=20bars、SL=1.5%、TP1=0.5R、TP2=2.0R、TB=72bars",
-            "<b>結果：42 筆交易，WR 66.7%，PF 1.660，淨損益 +11.93%</b>",
-            "V2.0 Pine Script 預設值已更新為最佳參數（由 PNG 截圖確認）",
-        ],
-    },
-    {
-        "date": "2026-05-24",
-        "title": "SMC 實驗（M01–M20）+ HTML 報告",
-        "items": [
-            "建立 XAUUSD-SMC-Experiments/ + 20 個 SMC 策略（OB/FVG/SSL/BOS/CHoCH 組合）",
-            "最強空單：M12 Bearish FVG+RSI（158筆，WR 43.0%，PF 1.470）",
-            "最強多單：M09 FVG+OB（PF 1.045，效果不佳）",
-            "整合到 Hub 實驗策略 → SMC 分頁",
-        ],
-    },
-    {
-        "date": "2026-05-02",
-        "title": "策略命名重構 + 架構統一",
-        "items": [
-            "資料夾重命名（git mv）：S2-Hybrid→S2A-RSI、S2-Pullback→S2B-Hammer",
-            "修復 S1 lookahead_on 重繪 bug → lookahead_off",
-            "統一 entry label 規則（S1BB_LE / S2A_LE / S2B_LE）",
-            "三策略均加入 EMA 過濾器群組（預設 off）",
-            "產出：S1 V3.6.2、S2A V2.2、S2B V2.1 測試版",
-        ],
-    },
-    {
-        "date": "2026-05-01",
-        "title": "BB 位置分析 + RSI 背離偵測",
-        "items": [
-            "建立 bb_analysis.py（%B 7 zone 分類）",
-            "S1 price > BB 上軌時勝率 77.8%（n=9）；中軌以下不建議進場",
-            "divergence.py 程式化偵測 swing low 背離（17 個信號，樣本不足）",
-            "S1 V3.6.1：加入 BB %B ≥ 0.6 過濾器 + 4H HTF RSI 過濾器",
-        ],
-    },
-    {
-        "date": "2026-04-29",
-        "title": "多時間框架（MTF）共軌分析",
-        "items": [
-            "建立 mtf_analysis.py；merge_asof 查找 HTF 狀態",
-            "HTF alignment=3/3 時 S1 勝率達 ~69%",
-            "4H bearish → S1 immediate_loss 飆升；S2 time_bleed 升高",
-            "空單 4H 過濾後平均 +4.1% ΔWR（16/20 改善）",
-        ],
-    },
-    {
-        "date": "2026-04-27",
-        "title": "初始分析 + DXY 相關性",
-        "items": [
-            "設計 4 類虧損分類邏輯（immediate_loss / false_breakout / time_bleed / normal_sl）",
-            "DXY RSI < 30 時三策略勝率均升至 60–75%",
-            "S2 time_bleed 超過 50% — 加時間止損是最高優先",
-            "建立 20 多單 + 20 空單實驗框架；E03 MACD Signal 最佳（PF 1.643）",
-        ],
-    },
-]
-
-CROSS_LOG = [
-    {
-        "date": "2026-05-15",
-        "title": "統一對話記錄頁 + 跨商品 Log 整合",
-        "items": [
-            "將 XAUUSD / TX / 跨商品 的所有對話記錄統一整合到「📋 對話記錄」獨立 Tab",
-            "每筆 log 加上商品 tag（🟡 XAUUSD / 🔵 TX / 📊 跨商品），便於追蹤 Prompt 演進歷史",
-            "移除 XAUUSD 和 TX 各自的「對話記錄」子 tab，集中到統一頁面",
-            "新增 feedback_completion_checklist.md 記憶，確保每次完成任務都記錄到 memory",
-        ],
-    },
-    {
-        "date": "2026-05-15",
-        "title": "跨商品分析：整點熱力圖 + 30m RSI 濾鏡",
-        "items": [
-            "新增 shared/run_shared_analysis.py：XAUUSD + TX 共同分析框架",
-            "整點進場熱力圖：星期幾 × 小時 → 歷史勝率 & 平均損益（TX 3,334 筆 / XAU 2,906 筆）",
-            "TX 最佳時段：週二 23:00 WR=73.7%，avg +40.9pts；最差：週四 08:00 WR=33.3%，avg -89.5pts",
-            "XAU 最佳時段：週三 06:00 WR=88.9%（n=9 小樣本）；最差：週一 06:00 WR=10.0%（n=10）",
-            "30m RSI 狀態過濾：TX RSI<MA 時 WR 53.7% avg +8.0pts；RSI>MA 時 WR 53.1% avg +1.8pts",
-            "背離訊號（Regular Bullish/Bearish）欄位在現有 CSV 無資料，需重新從 TradingView 匯出",
-            "新增「📊 跨商品分析」Nav Tab，兩商品分析放同一頁面方便比較",
-        ],
-    },
-    {
-        "date": "2026-05-14",
-        "title": "網站整合：Hub 主頁 + 多商品導覽 + 手機響應式",
-        "items": [
-            "整合 XAUUSD + TX 為 Trading Strategy Hub（根目錄 index.html）",
-            "頂部導覽：XAUUSD 黃金 / TX 台指期 / 📊 跨商品分析 / 🗺 網站地圖",
-            "加入 GitHub Actions 自動部署到 GitHub Pages",
-            "手機響應式：品牌列 + 可橫滑 tab 列，適配小螢幕",
-            "筆記驗證功能：validate_notes.py 比對交易筆記與歷史資料符合率",
-        ],
-    },
-    {
-        "date": "2026-05-13",
-        "title": "XAUUSD + TX 宏觀分析整合 + 網站地圖",
-        "items": [
-            "XAUUSD 宏觀分析（DXY 相關性、月度統計、季節性）整合進 Hub",
-            "TX 宏觀分析：月勝率 63.9%、四月 +518pts、九月唯一偏空",
-            "統一雙商品導覽，網站地圖列出所有分析頁面",
-        ],
-    },
-]
-
-TX_LOG = [
-    {
-        "date": "2026-05-13",
-        "title": "SL 敏感度分析 — 確認 30pts 過緊",
-        "items": [
-            "問題：SL=30pts（≈0.15%）被雜訊掃出後才噴上，導致 19/20 多單虧損",
-            "系統性測試 SL = 30 / 50 / 60 / 80 / 100 / 120 / 150（R:R 固定 2:1）",
-            "SL=30：只有 E12 獲利（PF=1.132, WR=36.1%）",
-            "SL=60：3 策略獲利，E12 PF=1.648, WR=45.2%",
-            "SL=120：甜蜜點 — E09/E07/E12 均 PF>2.0、WR突破50%；E03 淨盈虧 NT$184萬",
-            "SL=120 確認為新基準，更新 Pine Script 預設值",
-            "<b>結論：30pts 根本原因是台指期 ATR 平均遠大於 30pts，止損設計需重新校準</b>",
-        ],
-    },
-    {
-        "date": "2026-05-13",
-        "title": "宏觀分析 — 月度方向 + 週內結構",
-        "items": [
-            "新增 macro_analysis.py：以週線資料（2012–2026，723 根）統計月度勝率與季節性",
-            "整體月勝率 63.9%，平均月漲跌 +199 pts（月初買、月底賣）",
-            "九月是唯一偏空月（42.9%）；十二月最穩（78.6%）；四月期望值最大（平均 +518 pts）",
-            "週內結構：第1、4、5週勝率較高（58–61%）；第3週最弱（55.4%）",
-            "建立操作框架：先看月度季節性偏向 → 再用週線 RSI/BB 判斷當週進場時機",
-        ],
-    },
-    {
-        "date": "2026-05-13",
-        "title": "第一版回測引擎完成 + Pine Script 生成",
-        "items": [
-            "完成 experiments/ 模組：loader、indicators、engine、runner、report",
-            "20 多單策略 E01–E20（Oscillator / Trend / Breakout / Pattern / Session 五大類）",
-            "20 空單策略 S01–S20（對應多單鏡像邏輯）",
-            "真實資料回測（TAIFEX_DLY_MXF1!, 30.csv，2025-06 起 8585 bars）",
-            "多單 E12 BB Squeeze Break 唯一獲利（PF=1.132, WR=36.1%）",
-            "空單全部虧損 — 資料期間為大多頭，做空困難，為預期結果",
-            "Pine Script v6 多空各一檔：下拉選單選策略、Enable 開關、R:R 可設定",
-        ],
-    },
-    {
-        "date": "2026-05-12",
-        "title": "架構設計 — 從 XAUUSD 擴展到台指期",
-        "items": [
-            "決定標的：MTX 小台指期（每點 NT$50）",
-            "相關性指標：NQ 納斯達克期貨（同向，可切換 SOX/SPX/VIX）",
-            "SL/TP 改為固定點數（30pts/60pts，R:R 1:2）",
-            "時段：日盤（08:45–13:45）+ 夜盤（15:00–05:00）皆納入",
-        ],
-    },
-]
-
-SESSION_LOGS = {"xauusd": XAUUSD_LOG, "tx": TX_LOG, "cross": CROSS_LOG}
-
-
-# ─── Helpers ─────────────────────────────────────────────────────────
 def _load_top3(results_path: Path, n: int = 3) -> list[dict]:
     if not results_path.exists():
         return []
@@ -275,88 +99,6 @@ def _exp_row_tx(r: dict, direction: str) -> str:
         f"</tr>"
     )
 
-
-def _session_log_html(commodity_id: str) -> str:
-    blocks = []
-    for entry in SESSION_LOGS.get(commodity_id, []):
-        items_html = "".join(f"<li>{it}</li>" for it in entry["items"])
-        blocks.append(
-            f"<div class='log-entry'>"
-            f"<div class='log-date'>{entry['date']}</div>"
-            f"<div><div class='log-title'>{entry['title']}</div>"
-            f"<ul class='log-items'>{items_html}</ul></div>"
-            f"</div>"
-        )
-    return "\n".join(blocks)
-
-
-def _unified_log_html() -> str:
-    TAG_CFG = {
-        "xauusd": {"label": "🟡 XAUUSD", "bg": "#fef3c7", "color": "#92400e", "border": "#f59e0b"},
-        "tx":     {"label": "🔵 TX 台指期", "bg": "#dbeafe", "color": "#1e40af", "border": "#3b82f6"},
-        "cross":  {"label": "📊 跨商品",  "bg": "#ede9fe", "color": "#5b21b6", "border": "#7c3aed"},
-    }
-
-    all_entries = []
-    for cid, log in SESSION_LOGS.items():
-        for entry in log:
-            all_entries.append({**entry, "_cid": cid})
-
-    all_entries.sort(key=lambda e: e["date"], reverse=True)
-
-    blocks = []
-    for entry in all_entries:
-        cid = entry["_cid"]
-        cfg = TAG_CFG.get(cid, TAG_CFG["cross"])
-        tag = (
-            f"<span style='display:inline-block;padding:2px 10px;border-radius:12px;"
-            f"background:{cfg['bg']};color:{cfg['color']};"
-            f"border:1px solid {cfg['border']};font-size:.78em;font-weight:700;"
-            f"margin-bottom:6px'>{cfg['label']}</span>"
-        )
-        items_html = "".join(f"<li>{it}</li>" for it in entry["items"])
-        blocks.append(
-            f"<div class='log-entry'>"
-            f"<div class='log-date'>{entry['date']}</div>"
-            f"<div>{tag}<div class='log-title' style='margin-top:2px'>{entry['title']}</div>"
-            f"<ul class='log-items'>{items_html}</ul></div>"
-            f"</div>"
-        )
-
-    legend = "".join(
-        f"<span style='display:inline-flex;align-items:center;gap:5px;margin-right:12px;"
-        f"padding:3px 10px;border-radius:12px;background:{cfg['bg']};color:{cfg['color']};"
-        f"border:1px solid {cfg['border']};font-size:.8em;font-weight:600'>{cfg['label']}</span>"
-        for cid, cfg in TAG_CFG.items()
-    )
-
-    total = len(all_entries)
-    return f"""
-  <!-- ══ UNIFIED SESSION LOG ══════════════════════════════════════════ -->
-  <div id="commodity-history" class="commodity-section">
-    <div class="tab-panel active" style="max-width:1000px;margin:0 auto">
-      <div class="part-label"><span class="part-badge">HISTORY</span>對話記錄 · Prompt &amp; Evolution History</div>
-
-      <div class="card" style="margin-bottom:16px">
-        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:10px">
-          {legend}
-          <span style="color:var(--muted);font-size:.82em;margin-left:auto">共 {total} 筆記錄</span>
-        </div>
-        <div style="font-size:.84em;color:var(--text2)">
-          每筆記錄標示商品歸屬，方便追蹤跨商品分析演進與 Prompt 歷史。
-          記錄依日期由新至舊排列。
-        </div>
-      </div>
-
-      <div class="card">
-        {"".join(blocks)}
-      </div>
-    </div>
-  </div><!-- /commodity-history -->
-"""
-
-
-# ─── XAUUSD 宏觀分析（動態讀 CSV）─────────────────────────────────
 def _xauusd_macro_html() -> str:
     csv_path = ROOT / "xauusd/csv/FX_IDC_XAUUSD, 1W.csv"
     if not csv_path.exists():
@@ -551,195 +293,6 @@ def _xauusd_macro_html() -> str:
 
 
 # ─── XAUUSD static 現有策略優化 HTML ────────────────────────────────
-def _xauusd_opt_html() -> str:
-    return """
-  <!-- XAUUSD 現有策略優化 ────────────────────────────── -->
-  <div id="xauusd-main-opt" class="main-section">
-    <div class="subnav">
-      <button class="sub-tab active" onclick="showTab('xauusd-opt','overview',this)">綜合對比</button>
-      <button class="sub-tab" onclick="showTab('xauusd-opt','s1',this)">S1-AweWithBB</button>
-      <button class="sub-tab" onclick="showTab('xauusd-opt','s2a',this)">S2A-RSI</button>
-      <button class="sub-tab" onclick="showTab('xauusd-opt','s2b',this)">S2B-Hammer</button>
-    </div>
-
-    <!-- Overview -->
-    <div id="xauusd-opt-overview" class="tab-panel active">
-      <div class="part-label"><span class="part-badge">PART 1</span>精華重點 · Key Findings</div>
-      <div class="grid-3">
-        <div class="card">
-          <div class="card-title">📊 S1-AweWithBB <span class="badge badge-yellow">V3.6.2</span></div>
-          <div class="grid-2" style="gap:10px">
-            <div class="metric-card"><div class="metric-label">勝率</div><div class="metric-val green">53.2%</div></div>
-            <div class="metric-card"><div class="metric-label">獲利因子</div><div class="metric-val">1.525</div></div>
-            <div class="metric-card"><div class="metric-label">淨盈虧</div><div class="metric-val green">+$6,137</div></div>
-            <div class="metric-card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$494</div></div>
-          </div>
-          <div style="margin-top:12px;font-size:.82em;color:var(--muted)">主要問題：immediate_loss 31% · 504 筆交易</div>
-          <div class="report-links"><a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report.html">完整報告 →</a></div>
-        </div>
-        <div class="card">
-          <div class="card-title">📊 S2A-RSI <span class="badge badge-yellow">V2.3</span></div>
-          <div class="grid-2" style="gap:10px">
-            <div class="metric-card"><div class="metric-label">勝率</div><div class="metric-val yellow">42.2%</div></div>
-            <div class="metric-card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.679</div></div>
-            <div class="metric-card"><div class="metric-label">淨盈虧</div><div class="metric-val green">+$6,212</div></div>
-            <div class="metric-card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$1,177</div></div>
-          </div>
-          <div style="margin-top:12px;font-size:.82em;color:var(--muted)">主要問題：time_bleed 52% · 161 筆交易</div>
-          <div class="report-links"><a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/report.html">完整報告 →</a></div>
-        </div>
-        <div class="card">
-          <div class="card-title">📊 S2B-Hammer <span class="badge badge-yellow">V2.2</span></div>
-          <div class="grid-2" style="gap:10px">
-            <div class="metric-card"><div class="metric-label">勝率</div><div class="metric-val yellow">44.0%</div></div>
-            <div class="metric-card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.681</div></div>
-            <div class="metric-card"><div class="metric-label">淨盈虧</div><div class="metric-val green">+$7,722</div></div>
-            <div class="metric-card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$1,431</div></div>
-          </div>
-          <div style="margin-top:12px;font-size:.82em;color:var(--muted)">主要問題：time_bleed 54% · 200 筆交易</div>
-          <div class="report-links"><a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/report.html">完整報告 →</a></div>
-        </div>
-      </div>
-
-      <div class="insight-grid">
-        <div class="insight good"><strong>✅ DXY RSI &lt; 30 → 最佳做多窗口</strong>美元超賣時三策略勝率均升至 60–75%。</div>
-        <div class="insight good"><strong>✅ HTF Alignment 3/3 → S1 勝率 ~69%</strong>4H + 1D + 60m 全部看多時，S1 勝率比整體高出 16%。</div>
-        <div class="insight warn"><strong>⚠ S1 BB 位置是關鍵過濾器</strong>S1 在 price > BB 上軌時勝率 77.8%；低於中軌時僅 0–20%。建議：僅在 BB %B > 0.6 時進場。</div>
-        <div class="insight bad"><strong>❌ S2 的 time_bleed 問題尚未解決</strong>超過 50% 的虧損是持倉超時。已在 V2.3/V2.2 加入 strategy.close() 時間止損修正。</div>
-        <div class="insight info"><strong>📊 4H bearish 是最大失敗來源</strong>4H RSI bearish 時 S1 immediate_loss 升高，S2 time_bleed 升高。4H 過濾器已驗證 +1.6%~+4.1% ΔWR。</div>
-        <div class="insight purple"><strong>🔬 背離分析：樣本不足</strong>30m 資料中只有 17 個 RSI 背離信號（3 個月），統計效力不足。需要更長時間資料。</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🗂 策略分類體系</div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>族群</th><th>策略 ID</th><th>進場類型</th><th>觸發信號</th><th>Entry Label</th><th>當前版本</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><span class="badge badge-green">S1 右側突破</span></td>
-                <td><strong>S1-AweWithBB</strong></td><td>趨勢確認後順勢進場（突破 BB 上軌）</td>
-                <td>Awesome Oscillator + BB 突破</td><td><code>S1BB_LE</code></td><td class="ver-test">V3.6.2 🧪</td>
-              </tr>
-              <tr>
-                <td rowspan="2"><span class="badge badge-blue">S2 左側跌深</span></td>
-                <td><strong>S2A-RSI</strong></td><td>超賣區逆勢進場（指標）</td>
-                <td>RSI 交叉 / 背離</td><td><code>S2A_LE</code></td><td class="ver-test">V2.3 🧪</td>
-              </tr>
-              <tr>
-                <td><strong>S2B-Hammer</strong></td><td>超賣區逆勢進場（K 線）</td>
-                <td>Hammer 錘形蠟燭</td><td><code>S2B_LE</code></td><td class="ver-test">V2.2 🧪</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🧩 Pine Script 版本狀態</div>
-        <div class="tbl-wrap">
-          <table class="version-row">
-            <thead><tr><th>策略</th><th>版本</th><th>狀態</th><th>新增功能</th></tr></thead>
-            <tbody>
-              <tr><td>S1-AweWithBB</td><td class="ver-confirmed">V3.5</td><td><span class="badge badge-green">確認版</span></td><td>DXY RSI + RSI 動能過濾器</td></tr>
-              <tr><td>S1-AweWithBB</td><td class="ver-test">V3.6.2</td><td><span class="badge badge-yellow">測試中</span></td><td>BB %B ≥ 0.6 + 4H HTF RSI + lookahead_off 修正 + S1BB_LE 統一 label</td></tr>
-              <tr><td>S2A-RSI</td><td class="ver-confirmed">V2.2</td><td><span class="badge badge-green">確認版</span></td><td>統一 S2A_LE + EMA group + 架構對齊</td></tr>
-              <tr><td>S2A-RSI</td><td class="ver-test">V2.3</td><td><span class="badge badge-yellow">測試中</span></td><td>時間止損修正（strategy.close()）+ 4H HTF RSI 過濾器</td></tr>
-              <tr><td>S2B-Hammer</td><td class="ver-confirmed">V2.1</td><td><span class="badge badge-green">確認版</span></td><td>統一 S2B_LE + EMA group + 架構對齊</td></tr>
-              <tr><td>S2B-Hammer</td><td class="ver-test">V2.2</td><td><span class="badge badge-yellow">測試中</span></td><td>時間止損修正（strategy.close()）+ 4H HTF RSI 過濾器</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="report-links">
-          <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.6.2.pine">S1 V3.6.2 🧪</a>
-          <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.5.pine">S1 V3.5 ✅</a>
-          <a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/XAUUSD-Long-S2A-RSI-V2.3.pine">S2A V2.3 🧪</a>
-          <a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/XAUUSD-Long-S2B-Hammer-V2.2.pine">S2B V2.2 🧪</a>
-        </div>
-      </div>
-
-      <div class="part-label"><span class="part-badge">PART 2</span>分析紀錄</div>
-      <div class="card">
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>日期</th><th>對談重點</th><th>產出</th><th>交易備忘錄</th></tr></thead>
-            <tbody>
-              <tr><td class="td-date">2026-05-02</td><td><span class="tag tag-pine">Pine</span> 策略命名重構 + lookahead 修正</td><td>S1 V3.6.2 / S2A V2.2 / S2B V2.1</td><td class="td-memo"><strong>重繪修正後回測數字可能改變</strong>，全歷史驗證前不算確認版</td></tr>
-              <tr><td class="td-date">2026-05-01</td><td><span class="tag tag-analysis">分析</span> BB %B 位置分析 + RSI 背離</td><td>bb_analysis.py / divergence.py</td><td class="td-memo"><strong>S1 price > BB 上軌 WR 77.8%</strong>；%B &lt; 0.4 不建議進場</td></tr>
-              <tr><td class="td-date">2026-04-29</td><td><span class="tag tag-analysis">分析</span> MTF 共軌分析</td><td>mtf_analysis.py</td><td class="td-memo"><strong>alignment=3/3 → S1 WR ~69%</strong>；空單 4H 過濾 +4.1% ΔWR</td></tr>
-              <tr><td class="td-date">2026-04-28</td><td><span class="tag tag-pine">Pine</span> Insight Filters 設計</td><td>S1 V3.5 / S2 V2.1</td><td class="td-memo">DXY RSI &lt; 50 + RSI 動能上升才進場</td></tr>
-              <tr><td class="td-date">2026-04-27</td><td><span class="tag tag-analysis">分析</span> DXY 相關性 + 初始失敗模式</td><td>dxy_analysis.py / fail_patterns.py</td><td class="td-memo"><strong>DXY RSI &lt; 30 三策略勝率 60–75%</strong>；S2 time_bleed 是主要問題</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div><!-- /overview -->
-
-    <!-- S1 Tab -->
-    <div id="xauusd-opt-s1" class="tab-panel">
-      <div class="part-label"><span class="part-badge">PART 1</span>S1-AweWithBB 精華重點</div>
-      <div class="grid-4">
-        <div class="metric-card card"><div class="metric-label">勝率</div><div class="metric-val green">53.2%</div><div class="metric-sub">504 筆交易</div></div>
-        <div class="metric-card card"><div class="metric-label">獲利因子</div><div class="metric-val">1.525</div><div class="metric-sub">淨盈虧 +$6,137</div></div>
-        <div class="metric-card card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$494</div><div class="metric-sub">低回撤策略</div></div>
-        <div class="metric-card card"><div class="metric-label">immediate_loss</div><div class="metric-val red">31%</div><div class="metric-sub">進場即虧的虧損</div></div>
-      </div>
-      <div class="insight-grid">
-        <div class="insight good"><strong>✅ BB %B 位置關鍵發現</strong>price > BB 上軌（%B > 1.0）：WR 77.8%（n=9）<br>near_upper（%B 0.8–1.0）：WR 61.1%（n=18）<br>low zone（%B &lt; 0.4）：WR 0–20%<br>→ BB %B ≥ 0.6 過濾器（V3.6.1 已實作）</div>
-        <div class="insight info"><strong>📊 4H HTF 共軌影響</strong>alignment 0/3：~43% WR | alignment 3/3：~69% WR<br>4H bearish 時 immediate_loss 顯著升高</div>
-        <div class="insight warn"><strong>⚠ DXY 關鍵時機</strong>DXY RSI &lt; 30（USD 超賣）：60.9% WR<br>DXY RSI 30–50：49.8% WR（最差）</div>
-        <div class="insight bad"><strong>❌ 危險時段</strong>Hour 9 immediate_loss 比例最高；Hour 14 次之<br>考慮 session filter 排除這些時段</div>
-      </div>
-      <div class="report-links">
-        <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report.html">📄 完整報告</a>
-        <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.6.2.pine">🧪 V3.6.2</a>
-        <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.5.pine">✅ V3.5</a>
-      </div>
-    </div>
-
-    <!-- S2A Tab -->
-    <div id="xauusd-opt-s2a" class="tab-panel">
-      <div class="part-label"><span class="part-badge">PART 1</span>S2A-RSI 精華重點</div>
-      <div class="grid-4">
-        <div class="metric-card card"><div class="metric-label">勝率</div><div class="metric-val yellow">42.2%</div><div class="metric-sub">161 筆交易</div></div>
-        <div class="metric-card card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.679</div><div class="metric-sub">淨盈虧 +$6,212</div></div>
-        <div class="metric-card card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$1,177</div><div class="metric-sub">中等回撤</div></div>
-        <div class="metric-card card"><div class="metric-label">time_bleed</div><div class="metric-val red">52%</div><div class="metric-sub">持倉超時的虧損</div></div>
-      </div>
-      <div class="insight-grid">
-        <div class="insight bad"><strong>❌ time_bleed 超過一半虧損</strong>平均持倉 140 bars（70 小時）— 遠超合理範圍<br>→ 最優先：48 bar 時間強制止損（V2.3 已修正）</div>
-        <div class="insight info"><strong>📊 DXY 影響最顯著</strong>DXY RSI 30–50：38.4% WR（最差）<br>DXY RSI &lt; 30：75.0% WR（最佳，n=4）</div>
-        <div class="insight good"><strong>✅ 高盈虧比補償低勝率</strong>PF 1.679 — 贏的交易夠大、輸的控制尚可<br>→ 重點是減少 time_bleed 而非提高勝率</div>
-      </div>
-      <div class="report-links">
-        <a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/report.html">📄 完整報告</a>
-        <a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/XAUUSD-Long-S2A-RSI-V2.3.pine">🧪 V2.3</a>
-      </div>
-    </div>
-
-    <!-- S2B Tab -->
-    <div id="xauusd-opt-s2b" class="tab-panel">
-      <div class="part-label"><span class="part-badge">PART 1</span>S2B-Hammer 精華重點</div>
-      <div class="grid-4">
-        <div class="metric-card card"><div class="metric-label">勝率</div><div class="metric-val yellow">44.0%</div><div class="metric-sub">200 筆交易</div></div>
-        <div class="metric-card card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.681</div><div class="metric-sub">淨盈虧 +$7,722</div></div>
-        <div class="metric-card card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$1,431</div><div class="metric-sub">三策略中最高</div></div>
-        <div class="metric-card card"><div class="metric-label">time_bleed</div><div class="metric-val red">54%</div><div class="metric-sub">持倉超時的虧損</div></div>
-      </div>
-      <div class="insight-grid">
-        <div class="insight bad"><strong>❌ time_bleed 最嚴重</strong>54% 虧損是超時持倉，三策略中最高<br>→ V2.2 已加入 strategy.close() 時間止損</div>
-        <div class="insight warn"><strong>⚠ near_upper 有陷阱</strong>near_upper（%B 0.8–1.0）WR 只有 14.3%（n=7）<br>lower_mid（%B 0.2–0.4）WR 50.0%（n=10）最好</div>
-        <div class="insight info"><strong>📊 時段差異</strong>亞盤勝率 39.5%（最差）；美盤 49.3%（最佳）<br>→ 考慮關閉亞盤進場</div>
-        <div class="insight good"><strong>✅ DXY 超賣時最佳</strong>DXY RSI &lt; 30：66.7% WR</div>
-      </div>
-      <div class="report-links">
-        <a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/report.html">📄 完整報告</a>
-        <a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/XAUUSD-Long-S2B-Hammer-V2.2.pine">🧪 V2.2</a>
-      </div>
-    </div>
-  </div><!-- /xauusd-main-opt -->
-"""
-
 
 def _xauusd_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
     long_link  = c["long_dir"] + "/report.html"
@@ -1048,7 +601,6 @@ def _xauusd_fvg_html() -> str:
     </div><!-- /xauusd-fvg-params -->
   </div><!-- /xauusd-main-fvg -->
 """
-
 
 def _tx_macro_html() -> str:
     csv_path = ROOT / "tx/csv/TAIFEX_DLY_MXF1!, 1W.csv"
@@ -1433,128 +985,6 @@ def _tx_exp_html(long_rows: str, short_rows: str, c: dict) -> str:
     </div><!-- /tx-main-exp -->
 """
 
-
-def _sitemap_html() -> str:
-    xauusd = COMMODITIES[0]
-    tx     = COMMODITIES[1]
-    def _link(href, label, exists=True):
-        if exists:
-            return f"<a href='{href}' style='color:var(--primary)'>{label}</a>"
-        return f"<span style='color:var(--muted)'>{label}</span>"
-
-    xu_long_report  = _link(xauusd['long_dir']  + "/report.html", "多單實驗報告",  (ROOT / xauusd['long_dir']  / "report.html").exists())
-    xu_short_report = _link(xauusd['short_dir'] + "/report.html", "空單實驗報告", (ROOT / xauusd['short_dir'] / "report.html").exists())
-    xu_macro        = _link("xauusd/macro_report.html", "完整宏觀報告",  (ROOT / "xauusd/macro_report.html").exists())
-    tx_long_report  = _link(tx['long_dir']  + "/report.html", "多單實驗報告",  (ROOT / tx['long_dir']  / "report.html").exists())
-    tx_short_report = _link(tx['short_dir'] + "/report.html", "空單實驗報告", (ROOT / tx['short_dir'] / "report.html").exists())
-    tx_macro        = _link("tx/macro_report.html",     "完整宏觀報告",  (ROOT / "tx/macro_report.html").exists())
-    tx_sl120_report = _link("tx/sl120_report.html", "SL=120 甜蜜點報告", (ROOT / "tx/sl120_report.html").exists())
-    s1_report = _link("xauusd/XAUUSD-Long-S1-AweWithBB/report.html", "S1-AweWithBB 完整報告", (ROOT / "xauusd/XAUUSD-Long-S1-AweWithBB/report.html").exists())
-    s2a_report = _link("xauusd/XAUUSD-Long-S2A-RSI/report.html", "S2A-RSI 完整報告", (ROOT / "xauusd/XAUUSD-Long-S2A-RSI/report.html").exists())
-    s2b_report = _link("xauusd/XAUUSD-Long-S2B-Hammer/report.html", "S2B-Hammer 完整報告", (ROOT / "xauusd/XAUUSD-Long-S2B-Hammer/report.html").exists())
-
-    return f"""
-  <!-- 網站地圖 ───────────────────────────────────────── -->
-  <div id="commodity-sitemap" class="commodity-section">
-    <div class="tab-panel active" style="max-width:1000px;margin:0 auto">
-      <div class="part-label"><span class="part-badge">SITEMAP</span>網站地圖 · 一頁總覽所有內容</div>
-
-      <div class="grid-2">
-        <!-- XAUUSD -->
-        <div class="card">
-          <div class="card-title">🟡 XAUUSD 黃金</div>
-          <table style="width:100%;font-size:.88em">
-            <tbody>
-              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">📐 宏觀分析</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">月度統計 &amp; 季節性（1980–today）</td><td>{xu_macro}</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">週內結構</td><td>→ 宏觀分析 Tab</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">時段分析（9-10 / 14-15 / 20-21 / 23-00）</td><td>→ 宏觀分析 Tab</td></tr>
-
-              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">✅ 已確認策略</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S1-AweWithBB（V3.6.2）</td><td>{s1_report}</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S2A-RSI（V2.3）</td><td>{s2a_report}</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S2B-Hammer（V2.2）</td><td>{s2b_report}</td></tr>
-
-              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🔍 FVG 策略（V2.0）</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG 30m 多單回測（WR 66.7%，PF 1.660）</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html", "30m 多單報告", (ROOT / "xauusd/XAUUSD-FVG-Strategy/report_fvg_long.html").exists())}</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG 60m 多空最佳化（WR Long 79.5% / Short 70.5%）</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/report_fvg_60m.html", "60m 多空報告", (ROOT / "xauusd/XAUUSD-FVG-Strategy/report_fvg_60m.html").exists())}</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.1 Pine Script（雙向 FVG 顯示）</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.1.pine", "V2.1 Pine ★", (ROOT / "xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.1.pine").exists())}</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG V2.0 Pine Script</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine", "V2.0 Pine", (ROOT / "xauusd/XAUUSD-FVG-Strategy/XAUUSD-FVG-V2.0.pine").exists())}</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">FVG 教學說明（含設定 + 圖解）</td><td>{_link("xauusd/XAUUSD-FVG-Strategy/fvg_guide.html", "教學頁面", (ROOT / "xauusd/XAUUSD-FVG-Strategy/fvg_guide.html").exists())}</td></tr>
-
-              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🧪 實驗策略（20L + 20S）</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E01–E20 多單實驗</td><td>{xu_long_report}</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S01–S20 空單實驗</td><td>{xu_short_report}</td></tr>
-
-              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">📋 筆記驗證</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">月份強弱 / 季度 / 週次 / 時段</td><td>→ 筆記驗證 Tab</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- TX -->
-        <div class="card">
-          <div class="card-title">🔵 TX 台指期</div>
-          <table style="width:100%;font-size:.88em">
-            <tbody>
-              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">📐 宏觀分析</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">月度統計 &amp; 季節性（2012–today）</td><td>{tx_macro}</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">週內結構</td><td>→ 宏觀分析 Tab</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">時段分析（日盤 vs 夜盤）</td><td>→ 宏觀分析 Tab</td></tr>
-
-              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">✅ 已確認策略（SL=120pts）</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E09 EMA55 Pullback（PF=1.801）</td><td>→ 已確認策略 Tab</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E07 RSI 50 Crossover（PF=2.041）</td><td>→ 已確認策略 Tab</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E12 BB Squeeze Break（PF=2.002）</td><td>→ 已確認策略 Tab</td></tr>
-
-              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🧪 實驗策略（20L + 20S）</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">E01–E20 多單實驗</td><td>{tx_long_report}</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">S01–S20 空單實驗</td><td>{tx_short_report}</td></tr>
-
-              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">🎯 SL 甜蜜點分析</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">SL=120pts R:R 1:1 / 1:1.5 / 1:2 全策略比較</td><td>{tx_sl120_report}</td></tr>
-
-              <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">📋 筆記驗證</td></tr>
-              <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">月份強弱 / 季度 / 週次 / 選舉年</td><td>→ 筆記驗證 Tab</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- 跨商品分析 -->
-      <div class="card" style="margin-top:16px">
-        <div class="card-title">📊 跨商品共同分析（Cross-Commodity）</div>
-        <table style="width:100%;font-size:.88em">
-          <tbody>
-            <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">⏰ 整點熱力圖</td></tr>
-            <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">XAUUSD + TX 整點進場勝率 &amp; 損益（星期 × 小時）</td><td>→ 跨商品分析 Tab → 整點熱力圖</td></tr>
-            <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--primary);border-bottom:1px solid var(--border)">📈 RSI 濾鏡分析</td></tr>
-            <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">整點進場時，30m RSI 金叉 / 死叉 / 背離對勝率的影響</td><td>→ 跨商品分析 Tab → RSI 濾鏡</td></tr>
-            <tr><td colspan="2" style="padding:8px 0 4px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--border)">📦 原始資料</td></tr>
-            <tr><td style="padding:5px 0 5px 12px;color:var(--muted)">shared/shared_results.json（含 base64 heatmap 圖）</td><td>→ 執行 run_shared_analysis.py 更新</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🔧 更新流程</div>
-        <div style="font-size:.88em;line-height:2;color:var(--text2)">
-          <b>更新跨商品分析（整點熱力圖 + RSI 濾鏡）：</b><br>
-          <code style="background:var(--surface2);padding:2px 8px;border-radius:4px">python3.12 shared/run_shared_analysis.py</code><br><br>
-          <b>更新 XAUUSD 實驗結果：</b><br>
-          <code style="background:var(--surface2);padding:2px 8px;border-radius:4px">cd trading/ &amp;&amp; python3 xauusd/run_experiments.py &amp;&amp; python3 xauusd/run_short_experiments.py</code><br><br>
-          <b>更新 TX 實驗結果：</b><br>
-          <code style="background:var(--surface2);padding:2px 8px;border-radius:4px">cd trading/ &amp;&amp; python3 tx/run_experiments.py --sl 120 --tp 240 &amp;&amp; python3 tx/run_short_experiments.py --sl 120 --tp 240</code><br><br>
-          <b>重新生成 index.html：</b><br>
-          <code style="background:var(--surface2);padding:2px 8px;border-radius:4px">python3 generate_index.py</code>
-        </div>
-      </div>
-    </div>
-  </div><!-- /commodity-sitemap -->
-"""
-
-
-# ─── Validation (note vs data) ───────────────────────────────────────
 def _load_shared_results() -> dict:
     p = ROOT / "shared/shared_results.json"
     if not p.exists():
@@ -1979,309 +1409,315 @@ def _tx_validation_html(vdata: dict) -> str:
 
 
 # ─── Main generator ──────────────────────────────────────────────────
-def generate():
-    # Load experiment results
-    xauusd = COMMODITIES[0]
-    tx     = COMMODITIES[1]
 
-    xu_long  = _load_top3(ROOT / xauusd["long_dir"]  / "results.json")
-    xu_short = _load_top3(ROOT / xauusd["short_dir"] / "results.json")
-    tx_long  = _load_top3(ROOT / tx["long_dir"]      / "results.json")
-    tx_short = _load_top3(ROOT / tx["short_dir"]     / "results.json")
+# ═════════════════════════════════════════════════════════════════════
+# 以下為 20260711 拆頁新架構程式碼（上方為 generate_index.py 逐字移植區）
+# ═════════════════════════════════════════════════════════════════════
 
-    xu_long_rows  = "\n".join(_exp_row_xauusd(r, "long")  for r in xu_long)
-    xu_short_rows = "\n".join(_exp_row_xauusd(r, "short") for r in xu_short)
-    tx_long_rows  = "\n".join(_exp_row_tx(r, "long")  for r in tx_long)
-    tx_short_rows = "\n".join(_exp_row_tx(r, "short") for r in tx_short)
+# ─── Fragment 載入 ───────────────────────────────────────────────────
+def _frag(relpath: str) -> str:
+    """讀取 content/ 下的手寫 fragment（唯一合法的手寫內容存放處）"""
+    return (CONTENT / relpath).read_text(encoding="utf-8")
 
-    # Build commodity nav tabs (+ sitemap)
-    commodity_tabs = "\n".join(
-        f'    <button class="commodity-tab{"" if i>0 else " active"}" '
-        f'data-id="{c["id"]}" onclick="showCommodity(\'{c["id"]}\',this)">'
-        f'{c["name"]}</button>'
-        for i, c in enumerate(COMMODITIES)
+
+def _xauusd_macro_with_manual() -> str:
+    """動態生成的宏觀分析區塊 + 注入兩個手寫子分頁（宏觀指標解讀 / Macro 回測）"""
+    macro = _xauusd_macro_html()
+    btn_anchor = "時段分析</button>"
+    extra_btns = (
+        "\n      <button class=\"sub-tab\" onclick=\"showTab('xauusd-macro','macroindicator',this)\">📈 宏觀指標解讀</button>"
+        "\n      <button class=\"sub-tab\" onclick=\"showTab('xauusd-macro','macrobacktest',this)\">🔬 Macro 回測</button>"
     )
-    commodity_tabs += '\n    <button class="commodity-tab" data-id="shared" onclick="showCommodity(\'shared\',this)">📊 跨商品分析</button>'
-    commodity_tabs += '\n    <button class="commodity-tab" data-id="sitemap" onclick="showCommodity(\'sitemap\',this)">🗺 網站地圖</button>'
-    commodity_tabs += '\n    <button class="commodity-tab" data-id="history" onclick="showCommodity(\'history\',this)">📋 對話記錄</button>'
-    vdata      = _load_validation()
-    xu_validate_html = _xauusd_validation_html(vdata)
-    tx_validate_html = _tx_validation_html(vdata)
-    xu_macro_html    = _xauusd_macro_html()
-    shared_data      = _load_shared_results()
-    shared_html      = _shared_analysis_html(shared_data)
+    assert btn_anchor in macro, "macro subnav 錨點不存在，_xauusd_macro_html 結構可能已變"
+    macro = macro.replace(btn_anchor, btn_anchor + extra_btns, 1)
+    # 兩個手寫面板插在區塊最後一個 </div>（關閉 xauusd-main-macro）之前
+    idx = macro.rstrip().rfind("</div>")
+    panels = (_frag("xauusd/macro_indicator.html") + "\n"
+              + _frag("xauusd/macro_backtest.html") + "\n    ")
+    return macro[:idx] + panels + macro[idx:]
 
-    html = f"""<!DOCTYPE html>
+
+# ─── 對話記錄（data/logs.json 為唯一來源，計數自動）──────────────────
+TAG_CFG = {
+    "xauusd": {"label": "🟡 XAUUSD", "bg": "#fef3c7", "color": "#92400e", "border": "#f59e0b"},
+    "tx":     {"label": "🔵 TX 台指期", "bg": "#dbeafe", "color": "#1e40af", "border": "#3b82f6"},
+    "cross":  {"label": "📊 跨商品",  "bg": "#ede9fe", "color": "#5b21b6", "border": "#7c3aed"},
+}
+
+
+def _load_logs() -> list[dict]:
+    logs = json.loads(LOGS_PATH.read_text(encoding="utf-8"))
+    return sorted(logs, key=lambda e: e["date"], reverse=True)
+
+
+def _log_entry_html(entry: dict) -> str:
+    cfg = TAG_CFG.get(entry["tag"], TAG_CFG["cross"])
+    tag = (
+        f"<span style='display:inline-block;padding:2px 10px;border-radius:12px;"
+        f"background:{cfg['bg']};color:{cfg['color']};"
+        f"border:1px solid {cfg['border']};font-size:.78em;font-weight:700;"
+        f"margin-bottom:6px'>{cfg['label']}</span>"
+    )
+    items_html = "".join(f"<li>{it}</li>" for it in entry["items"])
+    return (
+        f"<div class='log-entry'>"
+        f"<div class='log-date'>{entry['date']}</div>"
+        f"<div>{tag}<div class='log-title' style='margin-top:2px'>{entry['title']}</div>"
+        f"<ul class='log-items'>{items_html}</ul></div>"
+        f"</div>"
+    )
+
+
+def _history_section() -> str:
+    logs = _load_logs()
+    blocks = "".join(_log_entry_html(e) for e in logs)
+    legend = "".join(
+        f"<span style='display:inline-flex;align-items:center;gap:5px;margin-right:12px;"
+        f"padding:3px 10px;border-radius:12px;background:{cfg['bg']};color:{cfg['color']};"
+        f"border:1px solid {cfg['border']};font-size:.8em;font-weight:600'>{cfg['label']}</span>"
+        for cfg in TAG_CFG.values()
+    )
+    return f"""
+  <div id="commodity-history" class="commodity-section active">
+    <div class="tab-panel active" style="max-width:1000px;margin:0 auto">
+      <div class="part-label"><span class="part-badge">HISTORY</span>對話記錄 · Prompt &amp; Evolution History</div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+          {legend}
+          <span style="color:var(--muted);font-size:.82em;margin-left:auto">共 {len(logs)} 筆記錄</span>
+        </div>
+        <div style="font-size:.84em;color:var(--text2)">
+          每筆記錄標示商品歸屬，方便追蹤跨商品分析演進與 Prompt 歷史。
+          記錄依日期由新至舊排列。新增記錄：append <code>data/logs.json</code> 後重跑 generate_site.py。
+        </div>
+      </div>
+
+      <div class="card">
+        {blocks}
+      </div>
+    </div>
+  </div><!-- /commodity-history -->
+"""
+
+
+def _latest_logs_html(n: int = 5) -> str:
+    """Hub 首頁的最新動態摘要（只列日期/tag/標題，點入 history.html 看全文）"""
+    logs = _load_logs()[:n]
+    rows = ""
+    for e in logs:
+        cfg = TAG_CFG.get(e["tag"], TAG_CFG["cross"])
+        rows += (
+            f"<div style='display:flex;align-items:baseline;gap:10px;padding:8px 0;"
+            f"border-bottom:1px solid var(--border)'>"
+            f"<span style='color:var(--muted);font-size:.82em;white-space:nowrap'>{e['date']}</span>"
+            f"<span style='padding:1px 8px;border-radius:10px;background:{cfg['bg']};color:{cfg['color']};"
+            f"border:1px solid {cfg['border']};font-size:.72em;font-weight:700;white-space:nowrap'>{cfg['label']}</span>"
+            f"<span style='font-size:.9em'>{e['title']}</span></div>"
+        )
+    return rows
+
+
+# ─── 頁面外殼（nav 單一來源）────────────────────────────────────────
+NAV_LINKS = [
+    ("xauusd.html",  "XAUUSD 黃金"),
+    ("tx.html",      "TX 台指期"),
+    ("shared.html",  "📊 跨商品分析"),
+    ("sitemap.html", "🗺 網站地圖"),
+    ("history.html", "📋 對話記錄"),
+]
+
+
+def _page(title: str, active_href: str, body: str) -> str:
+    tabs = "\n".join(
+        f'    <a class="commodity-tab{" active" if href == active_href else ""}" href="{href}">{label}</a>'
+        for href, label in NAV_LINKS
+    )
+    return f"""<!DOCTYPE html>
+<!-- ⚠️ 本檔由 generate_site.py 自動生成，禁止手改（會在下次生成時被覆蓋）。
+     手寫內容請改 content/ 下的 fragment，對話記錄請改 data/logs.json，詳見 DEVELOPMENT.md -->
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trading Strategy Hub</title>
+<title>{title}</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="shortcut icon" href="favicon.svg">
-<style>
-/* ── Reset & Variables ─────────────────────────────────── */
-*{{box-sizing:border-box;margin:0;padding:0}}
-:root{{
-  --bg:#f0f4f8;--surface:#ffffff;--surface2:#f8fafc;--border:#e2e8f0;
-  --nav-bg:#1e3a5f;--nav-text:rgba(255,255,255,.75);--nav-active:#ffffff;
-  --primary:#2563eb;--primary-light:#dbeafe;
-  --green:#059669;--green-light:#d1fae5;
-  --red:#dc2626;--red-light:#fee2e2;
-  --yellow:#d97706;--yellow-light:#fef3c7;
-  --purple:#7c3aed;--purple-light:#ede9fe;
-  --text:#0f172a;--text2:#334155;--muted:#64748b;
-  --radius:10px;--shadow:0 1px 4px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
-}}
-body{{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}}
-a{{color:var(--primary);text-decoration:none}}
-a:hover{{text-decoration:underline}}
-
-/* ── Top Navigation ─────────────────────────────────────── */
-.topnav{{background:var(--nav-bg);position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:0;padding:0 24px;box-shadow:0 2px 8px rgba(0,0,0,.2)}}
-.nav-brand{{color:white;font-weight:700;font-size:1.05em;padding:14px 20px 14px 0;border-right:1px solid rgba(255,255,255,.15);margin-right:12px;white-space:nowrap;letter-spacing:.5px}}
-.nav-brand span{{color:#93c5fd;font-size:.8em;font-weight:400}}
-.commodity-tabs{{display:flex;gap:4px;flex:1}}
-.commodity-tab{{background:transparent;border:none;cursor:pointer;color:var(--nav-text);padding:14px 20px;font-size:.92em;font-weight:600;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;letter-spacing:.3px}}
-.commodity-tab:hover{{color:white;background:rgba(255,255,255,.08)}}
-.commodity-tab.active{{color:white;border-bottom-color:#60a5fa;background:rgba(255,255,255,.12)}}
-.nav-meta{{color:rgba(255,255,255,.45);font-size:.78em;white-space:nowrap;padding-left:16px}}
-
-/* ── Commodity Section Nav ──────────────────────────────── */
-.commodity-subnav{{background:white;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:4px;padding:0 24px;overflow-x:auto}}
-.nav-main-tab{{background:transparent;border:none;cursor:pointer;color:var(--muted);padding:11px 20px;font-size:.9em;font-weight:600;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap}}
-.nav-main-tab:hover{{color:var(--primary);background:rgba(37,99,235,.04)}}
-.nav-main-tab.active{{color:var(--primary);border-bottom-color:var(--primary);background:var(--primary-light)}}
-
-/* ── Sub Navigation ─────────────────────────────────────── */
-.subnav{{background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:4px;padding:0 24px;overflow-x:auto}}
-.sub-tab{{background:transparent;border:none;cursor:pointer;color:var(--muted);padding:9px 16px;font-size:.86em;font-weight:500;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}}
-.sub-tab:hover{{color:var(--primary)}}
-.sub-tab.active{{color:var(--primary);border-bottom-color:var(--primary);background:var(--primary-light)}}
-
-/* ── Sections / Tabs ─────────────────────────────────────── */
-.commodity-section{{display:none}}
-.commodity-section.active{{display:block}}
-.main-section{{display:none}}
-.main-section.active{{display:block}}
-.tab-panel{{display:none;padding:24px;max-width:1300px;margin:0 auto}}
-.tab-panel.active{{display:block}}
-
-/* ── Part Headers ────────────────────────────────────────── */
-.part-label{{display:flex;align-items:center;gap:10px;margin:28px 0 14px;font-size:.78em;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}}
-.part-label::after{{content:'';flex:1;height:1px;background:var(--border)}}
-.part-badge{{background:var(--primary);color:white;padding:2px 10px;border-radius:20px;font-size:.9em;letter-spacing:.5px}}
-
-/* ── Cards ──────────────────────────────────────────────── */
-.card{{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:20px 24px;box-shadow:var(--shadow);margin-bottom:16px}}
-.card-title{{font-size:.95em;font-weight:700;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;gap:8px}}
-.grid-2{{display:grid;grid-template-columns:1fr 1fr;gap:16px}}
-.grid-3{{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}}
-.grid-4{{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}}
-@media(max-width:900px){{.grid-3,.grid-4{{grid-template-columns:1fr 1fr}}.grid-2{{grid-template-columns:1fr}}}}
-@media(max-width:600px){{.grid-3,.grid-4,.grid-2{{grid-template-columns:1fr}}}}
-
-/* ── Mobile Navigation ───────────────────────────────── */
-@media(max-width:640px){{
-  .topnav{{flex-wrap:wrap;padding:0 12px}}
-  .nav-brand{{flex:1;border-right:none;margin-right:0;padding:10px 0;font-size:.9em}}
-  .nav-brand span{{display:none}}
-  .nav-meta{{display:none}}
-  .commodity-tabs{{width:100%;border-top:1px solid rgba(255,255,255,.15);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;gap:0;padding-bottom:2px}}
-  .commodity-tabs::-webkit-scrollbar{{display:none}}
-  .commodity-tab{{padding:10px 16px;font-size:.84em;flex-shrink:0}}
-  .commodity-subnav{{padding:0 8px}}
-  .nav-main-tab{{padding:9px 14px;font-size:.82em}}
-  .subnav{{padding:0 8px}}
-  .sub-tab{{padding:8px 12px;font-size:.82em}}
-  .tab-panel{{padding:16px 12px}}
-  .card{{padding:16px}}
-}}
-
-/* ── Metric Cards ───────────────────────────────────────── */
-.metric-card{{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}}
-.metric-label{{font-size:.75em;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}}
-.metric-val{{font-size:1.5em;font-weight:700;color:var(--text)}}
-.metric-sub{{font-size:.78em;color:var(--muted);margin-top:2px}}
-.metric-val.green{{color:var(--green)}}.metric-val.red{{color:var(--red)}}.metric-val.yellow{{color:var(--yellow)}}
-
-/* ── Insight Boxes ──────────────────────────────────────── */
-.insight-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:16px}}
-.insight{{border-radius:8px;padding:14px 16px;font-size:.88em;border-left:4px solid;line-height:1.5}}
-.insight.good{{background:var(--green-light);border-color:var(--green)}}
-.insight.warn{{background:var(--yellow-light);border-color:var(--yellow)}}
-.insight.bad{{background:var(--red-light);border-color:var(--red)}}
-.insight.info{{background:var(--primary-light);border-color:var(--primary)}}
-.insight.purple{{background:var(--purple-light);border-color:var(--purple)}}
-.insight strong{{display:block;font-weight:700;margin-bottom:4px;font-size:1em}}
-
-/* ── Tables ─────────────────────────────────────────────── */
-.tbl-wrap{{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}}
-table{{border-collapse:collapse;width:100%;font-size:.84em}}
-thead th{{background:var(--nav-bg);color:white;padding:9px 12px;text-align:left;font-weight:600;white-space:nowrap}}
-tbody td{{padding:8px 12px;border-bottom:1px solid #f1f5f9;vertical-align:top}}
-tbody tr:last-child td{{border-bottom:none}}
-tbody tr:hover td{{background:#f8fafc}}
-.td-date{{white-space:nowrap;color:var(--muted);font-size:.85em;font-family:monospace}}
-.td-memo{{font-size:.84em;color:var(--text2);line-height:1.5}}
-.td-memo strong{{color:var(--text);display:block}}
-.td-topic{{font-weight:600;color:var(--text);font-size:.88em}}
-.tag{{display:inline-block;padding:1px 8px;border-radius:10px;font-size:.75em;font-weight:600;margin:1px 2px}}
-.tag-analysis{{background:#dbeafe;color:#1e40af}}.tag-optimize{{background:#d1fae5;color:#065f46}}
-.tag-pine{{background:#ede9fe;color:#5b21b6}}.tag-infra{{background:#fef3c7;color:#92400e}}
-.tag-new{{background:#fee2e2;color:#991b1b}}
-
-/* ── Status Badges ──────────────────────────────────────── */
-.badge{{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.75em;font-weight:700}}
-.badge-green{{background:var(--green-light);color:var(--green)}}
-.badge-yellow{{background:var(--yellow-light);color:var(--yellow)}}
-.badge-red{{background:var(--red-light);color:var(--red)}}
-.badge-blue{{background:var(--primary-light);color:var(--primary)}}
-.badge-purple{{background:var(--purple-light);color:var(--purple)}}
-.pos{{color:var(--green);font-weight:700}}.neg{{color:var(--red);font-weight:700}}
-.neutral{{color:var(--yellow);font-weight:700}}
-
-/* ── Report Links ───────────────────────────────────────── */
-.report-links{{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}}
-.report-link{{display:inline-flex;align-items:center;gap:5px;background:var(--primary-light);color:var(--primary);padding:5px 12px;border-radius:6px;font-size:.82em;font-weight:600;border:1px solid #bfdbfe;transition:all .15s}}
-.report-link:hover{{background:var(--primary);color:white;text-decoration:none}}
-
-/* ── Log ────────────────────────────────────────────────── */
-.log-entry{{display:flex;gap:20px;padding:16px 0;border-bottom:1px solid var(--border)}}
-.log-entry:last-child{{border-bottom:none}}
-.log-date{{font-size:.8em;color:var(--muted);white-space:nowrap;min-width:90px;padding-top:2px;font-family:monospace}}
-.log-title{{font-weight:600;color:var(--primary);margin-bottom:6px}}
-.log-items{{padding-left:18px;font-size:.88em;color:var(--text2);line-height:1.8}}
-@media(max-width:700px){{.log-entry{{flex-direction:column;gap:4px}}}}
-
-/* ── Version Table ──────────────────────────────────────── */
-.version-row td:first-child{{font-family:monospace;font-size:.85em}}
-.ver-confirmed{{color:var(--green)}}.ver-test{{color:var(--yellow)}}
-
-/* ── Memory Setup ───────────────────────────────────────── */
-.setup-card{{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:20px 24px;box-shadow:var(--shadow);margin:24px auto;max-width:900px}}
-.setup-card h2{{font-size:.95em;color:var(--text2);margin-bottom:12px;border-left:4px solid var(--primary);padding-left:10px;font-weight:700}}
-.setup-card pre{{background:var(--surface2);padding:14px;border-radius:8px;font-size:.83em;overflow-x:auto;border:1px solid var(--border)}}
-
-/* ── Footer ─────────────────────────────────────────────── */
-.footer{{text-align:center;color:var(--muted);font-size:.78em;padding:32px 16px;margin-top:16px;border-top:1px solid var(--border)}}
-</style>
+<link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
 
-<!-- ══ TOP NAV ══════════════════════════════════════════════════════ -->
 <nav class="topnav">
-  <div class="nav-brand">Trading Strategy Hub <span>multi-commodity</span></div>
+  <div class="nav-brand"><a href="index.html" style="color:inherit;text-decoration:none">Trading Strategy Hub</a> <span>multi-commodity</span></div>
   <div class="commodity-tabs">
-{commodity_tabs}
+{tabs}
   </div>
-  <div class="nav-meta">Updated 2026-05-14</div>
+  <div class="nav-meta">Updated {date.today().isoformat()}</div>
 </nav>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     COMMODITY: XAUUSD 黃金
-════════════════════════════════════════════════════════════════════ -->
-<div id="commodity-xauusd" class="commodity-section active">
+{body}
+
+<script src="assets/site.js"></script>
+</body>
+</html>
+"""
+
+
+# ─── 各頁面組裝 ──────────────────────────────────────────────────────
+def build_xauusd() -> str:
+    xauusd = COMMODITIES[0]
+    xu_long  = _load_top3(ROOT / xauusd["long_dir"]  / "results.json")
+    xu_short = _load_top3(ROOT / xauusd["short_dir"] / "results.json")
+    xu_long_rows  = "\n".join(_exp_row_xauusd(r, "long")  for r in xu_long)
+    xu_short_rows = "\n".join(_exp_row_xauusd(r, "short") for r in xu_short)
+    vdata = _load_validation()
+
+    body = f"""<div id="commodity-xauusd" class="commodity-section active">
   <div class="commodity-subnav">
     <button class="nav-main-tab active" onclick="showMain('xauusd-main-macro',this)">宏觀分析</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-opt',this)">已確認策略</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-exp',this)">實驗策略</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-fvg',this)">🔍 FVG 策略</button>
     <button class="nav-main-tab" onclick="showMain('xauusd-main-validate',this)">筆記驗證</button>
+    <button class="nav-main-tab" onclick="showMain('xauusd-main-weekly',this)">📊 週報分析</button>
+    <button class="nav-main-tab" onclick="showMain('xauusd-main-h2',this)">📈 2026 H1/H2</button>
   </div>
 
-{xu_macro_html}
-{_xauusd_opt_html()}
+{_xauusd_macro_with_manual()}
+{_frag("xauusd/opt.html")}
 {_xauusd_exp_html(xu_long_rows, xu_short_rows, xauusd)}
 {_xauusd_fvg_html()}
-{xu_validate_html}
-</div><!-- /commodity-xauusd -->
+{_xauusd_validation_html(vdata)}
+{_frag("xauusd/weekly.html")}
+{_frag("xauusd/h2.html")}
+</div><!-- /commodity-xauusd -->"""
+    return _page("XAUUSD 黃金 | Trading Strategy Hub", "xauusd.html", body)
 
-<!-- ══════════════════════════════════════════════════════════════════
-     COMMODITY: TX 台指期
-════════════════════════════════════════════════════════════════════ -->
-<div id="commodity-tx" class="commodity-section">
+
+def build_tx() -> str:
+    tx = COMMODITIES[1]
+    tx_long  = _load_top3(ROOT / tx["long_dir"]  / "results.json")
+    tx_short = _load_top3(ROOT / tx["short_dir"] / "results.json")
+    tx_long_rows  = "\n".join(_exp_row_tx(r, "long")  for r in tx_long)
+    tx_short_rows = "\n".join(_exp_row_tx(r, "short") for r in tx_short)
+    vdata = _load_validation()
+
+    body = f"""<div id="commodity-tx" class="commodity-section active">
   <div class="commodity-subnav">
     <button class="nav-main-tab active" onclick="showMain('tx-main-macro',this)">宏觀分析</button>
     <button class="nav-main-tab" onclick="showMain('tx-main-confirmed',this)">已確認策略</button>
     <button class="nav-main-tab" onclick="showMain('tx-main-exp',this)">實驗策略</button>
     <button class="nav-main-tab" onclick="showMain('tx-main-validate',this)">筆記驗證</button>
+    <button class="nav-main-tab" onclick="showMain('tx-main-zheng2',this)">📈 正二回測</button>
   </div>
 
 {_tx_macro_html()}
 {_tx_confirmed_html()}
 {_tx_exp_html(tx_long_rows, tx_short_rows, tx)}
-{tx_validate_html}
-</div><!-- /commodity-tx -->
+{_tx_validation_html(vdata)}
+{_frag("tx/zheng2.html")}
+</div><!-- /commodity-tx -->"""
+    return _page("TX 台指期 | Trading Strategy Hub", "tx.html", body)
 
-{shared_html}
 
-{_sitemap_html()}
+def build_shared() -> str:
+    shared_html = _shared_analysis_html(_load_shared_results())
+    # 拆頁後本頁的 commodity-section 需為 active
+    shared_html = shared_html.replace(
+        'id="commodity-shared" class="commodity-section"',
+        'id="commodity-shared" class="commodity-section active"', 1)
+    return _page("跨商品分析 | Trading Strategy Hub", "shared.html", shared_html)
 
-{_unified_log_html()}
 
-<!-- ══ SETUP SECTION ════════════════════════════════════════════════ -->
-<div class="setup-card">
-  <h2>換電腦後的記憶設定（git clone 後執行一次）</h2>
-  <pre>
-# Mac / Linux（在 trading/ 目錄執行）
-PROJ=$(pwd)
-SYSTEM_KEY=$(echo "$PROJ" | sed 's|^/||' | sed 's|/|-|g')
-rm -rf ~/.claude/projects/${{SYSTEM_KEY}}/memory
-ln -s "${{PROJ}}/.claude/memory" ~/.claude/projects/${{SYSTEM_KEY}}/memory
+def build_sitemap() -> str:
+    sm = _frag("sitemap.html").replace(
+        'id="commodity-sitemap" class="commodity-section"',
+        'id="commodity-sitemap" class="commodity-section active"', 1)
+    return _page("網站地圖 | Trading Strategy Hub", "sitemap.html", sm)
 
-# Windows PowerShell（在 trading/ 目錄執行）
-$proj = (Get-Location).Path
-$key  = $proj -replace '\\\\', '-' -replace ':', ''
-$src  = "$proj\\.claude\\memory"
-$dst  = "$env:USERPROFILE\\.claude\\projects\\-$key\\memory"
-if (Test-Path $dst) {{ Remove-Item $dst -Recurse -Force }}
-New-Item -ItemType Junction -Path $dst -Target $src</pre>
-</div>
 
-<div class="footer">
-  Trading Strategy Hub &nbsp;·&nbsp; XAUUSD 黃金 + TX 台指期 &nbsp;·&nbsp; Generated by Claude Code 2026-05-14
-  <br><br>
-  <a href="https://github.com/tittanliao/trading" style="color:var(--muted)">GitHub Repository</a>
-  &nbsp;·&nbsp;
-  更新實驗結果：<code>python generate_index.py</code>
-</div>
+def build_history() -> str:
+    return _page("對話記錄 | Trading Strategy Hub", "history.html", _history_section())
 
-<script>
-function showCommodity(id, btn) {{
-  document.querySelectorAll('.commodity-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.commodity-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('commodity-' + id).classList.add('active');
-  btn.classList.add('active');
-}}
 
-function showMain(sectionId, btn) {{
-  const commodity = btn.closest('.commodity-section');
-  commodity.querySelectorAll('.main-section').forEach(s => s.classList.remove('active'));
-  btn.closest('.commodity-subnav').querySelectorAll('.nav-main-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById(sectionId).classList.add('active');
-  btn.classList.add('active');
-}}
+def build_hub() -> str:
+    logs = _load_logs()
+    body = f"""<div class="commodity-section active" style="max-width:1000px;margin:0 auto;padding:20px 16px">
 
-function showTab(prefix, id, btn) {{
-  const panelId = prefix + '-' + id;
-  btn.closest('.commodity-section').querySelectorAll('[id^="' + prefix + '-"]').forEach(p => {{
-    if (p.classList.contains('tab-panel')) p.classList.remove('active');
-  }});
-  btn.closest('.subnav').querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById(panelId).classList.add('active');
-  btn.classList.add('active');
-}}
-</script>
+  <div class="part-label"><span class="part-badge">HUB</span>多商品量化策略分析工具箱</div>
 
-</body>
-</html>
-"""
+  <div class="hub-grid">
+    <div class="hub-card" style="border-top:4px solid #2563eb">
+      <h2>🟡 XAUUSD 黃金</h2>
+      <div class="sub">黃金/美元 · 30m · S1/S2A/S2B 三策略 + 20L/20S 實驗 + FVG</div>
+      <div class="hub-links">
+        <a class="report-link" href="xauusd.html">主頁 →</a>
+        <a class="report-link" href="xauusd.html#xauusd-main-opt">已確認策略</a>
+        <a class="report-link" href="xauusd.html#xauusd-main-fvg">FVG</a>
+        <a class="report-link" href="xauusd.html#xauusd-main-h2">2026 H1/H2</a>
+      </div>
+    </div>
+    <div class="hub-card" style="border-top:4px solid #1565c0">
+      <h2>🔵 TX 台指期</h2>
+      <div class="sub">小台 MTX · 30m · 20L/20S 實驗 · 宏觀分析 · 正二回測</div>
+      <div class="hub-links">
+        <a class="report-link" href="tx.html">主頁 →</a>
+        <a class="report-link" href="tx.html#tx-main-confirmed">已確認策略</a>
+        <a class="report-link" href="tx.html#tx-main-zheng2">正二回測</a>
+      </div>
+    </div>
+    <div class="hub-card" style="border-top:4px solid #7c3aed">
+      <h2>📊 跨商品分析</h2>
+      <div class="sub">整點熱力圖 · 30m RSI 濾鏡（XAUUSD + TX 共同框架）</div>
+      <div class="hub-links">
+        <a class="report-link" href="shared.html">主頁 →</a>
+      </div>
+    </div>
+  </div>
 
-    out = ROOT / "index.html"
-    out.write_text(html, encoding="utf-8")
-    print(f"index.html written → {out}")
+  <div class="card" style="margin-top:8px">
+    <div class="card-title">📋 最新動態（共 {len(logs)} 筆記錄）</div>
+    {_latest_logs_html(5)}
+    <div style="margin-top:12px"><a class="report-link" href="history.html">完整對話記錄 →</a></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">🗺 快速導覽</div>
+    <div class="hub-links" style="margin-top:8px">
+      <a class="report-link" href="sitemap.html">網站地圖（所有報告清單）</a>
+      <a class="report-link" href="xauusd/macro_report.html">XAUUSD 宏觀完整報告</a>
+      <a class="report-link" href="tx/macro_report.html">TX 宏觀完整報告</a>
+    </div>
+  </div>
+
+</div>"""
+    return _page("Trading Strategy Hub", "", body)
+
+
+# ─── Main ────────────────────────────────────────────────────────────
+PAGES = {
+    "index":   ("index.html",   build_hub),
+    "xauusd":  ("xauusd.html",  build_xauusd),
+    "tx":      ("tx.html",      build_tx),
+    "shared":  ("shared.html",  build_shared),
+    "history": ("history.html", build_history),
+    "sitemap": ("sitemap.html", build_sitemap),
+}
+
+
+def main():
+    ap = argparse.ArgumentParser(description="生成 Trading Strategy Hub 靜態頁面")
+    ap.add_argument("--page", choices=list(PAGES), help="只生成指定頁面（預設全部）")
+    args = ap.parse_args()
+
+    targets = [args.page] if args.page else list(PAGES)
+    for key in targets:
+        fname, builder = PAGES[key]
+        out = ROOT / fname
+        out.write_text(builder(), encoding="utf-8")
+        print(f"  ✅ {fname} 已生成（{out.stat().st_size:,} bytes）")
+    print("完成。提醒：生成後用 git diff --stat 檢查變動幅度是否符合預期。")
 
 
 if __name__ == "__main__":
-    generate()
+    main()
