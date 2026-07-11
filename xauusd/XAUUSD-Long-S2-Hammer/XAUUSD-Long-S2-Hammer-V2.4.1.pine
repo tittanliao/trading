@@ -210,8 +210,8 @@ bgcolor(use_htf_filter and htf_is_bearish ? color.new(color.red, 97) : na, title
 bgcolor(use_regime_filter and is_consolidation_4h ? color.new(color.gray, 88) : na, title="Regime: CONSOLIDATION")
 bgcolor(use_zscore_filter and is_zscore_trap ? color.new(color.red, 92) : na, title="Z-Score Trap")
 
-plotshape(is_hammer and not LongEntry and bar_index > MaxUseBars and MP == 0, "Hammer (Filtered)", location.belowbar, color.new(color.gray, 60), shape.triangleup, size.tiny, text="H")
-plotshape(LongEntry, "Hammer (Entry)", location.belowbar, color.green, shape.triangleup, size.small, text="S2-Hammer")
+plotshape(is_hammer and not LongEntry and bar_index > MaxUseBars and MP == 0, title="Hammer (Filtered)", style=shape.triangleup, location=location.belowbar, color=color.new(color.gray, 60), size=size.tiny, text="H")
+plotshape(LongEntry, title="Hammer (Entry)", style=shape.triangleup, location=location.belowbar, color=color.green, size=size.small, text="S2-Hammer")
 
 if strategy.opentrades > 0 and strategy.opentrades.entry_bar_index(0) == bar_index
     yPos = high * 1.003
