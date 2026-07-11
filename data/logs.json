@@ -2,6 +2,18 @@
   {
     "date": "2026-07-11",
     "tag": "xauusd",
+    "title": "解析TradingView手動回測記錄xlsx，S2-Hammer V3.2全樣本大幅改善但OOS待驗證",
+    "items": [
+      "解析使用者提供的 Strategy_analysis_by_tittan.xlsx（8組S1/S2 TradingView Strategy Tester手動記錄）",
+      "<b>交叉驗證成功</b>：xlsx記錄的S2-Hammer V1.9數字（WR41.1%/PF1.535/淨利/MDD）與Python算出的（.29/MDD.91）幾乎一致，互相驗證Pine→Python複製的正確性",
+      "<b>S1 V3.9雙重驗證</b>：xlsx全樣本（WR56.2%/PF1.869/淨利84.7%）與Python共同期間分析（PF1.743→1.888）方向幅度吻合；TP2=3.5R在v3.4/v3.7/v3.8.1/v3.9四代持續優於TP2=2R，確認為穩定結論",
+      "<b>S2-Hammer V3.2重大發現</b>：HTF 1H RSI bearish阻擋+S2-RSI互斥(30m RSI上穿20)兩過濾器全樣本回測下PF 1.535→2.047、MDD 12.7%→7.0%（腰斬）、淨利72.2%→87.2%，代價是交易數減少30%（224→157）",
+      "⚠️ V3.2結果僅為Strategy Tester全樣本彙總，非逐筆CSV，無法拆分OOS——已更新project_wip.md最高優先為「索取V3.2逐筆List of Trades CSV做70/30 OOS驗證」，全樣本變好不代表OOS段（原V1.9失敗的近2.5個月）也變好"
+    ]
+  },
+  {
+    "date": "2026-07-11",
+    "tag": "xauusd",
     "title": "價格CSV重匯到最新日期 + 發現新匯出缺RSI欄位，加自動補算fallback",
     "items": [
       "價格CSV（30/60/240/1D/1W × XAUUSD+DXY）重匯到2026-07-11，舊版存 csv/20260705/，新版 csv/20260711/，config.py CSV_DIR已指向新資料夾",
