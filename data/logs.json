@@ -2,6 +2,18 @@
   {
     "date": "2026-07-11",
     "tag": "xauusd",
+    "title": "提早保本參數掃描：所有門檻皆無效，推翻V2.4.1「不傷慢贏」假設",
+    "items": [
+      "新增 run_s2_hammer_early_be_sweep.py：用30m真實K棒逐bar重建（非僅MFE/MAE彙總粗估），對每筆真實交易模擬「若開啟提早保本會發生什麼」，掃描0.10%~1.75%共12個觸發門檻",
+      "<b>結論：所有門檻在V1.9全樣本/V3.2全樣本/V1.9-OOS段全部呈現淨損</b>，最佳門檻也只接近打平（V1.9最佳1.25%門檻仍虧-，OOS段最佳1.25%仍虧-，V3.2最佳1.50%僅+屬雜訊）",
+      "<b>低門檻（0.1%~0.5%，最貼近「早點鎖利處理time_bleed」的直覺設定）反而虧最多</b>：V1.9在0.15%門檻虧-,836",
+      "<b>根本原因</b>：S2-Hammer獲利引擎依賴少數大贏家（TP2=4R，平均持倉90h+），這些慢贏單過程常見先小賺拉回進場價、之後才反轉大漲；提早保本會把這類單腰斬在打平，砍贏家代價>救輸家好處——這推翻了V2.4.1當初「83%可攔截且不傷慢贏」的假設（該假設只算了救回那一半）",
+      "已更正V3.2 pine的FILTER③ tooltip（維持預設OFF不變，說明文字改為不建議開啟），更新ANALYSIS_SKILL.md/CLAUDE.md/project_wip.md，time_bleed可能是「讓贏家跑」的結構性代價，下一步方向轉為進場品質或重新檢視型態定義"
+    ]
+  },
+  {
+    "date": "2026-07-11",
+    "tag": "xauusd",
     "title": "S2-Hammer V3.2 fail-pattern對照：過濾器只砍immediate_loss，time_bleed沒變",
     "items": [
       "暫切 analysis/config.py 到 V3.2，重跑 main.py 生成 fail-pattern 完整報告，另存為 report_v3.2.html（與 V1.9 基準 report.html 並存，config.py 已切回 V1.9）",

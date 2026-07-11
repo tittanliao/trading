@@ -31,7 +31,7 @@ grp_risk = "=== 風險與出場 (Risk & Exit) ==="
 sl_fix_pct = input.float(1.0, title="固定止損 % (Fixed SL)", step=0.1, group=grp_risk)
 Profit_Ratio_1 = input.float(2.0, title="TP1 盈虧比 (Ratio)", step=0.1, group=grp_risk)
 Profit_Ratio_2 = input.float(4.0, title="TP2 盈虧比 (Ratio)", step=0.1, group=grp_risk)
-out_k_count = input.int(48, "時間出場 (K棒數)", group=grp_risk, tooltip="超過此 K 棒數仍未 TP/SL → 時間出場。⚠️ 20260711 歸因：90% 贏單持倉 ≥12h，不要調小——time_bleed 的解法是提早保本（FILTER ③），不是縮短時間出場")
+out_k_count = input.int(48, "時間出場 (K棒數)", group=grp_risk, tooltip="超過此 K 棒數仍未 TP/SL → 時間出場。⚠️ 20260711 歸因：90% 贏單持倉 ≥12h，不要調小。⚠️ 20260711 保本參數掃描（真實K棒逐bar重建）：提早保本（FILTER③）在所有測試門檻下都讓淨利變差（推翻先前「兩全」假設），time_bleed 可能是「讓贏家跑」獲利機制的結構性代價，非出場端簡單規則可修")
 
 // --- S2 核心：錘頭線定義 ---
 grp_core = "=== S2 核心: 錘頭線設定 (Core) ==="
@@ -55,7 +55,7 @@ mutex_bars = input.int(24, "互斥回看 K 棒數", minval=1, group=grp_mutex, t
 
 // --- FILTER ③: 提早保本（V2.4.1 出場增強）---
 grp_be = "=== FILTER ③: 提早保本（V2.4.1 出場增強）==="
-use_early_be = input.bool(false, "啟用提早保本", group=grp_be, tooltip="公式：high 曾達 Entry×(1+觸發%) → SL 上移至 Entry×(1+偏移%)，出場標記 S2_BE\n\n為何需要：20260711 歸因——83% 拖 ≥12h 的虧損單曾有 MFE ≥ 0.3% 可攔截；同時 90% 贏單是慢贏，縮短時間止損會傷贏單，提早保本則兩全")
+use_early_be = input.bool(false, "啟用提早保本", group=grp_be, tooltip="公式：high 曾達 Entry×(1+觸發%) → SL 上移至 Entry×(1+偏移%)，出場標記 S2_BE\n\n⚠️ 20260711 保本參數掃描（真實K棒逐bar重建，非僅MFE彙總粗估）：測試0.10%~1.75%共12個門檻，在V1.9全樣本/V3.2全樣本/V1.9-OOS段全部呈現淨損，最佳門檻也只接近打平（不是真的優勢）。原因：多數贏單是慢贏（持倉90h+），過程常見先小賺拉回進場價、之後才反轉大漲，保本會把這類單提前腰斬在打平，砍贏家的代價>救輸家的好處，門檻越低代價越大。不建議開啟，詳見 report_early_be_sweep.html")
 be_trigger_pct = input.float(0.3, "保本觸發浮盈 %", step=0.05, minval=0.1, group=grp_be)
 be_offset_pct = input.float(0.0, "保本位置偏移 %（0=進場價）", step=0.05, group=grp_be)
 

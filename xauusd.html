@@ -521,7 +521,12 @@
             <strong style="color:#fde047">🟡 V3.2（過濾器版）OOS：真實改善但未解決</strong><br>
             <span style="color:var(--muted)">HTF RSI+S2-RSI互斥過濾器：全樣本 PF 1.535→2.047、MDD腰斬；但雙重OOS驗證顯示 IS→OOS 勝率仍大幅衰退（53.2%→33.3%），在 V1.9-OOS 相同區間 WR 30.8%/PF 1.23 雖優於 V1.9 同期但仍脆弱——不建議急著升版確認</span>
           </div>
+          <div style="margin-top:8px;font-size:.8em;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:8px">
+            <strong style="color:#fca5a5">❌ 提早保本已證實無效（推翻V2.4.1假設）</strong><br>
+            <span style="color:var(--muted)">真實K棒逐bar重建掃描0.10%~1.75%共12個門檻，V1.9/V3.2/OOS段全部淨損，最佳門檻也只接近打平。原因：慢贏單（持倉90h+）常見先小賺拉回進場價再反轉大漲，保本會腰斬這類單，砍贏家代價>救輸家好處——time_bleed可能是「讓贏家跑」的結構性代價，不建議開啟</span>
+          </div>
           <div class="report-links">
+            <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_early_be_sweep.html" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);border-color:#ef4444;color:white">🔬 提早保本掃描 ❌</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_v32_oos.html" style="background:linear-gradient(135deg,#78350f,#eab308);border-color:#eab308;color:white">🔬 V3.2 OOS 雙重驗證 🟡</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_s2_attribution.html" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);border-color:#ef4444;color:white">🔬 真實逐筆歸因 + OOS ⚠</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report.html">完整報告（V1.9）→</a>
@@ -1057,13 +1062,15 @@
       <div class="insight-grid">
         <div class="insight bad"><strong>⚠ V1.9 原始邏輯 OOS 未通過</strong>後30%樣本外 WR 27.9%/PF 0.92，低於損益兩平<br>→ 見「真實逐筆歸因 + OOS」報告</div>
         <div class="insight warn"><strong>🟡 V3.2過濾器：真實改善但未解決</strong>雙重OOS驗證：自己的OOS勝率仍衰退19.9pp；同V1.9-OOS區間WR30.8%/PF1.23優於V1.9但仍脆弱<br>→ 見「V3.2 OOS 雙重驗證」報告，不建議急著升版</div>
-        <div class="insight bad"><strong>❌ time_bleed 最嚴重</strong>57% 虧損是超時持倉，三策略中最高；85% 曾有 MFE≥0.3% 理論可救回<br>→ V2.4.1 已加入互斥過濾器 + 提早保本（測試中）</div>
-        <div class="insight info"><strong>🔍 V3.2 fail-pattern 對照（20260711）</strong>過濾器只砍到 immediate_loss（16.8%→10.8%），time_bleed 佔比幾乎沒變（57.8%）——因為 V3.2 只開 HTF/互斥過濾器，還沒開提早保本<br>→ <a href="xauusd/XAUUSD-Long-S2-Hammer/report_v3.2.html" style="color:var(--primary)">V3.2 完整報告</a></div>
+        <div class="insight bad"><strong>❌ time_bleed 最嚴重</strong>57% 虧損是超時持倉，三策略中最高<br>→ V3.2 已加入HTF/互斥過濾器，但未處理time_bleed</div>
+        <div class="insight info"><strong>🔍 V3.2 fail-pattern 對照（20260711）</strong>過濾器只砍到 immediate_loss（16.8%→10.8%），time_bleed 佔比幾乎沒變（57.8%）——因為 V3.2 只開 HTF/互斥過濾器<br>→ <a href="xauusd/XAUUSD-Long-S2-Hammer/report_v3.2.html" style="color:var(--primary)">V3.2 完整報告</a></div>
+        <div class="insight bad"><strong>❌ 提早保本已證實無效（20260711）</strong>真實K棒逐bar重建掃描12個門檻，V1.9/V3.2/OOS段全部淨損；慢贏單常見先小賺拉回進場價再反轉大漲，保本會腰斬這類單——time_bleed可能是結構性代價，推翻V2.4.1「不傷慢贏」假設<br>→ <a href="xauusd/XAUUSD-Long-S2-Hammer/report_early_be_sweep.html" style="color:var(--primary)">提早保本掃描報告</a></div>
         <div class="insight warn"><strong>⚠ near_upper 有陷阱</strong>near_upper（%B 0.8–1.0）WR 只有 14.3%（n=7）<br>lower_mid（%B 0.2–0.4）WR 50.0%（n=10）最好</div>
         <div class="insight info"><strong>📊 時段差異</strong>亞盤勝率 39.5%（最差）；美盤 49.3%（最佳）<br>→ 考慮關閉亞盤進場</div>
         <div class="insight good"><strong>✅ DXY 超賣時最佳</strong>DXY RSI &lt; 30：66.7% WR</div>
       </div>
       <div class="report-links">
+        <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_early_be_sweep.html" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);border-color:#ef4444;color:white">🔬 提早保本掃描 ❌</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_v32_oos.html" style="background:linear-gradient(135deg,#78350f,#eab308);border-color:#eab308;color:white">🔬 V3.2 OOS 雙重驗證 🟡</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_s2_attribution.html" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);border-color:#ef4444;color:white">🔬 真實逐筆歸因 + OOS ⚠</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report.html">📄 完整報告（V1.9）</a>
