@@ -2,6 +2,17 @@
   {
     "date": "2026-07-11",
     "tag": "xauusd",
+    "title": "S2-Hammer V3.2 fail-pattern對照：過濾器只砍immediate_loss，time_bleed沒變",
+    "items": [
+      "暫切 analysis/config.py 到 V3.2，重跑 main.py 生成 fail-pattern 完整報告，另存為 report_v3.2.html（與 V1.9 基準 report.html 並存，config.py 已切回 V1.9）",
+      "<b>驗證了V3.2 OOS結論的根因</b>：immediate_loss佔虧損單比例 16.8%→10.8%（HTF bearish阻擋確實防止方向性錯誤進場）；但 time_bleed 佔比 ~54-57%→57.8%幾乎沒變——因為V3.2目前只開HTF RSI+互斥兩個過濾器，沒有開提早保本，「方向沒錯但拖超過12小時」的虧損完全沒被處理到",
+      "時段結構不變：美盤最強(56.6%)、亞盤最弱(37.7%)，過濾器沒改變這個弱點",
+      "網站opt.html/sitemap.html新增V3.2完整報告連結，V1.9/V3.2兩版並列供對照"
+    ]
+  },
+  {
+    "date": "2026-07-11",
+    "tag": "xauusd",
     "title": "S2-Hammer V3.2 逐筆OOS雙重驗證：真實改善但未完全解決",
     "items": [
       "使用者提供 V3.2（HTF 1H RSI bearish阻擋+S2-RSI互斥30m RSI上穿20，TP1/TP2=2R/4R）逐筆List of Trades CSV（157筆），新增 run_s2_hammer_v32_oos.py 做雙重OOS驗證",

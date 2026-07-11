@@ -18,6 +18,10 @@ metadata:
   1. 疊加提早保本規則（V3.2 目前未開）看能否進一步救回
   2. 持續累積更多近期交易，觀察 V3.2 是否隨時間推移穩定在改善水準
   3. 重新檢視錘頭型態定義本身是否需要調整（更根本的方向）
+- **fail-pattern 對照已補做**（暫切 `config.py` 到 V3.2 重跑 main.py，詳見 `report_v3.2.html`／
+  ANALYSIS_SKILL.md「V3.2 fail-pattern 對照」）：印證上面判斷——過濾器只砍到 immediate_loss
+  （16.8%→10.8%），time_bleed 佔比完全沒變（57.8%），因為 V3.2 沒開提早保本。
+  `report.html` 已切回 V1.9 現行基準，兩版報告並存（`report.html`=V1.9、`report_v3.2.html`=V3.2）。
 
 ## S1-AweWithBB 現況：V3.9 初步雙重驗證正向，未完整驗證
 - V3.9（BB Source close→ohlc4）在 TradingView 全樣本（xlsx記錄）與 Python 共同期間分析兩邊
