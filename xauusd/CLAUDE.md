@@ -86,8 +86,8 @@ xauusd/
 │    macro_analysis.py 例外，見上方註記）
 │
 ├── XAUUSD-Long-S1-AweWithBB/    # S1 右側突破：交易 CSV + report.html + Pine scripts
-├── XAUUSD-Long-S2A-RSI/         # S2A 左側回測（指標）：原 S2-Hybrid，RSI 超賣/背離
-├── XAUUSD-Long-S2B-Hammer/      # S2B 左側回測（型態）：原 S2-Pullback，錘頭線
+├── XAUUSD-Long-S2-RSI/         # S2-RSI 左側回測（指標）：原 S2-Hybrid，RSI 超賣/背離
+├── XAUUSD-Long-S2-Hammer/      # S2-Hammer 左側回測（型態）：原 S2-Pullback，錘頭線
 ├── XAUUSD-Long-Experiments/     # 多單實驗：report.html + pine/（20 files）
 ├── XAUUSD-Short-Experiments/    # 空單實驗：report.html + pine/（20 files）
 └── XAUUSD-Long-Experiments/pine/ALL_Long_Strategies.pine   # 合併 E01–E20（下拉選單）
@@ -169,20 +169,20 @@ Regular Bullish, Regular Bullish Label, Regular Bearish, Regular Bearish Label
 | 家族 | 類型 | ID | 舊名 | Pine Entry |
 |------|------|-----|------|------------|
 | S1 | 右側突破 | S1-AweWithBB | — | `S1BB_LE` |
-| S2A | 左側回測（指標） | S2A-RSI | S2-Hybrid | `S2A_LE` |
-| S2B | 左側回測（型態） | S2B-Hammer | S2-Pullback | `S2B_LE` |
+| S2-RSI | 左側回測（指標） | S2-RSI | S2-Hybrid | `S2A_LE` |
+| S2-Hammer | 左側回測（型態） | S2-Hammer | S2-Pullback | `S2B_LE` |
 | S2C+ | 左側回測（未來） | TBD | — | `S2C_LE` |
 | S3+ | 空單（未來） | TBD | — | `S3_LE` |
 
 **版本命名規則**：`VX.Y`（確認版）→ `VX.Y+1.1`（測試版）→ `VX.Y+1`（確認後升版）
 
-## 現有策略最新績效（S1 為 2026-07-05 真實逐筆歸因；S2A/S2B 仍為 2026-04-27 基準數據，尚未做同等歸因）
+## 現有策略最新績效（S1 為 2026-07-05 真實逐筆歸因；S2-RSI/S2-Hammer 仍為 2026-04-27 基準數據，尚未做同等歸因）
 
 | ID | 策略名稱 | 版本 | 交易筆數 | 勝率 | 獲利因子 | 淨盈虧 | 最大回撤 | 主要問題 |
 |----|---------|------|---------|------|---------|--------|---------|---------|
 | S1-AweWithBB | AweWithBB | **V3.7（已確認）** | 459 | 55.1% | 1.743 | +$7,578 | -$346 | immediate_loss 27%（V3.4為31%，已改善） |
-| S2A-RSI | RSI Reversion | V2.0（基準，V2.4測試中） | 161 | 42.2% | 1.679 | +$6,212 | -$1,177 | time_bleed 52% |
-| S2B-Hammer | Hammer Pullback | V1.9（基準，V2.3測試中） | 200 | 44.0% | 1.681 | +$7,722 | -$1,431 | time_bleed 54% |
+| S2-RSI | RSI Reversion | V2.0（基準，V2.4測試中） | 161 | 42.2% | 1.679 | +$6,212 | -$1,177 | time_bleed 52% |
+| S2-Hammer | Hammer Pullback | V1.9（基準，V2.3測試中） | 200 | 44.0% | 1.681 | +$7,722 | -$1,431 | time_bleed 54% |
 
 > S1 V3.4→V3.7 真實逐筆歸因結論：淨利改善主因是出場結構（SL觸發率↓、TP2佔比↑），時間止損縮短(48→36 bars)從未觸發、非貢獻來源；進場過濾器確實降低immediate_loss。詳見 `XAUUSD-Long-S1-AweWithBB/report_v3.7_real.html` 與 `xauusd/claude/ANALYSIS_SKILL.md`「V3.7 真實逐筆歸因結論」。
 
@@ -277,7 +277,7 @@ BB %B = (close - lower) / (upper - lower)；7 個分區（below_lower → above_
 | V3.6.3 | 已取代 | 新增 Regime 過濾器（BEAR_TREND + 低BBW假突破阻擋，皆預設OFF）+ 右上角 Regime 狀態表格 |
 | **V3.7** | **已確認（現行版）** | 精簡重構：移除期貨對應/趨勢EMA/洞察濾網/4H HTF RSI 過濾器；Regime 過濾器拆為3組獨立開關（斜率/BBW高檔預設ON/BBW低檔）；時間出場 48→36 bars；真實逐筆歸因見上方績效表 |
 
-**S2A-RSI（左側回測，指標）— 原 S2-Hybrid**
+**S2-RSI（左側回測，指標）— 原 S2-Hybrid**
 
 | 版本 | 狀態 | 說明 |
 |------|------|------|
@@ -287,7 +287,7 @@ BB %B = (close - lower) / (upper - lower)；7 個分區（below_lower → above_
 | V2.3 | 測試中未確認 | **時間止損修正**（strategy.close() 保證市價平倉）+ 4H HTF RSI 過濾器（同 S1 V3.6.2，該approach後來被V2.4的Regime方案取代） |
 | V2.4 | 測試中未確認 | 新增 Regime 過濾器（阻擋CONSOLIDATION）+ Z-Score 過濾器（阻擋Z<-2.5陷阱區，甜蜜區-1.5~-0.5）+ 右上角狀態表格，皆預設OFF。**S2 尚未做真實逐筆歸因驗證**（S1 V3.7 已做，這是S2的NEXT優先方向） |
 
-**S2B-Hammer（左側回測，型態）— 原 S2-Pullback**
+**S2-Hammer（左側回測，型態）— 原 S2-Pullback**
 
 | 版本 | 狀態 | 說明 |
 |------|------|------|

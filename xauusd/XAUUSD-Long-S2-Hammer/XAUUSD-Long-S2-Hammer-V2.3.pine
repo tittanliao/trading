@@ -1,6 +1,6 @@
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 // © Tittan
-// Strategy: XAUUSD-Long-S2B-Hammer-V2.3
+// Strategy: XAUUSD-Long-S2-Hammer-V2.3
 // V2.3 changes vs V2.2：新增 Regime 過濾器 + Z-Score 過濾器
 //   ① Regime 過濾器：阻擋 CONSOLIDATION（bbw_rank<65% + |slope|<0.15%）—— S2 在此期望值 -0.98R（2026 H1）
 //   ② Z-Score 過濾器：阻擋 Z < -2.5 陷阱區（勝率僅 20%，-0.41R）；嚴格模式可僅允許甜蜜區 -1.5~-0.5（73%/+0.34R）
@@ -8,8 +8,8 @@
 //   所有過濾器預設 OFF，與 V2.2 行為完全一致
 // Entry: S2B_LE  Exit: S2B_TP1 / S2B_TP2 / S2B_SL / S2B_TimeWin / S2B_TimeLoss
 //@version=6
-strategy(title="XAUUSD-Long-S2B-Hammer-V2.3",
- shorttitle="S2B-Hammer-V2.3",
+strategy(title="XAUUSD-Long-S2-Hammer-V2.3",
+ shorttitle="S2-Hammer-V2.3",
  overlay=true,
  format=format.price,
  precision=2,
@@ -34,7 +34,7 @@ Profit_Ratio_2 = input.float(4.0, "TP2 盈虧比 (Ratio)", step=0.1, group=grp_r
 out_k_count    = input.int(48, "時間出場 (K棒數)", group=grp_risk,
  tooltip="超過此 K 棒數仍未 TP/SL → 強制市價平倉（strategy.close()）")
 
-grp_core = "=== S2B 核心: 錘頭線設定 (Core) ==="
+grp_core = "=== S2-Hammer 核心: 錘頭線設定 (Core) ==="
 hammer_tail_ratio  = input.float(2.0, "下影線/實體 比例",  minval=1.0, step=0.1, group=grp_core)
 hammer_upper_ratio = input.float(0.5, "上影線/實體 比例",  maxval=1.0, step=0.1, group=grp_core)
 min_body_atr_mult  = input.float(0.3, "最小 K 棒波動濾網 (ATR Mult)", minval=0.0, group=grp_core)
@@ -50,7 +50,7 @@ regime_slope_thresh = input.float(0.15, "EMA20 斜率門檻（%）", step=0.05, 
 regime_bbw_high     = input.float(65.0, "趨勢帶 BBW rank 門檻（%）", step=5.0, group=grp_regime)
 
 // ── V2.3 新增：Z-Score 過濾器 ──
-grp_zscore = "=== ★ Z-Score 過濾器（V2.3，S2B 錘頭專用）==="
+grp_zscore = "=== ★ Z-Score 過濾器（V2.3，S2-Hammer 錘頭專用）==="
 use_zscore_filter = input.bool(false, "啟用 Z-Score 過濾器",
  group=grp_zscore,
  tooltip="根據 2026 H1 數據：\n• Z < -2.5：勝率僅 20%（陷阱！趨勢延伸非均值回歸）❌\n• Z = -1.5~-0.5：73% 勝率，+0.34R（S2 最佳甜蜜區）✅\n開啟後阻擋 Z < -2.5 的極端超賣錘頭\n（錘頭型態成立但市場仍在下跌加速段）")
@@ -176,7 +176,7 @@ if MP > 0
     else
         strategy.exit("S2B_SL", from_entry="S2B_LE", stop=SLPrice, comment_loss="S2B_SL")
 
-alertcondition(LongEntry, title="S2B Entry", message="S2B Hammer Detected, Price={{close}}")
+alertcondition(LongEntry, title="S2-Hammer Entry", message="S2-Hammer Hammer Detected, Price={{close}}")
 
 //------------------------------------------------------------------------------
 // 5. 視覺化 (Visualization)
@@ -193,11 +193,11 @@ plotshape(is_hammer and not LongEntry and bar_index > MaxUseBars and MP == 0,
  "Hammer (Filtered)", location.belowbar, color.new(color.gray, 60), shape.triangleup, size.tiny, text="H")
 
 // 實際進場訊號
-plotshape(LongEntry, "Hammer (Entry)", location.belowbar, color.green, shape.triangleup, size.small, text="S2B")
+plotshape(LongEntry, "Hammer (Entry)", location.belowbar, color.green, shape.triangleup, size.small, text="S2-Hammer")
 
 if strategy.opentrades > 0 and strategy.opentrades.entry_bar_index(0) == bar_index
     yPos = high * 1.003
-    txt = "S2B Hammer\n" +
+    txt = "S2-Hammer Hammer\n" +
           "LE: "   + str.tostring(EntryPrice, "#.##") +
           "\nSL: "  + str.tostring(SLPrice,   "#.##") +
           "\nTP1: " + str.tostring(PTPrice1,  "#.##") +

@@ -34,7 +34,7 @@ python3.12 xauusd/scripts/run_xxx.py
 ### B. Pine Script 新版本
 
 若用戶提供新 .pine 檔：
-1. 複製到對應資料夾（S1: `XAUUSD-Long-S1-AweWithBB/`、S2A: `XAUUSD-Long-S2A-RSI/`、S2B: `XAUUSD-Long-S2B-Hammer/`）
+1. 複製到對應資料夾（S1: `XAUUSD-Long-S1-AweWithBB/`、S2-RSI: `XAUUSD-Long-S2-RSI/`、S2-Hammer: `XAUUSD-Long-S2-Hammer/`）
 2. 檔名格式：`{策略ID}-V{版本}.pine`（`VX.Y` 確認版 / `VX.Y+1.1` 測試版）
 
 ### C. 策略數字更新（僅在版本/績效有變時）

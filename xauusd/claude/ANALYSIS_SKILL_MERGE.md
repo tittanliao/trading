@@ -76,20 +76,20 @@ ls "/Users/tittan/googledrive/XAUUSD/weekly report/macro/" | sort | tail -1
 | Gold MA趨勢 | Macro Bull（黃金日線 > MA50）| +1 |
 | **滿分** | | **6分** |
 
-- 5–6 分 → **STRONG BUY**：宏觀順風，S1 正常執行；S2A 縮倉（見下方）
-- 3–4 分 → **NEUTRAL**：**S1 和 S2A 表現最佳的黃金環境**，依技術信號正常執行
+- 5–6 分 → **STRONG BUY**：宏觀順風，S1 正常執行；S2-RSI 縮倉（見下方）
+- 3–4 分 → **NEUTRAL**：**S1 和 S2-RSI 表現最佳的黃金環境**，依技術信號正常執行
 - 0–2 分 → **WAIT**：宏觀逆風，S1 完全不做，S2 縮倉
 
 **各策略宏觀最佳環境（2024-01 → 2026-04，真實交易回測，N=504/160/199）：**
 | 策略 | STRONG BUY | NEUTRAL | WAIT | 結論 |
 |------|-----------|---------|------|------|
 | S1-AweWithBB | WR 52.1% PF 1.46 | **WR 58.7% PF 2.08 ★** | WR 51.8% PF 1.39 | NEUTRAL 最佳；WAIT 過濾有效（PF +0.12）|
-| S2A-RSI | **WR 34.4% PF 1.26 ⚠️** | **WR 66.7% PF 4.71 ★** | WR 41.3% PF 1.58 | STRONG BUY 最危險；NEUTRAL 最佳 |
-| S2B-Hammer | WR 44.4% PF 1.71 | WR 46.2% PF 1.80 | WR 42.0% PF 1.59 | 各環境均穩，宏觀敏感度最低 |
+| S2-RSI | **WR 34.4% PF 1.26 ⚠️** | **WR 66.7% PF 4.71 ★** | WR 41.3% PF 1.58 | STRONG BUY 最危險；NEUTRAL 最佳 |
+| S2-Hammer | WR 44.4% PF 1.71 | WR 46.2% PF 1.80 | WR 42.0% PF 1.59 | 各環境均穩，宏觀敏感度最低 |
 
-> **S2A-RSI 反直覺發現**：STRONG BUY（黃金宏觀順風）反而是 S2A 最差的進場環境。
+> **S2-RSI 反直覺發現**：STRONG BUY（黃金宏觀順風）反而是 S2-RSI 最差的進場環境。
 > 原因：趨勢強勁上漲時，RSI 逆勢信號頻繁假突破，進場即被洗出。
-> **結論：STRONG BUY 環境應縮 S2A 倉位，而非積極執行。**
+> **結論：STRONG BUY 環境應縮 S2-RSI 倉位，而非積極執行。**
 
 **GVZ 狀態 → 操作含義：**
 | GVZ 狀態 | 門檻 | 含義 | 操作調整 |
@@ -99,7 +99,7 @@ ls "/Users/tittan/googledrive/XAUUSD/weekly report/macro/" | sort | tail -1
 | 🔥 Extreme | > 20 | 事件驅動高波動 | 縮倉 50%，S2 為主，S1 慎用 |
 
 **宏觀 × 技術面衝突裁決（依 2024-2026 真實回測更新）：**
-| 宏觀 | 技術面 | S1-AweWithBB | S2A-RSI | S2B-Hammer |
+| 宏觀 | 技術面 | S1-AweWithBB | S2-RSI | S2-Hammer |
 |------|--------|-------------|---------|-----------|
 | WAIT | 技術看多 | ⛔ 不執行 | 0.02 手（極限縮倉）| 0.02 手（縮倉）|
 | WAIT | 技術看空 | — | 確認不做多，等宏觀好轉 | — |

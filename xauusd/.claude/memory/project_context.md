@@ -17,14 +17,14 @@ type: project
 - 時間止損：48 bars（30m K = 24 小時）
 - 進場：信號 bar 的下一根 open
 
-## 現有策略績效（S1 更新至 2026-07-05 真實逐筆歸因，S2A/S2B 仍為 2026-04-27 數據）
+## 現有策略績效（S1 更新至 2026-07-05 真實逐筆歸因，S2-RSI/S2-Hammer 仍為 2026-04-27 數據）
 | 策略 | 版本 | 勝率 | 獲利因子 | 淨盈虧 | 主要問題 |
 |------|------|------|---------|--------|---------|
 | S1 AweWithBB | V3.7（已確認，取代V3.4） | 55.1% | 1.743 | +$7,578 | immediate_loss 27%（V3.4為31%，已改善） |
-| S2A RSI | V2.0（原S2-Hybrid） | 42.2% | 1.679 | +$6,212 | time_bleed 52% |
-| S2B Hammer | V1.9（原S2-Pullback） | 44.0% | 1.681 | +$7,722 | time_bleed 54% |
+| S2-RSI RSI | V2.0（原S2-Hybrid） | 42.2% | 1.679 | +$6,212 | time_bleed 52% |
+| S2-Hammer Hammer | V1.9（原S2-Pullback） | 44.0% | 1.681 | +$7,722 | time_bleed 54% |
 
-> 命名更正（20260502統一）：「S2 Hybrid」已正式改稱「S2A-RSI」，「S3 Pullback」已正式改稱「S2B-Hammer」（不是S3）。
+> 命名更正（20260502統一）：「S2 Hybrid」已正式改稱「S2-RSI」，「S3 Pullback」已正式改稱「S2-Hammer」（不是S3）。
 > 單一事實來源：策略版本/績效數字以 `xauusd/claude/ANALYSIS_SKILL.md` 為準，此記憶只是快照，過時時以 ANALYSIS_SKILL.md 為準。
 
 ## 實驗策略排名（3 個月 30m，2026-01-21 至 2026-04-27）

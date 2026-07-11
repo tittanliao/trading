@@ -1,6 +1,6 @@
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 // © Tittan
-// Strategy: XAUUSD-Long-S2A-RSI-V2.4
+// Strategy: XAUUSD-Long-S2-RSI-V2.4
 // V2.4 changes vs V2.3：新增 Regime 過濾器 + Z-Score 過濾器
 //   ① Regime 過濾器：阻擋 CONSOLIDATION（bbw_rank<65% + |slope|<0.15%）—— S2 在此期望值 -0.98R（2026 H1）
 //   ② Z-Score 過濾器：阻擋 Z < -2.5 陷阱區（勝率僅 20%，-0.41R）；嚴格模式可僅允許甜蜜區 -1.5~-0.5（73%/+0.34R）
@@ -8,8 +8,8 @@
 //   所有過濾器預設 OFF，與 V2.3 行為完全一致
 // Entry: S2A_LE  Exit: S2A_TP1 / S2A_TP2 / S2A_SL / S2A_TimeWin / S2A_TimeLoss
 //@version=6
-strategy(title="XAUUSD-Long-S2A-RSI-V2.4",
- shorttitle="S2A-RSI-V2.4",
+strategy(title="XAUUSD-Long-S2-RSI-V2.4",
+ shorttitle="S2-RSI-V2.4",
  overlay=true,
  format=format.price,
  precision=2,
@@ -23,7 +23,7 @@ strategy(title="XAUUSD-Long-S2A-RSI-V2.4",
 strategy.cancel_all()
 MP = strategy.position_size > 0 ? 1 : strategy.position_size < 0 ? -1 : 0
 
-grp_core = "=== S2A 核心: 進場模式 ==="
+grp_core = "=== S2-RSI 核心: 進場模式 ==="
 entry_mode   = input.string("Oversold Reversion (V-Shape)", "選擇進場模式",
  options=["Oversold Reversion (V-Shape)","Strict Divergence (W-Bottom)"],
  group=grp_core, tooltip="V-Shape: RSI 上穿數值即進場\nW-Bottom: 等待 RSI 墊高背離才進場")
@@ -197,7 +197,7 @@ if MP > 0
     else
         strategy.exit("S2A_SL", from_entry="S2A_LE", stop=SLPrice, comment_loss="S2A_SL")
 
-alertcondition(LongEntry, title="S2A Entry", message="S2A RSI Signal, Price={{close}}")
+alertcondition(LongEntry, title="S2-RSI Entry", message="S2-RSI RSI Signal, Price={{close}}")
 
 //------------------------------------------------------------------------------
 // 5. 視覺化 (Visualization)
@@ -212,11 +212,11 @@ bgcolor(use_zscore_filter and is_zscore_trap            ? color.new(color.red,  
 
 plotshape(raw_trigger and not LongEntry and bar_index > MaxUseBars and MP == 0,
  "Filtered", location.belowbar, color.new(color.gray,60), shape.triangleup, size.tiny, text="x")
-plotshape(LongEntry, "Entry", location.belowbar, plot_col, shape.triangleup, size.small, text="S2A")
+plotshape(LongEntry, "Entry", location.belowbar, plot_col, shape.triangleup, size.small, text="S2-RSI")
 
 if strategy.opentrades > 0 and strategy.opentrades.entry_bar_index(0) == bar_index
     yPos = high * 1.003
-    txt = "S2A (" + (entry_mode == "Oversold Reversion (V-Shape)" ? "Rev" : "Div") + ")\n" +
+    txt = "S2-RSI (" + (entry_mode == "Oversold Reversion (V-Shape)" ? "Rev" : "Div") + ")\n" +
           str.tostring(EntryPrice,"#.##") +
           "\nSL: "  + str.tostring(SLPrice,  "#.##") +
           "\nTP1: " + str.tostring(PTPrice1, "#.##") +

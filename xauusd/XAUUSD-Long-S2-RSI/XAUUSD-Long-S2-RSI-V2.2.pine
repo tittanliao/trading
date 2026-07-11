@@ -1,12 +1,12 @@
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 // © Tittan
-// Strategy: XAUUSD-Long-S2A-RSI-V2.2
-// Renamed from S2-Hybrid. S2A = Left-side reversion, indicator-triggered (RSI crossover / divergence)
+// Strategy: XAUUSD-Long-S2-RSI-V2.2
+// Renamed from S2-Hybrid. S2-RSI = Left-side reversion, indicator-triggered (RSI crossover / divergence)
 // Update: Unified entry/exit label naming, add TP1/TP2 to entry label, add filtered signal visualization
 // Entry label: S2A_LE  Exit labels: S2A_TP1 / S2A_TP2 / S2A_SL / S2A_TimeWin / S2A_TimeLoss
 //@version=6
-strategy(title="XAUUSD-Long-S2A-RSI-V2.2",
- shorttitle="S2A-RSI-V2.2",
+strategy(title="XAUUSD-Long-S2-RSI-V2.2",
+ shorttitle="S2-RSI-V2.2",
  overlay = true,
  format=format.price,
  precision=2,
@@ -21,7 +21,7 @@ strategy.cancel_all()
 MP = strategy.position_size > 0 ? 1 : strategy.position_size < 0 ? -1 : 0
 
 // --- 核心邏輯選擇 ---
-grp_core = "=== S2A 核心: 進場模式 (Entry Mode) ==="
+grp_core = "=== S2-RSI 核心: 進場模式 (Entry Mode) ==="
 entry_mode = input.string("Oversold Reversion (V-Shape)", "選擇進場模式",
  options=["Oversold Reversion (V-Shape)", "Strict Divergence (W-Bottom)"],
  group=grp_core, tooltip="V-Shape: RSI上穿數值即進場 (V4.0風格)\nW-Bottom: 等待RSI墊高背離才進場 (V1.0風格)")
@@ -63,7 +63,7 @@ use_insight = input.bool(false, "啟用洞察濾網",
  tooltip="關閉 = 原始邏輯\n打開 = DXY RSI + ATR 波動度 過濾\n目的：減少 time_bleed（持倉超過24h無方向）比例")
 dxy_rsi_thresh = input.int(50, "DXY RSI 日線門檻 (< 此值才進場)",
  minval=20, maxval=80, group=grp_insight,
- tooltip="S2A 在 DXY RSI 30-50 中性區間勝率僅 38.4%\n設為 50 可過濾掉美元中強期")
+ tooltip="S2-RSI 在 DXY RSI 30-50 中性區間勝率僅 38.4%\n設為 50 可過濾掉美元中強期")
 use_vol_filter  = input.bool(true, "啟用波動度過濾 (ATR)", group=grp_insight,
  tooltip="ATR < ATR均值×倍數時市場進入低波動橫盤，此時進場容易 time_bleed")
 atr_mult_filter = input.float(0.8, "ATR 最小倍數 (ATR > ATR_Avg × 此值)", step=0.1, group=grp_insight)
@@ -167,7 +167,7 @@ if MP > 0
             exit_stop_price := low
             strategy.exit("S2A_TimeLoss", from_entry="S2A_LE", stop=exit_stop_price, comment="S2A_TimeLoss")
 
-alertcondition(LongEntry, title="S2A Entry", message="S2A RSI Signal, Price={{close}}")
+alertcondition(LongEntry, title="S2-RSI Entry", message="S2-RSI RSI Signal, Price={{close}}")
 
 //------------------------------------------------------------------------------
 // 5. 視覺化 (Visualization)
@@ -184,13 +184,13 @@ plotshape(raw_trigger and not LongEntry and bar_index > MaxUseBars and MP == 0,
 // 實際進場訊號
 plotshape(LongEntry, title="Entry Signal",
  location=location.belowbar, color=plot_col,
- style=shape.triangleup, size=size.small, text="S2A")
+ style=shape.triangleup, size=size.small, text="S2-RSI")
 
 bgcolor(use_insight and dxy_rsi_d < dxy_rsi_thresh ? color.new(color.green, 95) : na, title="DXY Favorable")
 
 if strategy.opentrades > 0 and strategy.opentrades.entry_bar_index(0) == bar_index
     yPos = high * 1.003
-    txt_spot = "S2A RSI (" + (entry_mode == "Oversold Reversion (V-Shape)" ? "Rev" : "Div") + ")\n" +
+    txt_spot = "S2-RSI RSI (" + (entry_mode == "Oversold Reversion (V-Shape)" ? "Rev" : "Div") + ")\n" +
                "LE: "   + str.tostring(EntryPrice, "#.##") +
                "\nSL: "  + str.tostring(SLPrice,   "#.##") +
                "\nTP1: " + str.tostring(PTPrice1,  "#.##") +

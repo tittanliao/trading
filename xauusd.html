@@ -341,8 +341,8 @@
           資料涵蓋 2024-01 至 2026-04（超過 2 年），包含牛市、修正、盤整等多種市場環境。
         </div>
         <div class="insight warn">
-          <strong>⚠️ 新發現：S2A-RSI 在 STRONG BUY 期表現最差</strong>
-          傳統邏輯認為 STRONG BUY = 黃金逆風解除 = 應該做多。但 S2A（逆勢左側）在 STRONG BUY 期 WR 只有 34.4%，
+          <strong>⚠️ 新發現：S2-RSI 在 STRONG BUY 期表現最差</strong>
+          傳統邏輯認為 STRONG BUY = 黃金逆風解除 = 應該做多。但 S2-RSI（逆勢左側）在 STRONG BUY 期 WR 只有 34.4%，
           NEUTRAL 期卻高達 66.7%。原因：STRONG BUY 時黃金強勁上漲，逆勢反轉信號頻繁假信號。
         </div>
       </div>
@@ -373,9 +373,9 @@
         </div>
       </div>
 
-      <!-- S2A-RSI 真實結果 -->
+      <!-- S2-RSI 真實結果 -->
       <div class="card">
-        <h3 style="color:var(--primary);margin-bottom:4px">S2A-RSI（V2.0）— 160 筆，2024-01 → 2026-04</h3>
+        <h3 style="color:var(--primary);margin-bottom:4px">S2-RSI（V2.0）— 160 筆，2024-01 → 2026-04</h3>
         <p style="color:var(--muted);font-size:.84em;margin:0 0 12px">左側逆勢（RSI 指標觸發）。S2 不套用 WAIT 過濾，全數執行。</p>
         <table class="results-table" style="font-size:.88em">
           <thead><tr><th>Verdict</th><th>交易筆</th><th>勝率</th><th>獲利因子</th><th>淨盈虧%</th></tr></thead>
@@ -386,15 +386,15 @@
           </tbody>
         </table>
         <div class="insight bad" style="margin-top:10px;font-size:.85em">
-          <strong>🔴 新發現（修正操作規則）</strong>：STRONG BUY 環境是 S2A 最危險的時機（WR 34.4%，低於損益平衡水位），
-          NEUTRAL 才是最佳（WR 66.7%，PF 4.713）。建議在 STRONG BUY 期對 S2A 縮至最小倉（0.01 lot），
+          <strong>🔴 新發現（修正操作規則）</strong>：STRONG BUY 環境是 S2-RSI 最危險的時機（WR 34.4%，低於損益平衡水位），
+          NEUTRAL 才是最佳（WR 66.7%，PF 4.713）。建議在 STRONG BUY 期對 S2-RSI 縮至最小倉（0.01 lot），
           NEUTRAL 期可正常執行，WAIT 期縮倉 0.02 lot（維持原規則）。
         </div>
       </div>
 
-      <!-- S2B-Hammer 真實結果 -->
+      <!-- S2-Hammer 真實結果 -->
       <div class="card">
-        <h3 style="color:var(--primary);margin-bottom:4px">S2B-Hammer（V1.9）— 199 筆，2024-01 → 2026-04</h3>
+        <h3 style="color:var(--primary);margin-bottom:4px">S2-Hammer（V1.9）— 199 筆，2024-01 → 2026-04</h3>
         <p style="color:var(--muted);font-size:.84em;margin:0 0 12px">左側逆勢（錘頭型態觸發）。各宏觀環境表現最均衡。</p>
         <table class="results-table" style="font-size:.88em">
           <thead><tr><th>Verdict</th><th>交易筆</th><th>勝率</th><th>獲利因子</th><th>淨盈虧%</th></tr></thead>
@@ -405,7 +405,7 @@
           </tbody>
         </table>
         <div class="insight info" style="margin-top:10px;font-size:.85em">
-          <strong>結論</strong>：S2B 在各宏觀環境下表現均穩（WR 42–46%，PF 1.59–1.80），宏觀敏感度最低。
+          <strong>結論</strong>：S2-Hammer 在各宏觀環境下表現均穩（WR 42–46%，PF 1.59–1.80），宏觀敏感度最低。
           WAIT 期 WR 稍差但仍獲利；STRONG BUY 與 NEUTRAL 差異不大。維持原操作規則（縮倉但不停止）。
         </div>
       </div>
@@ -423,13 +423,13 @@
               <td style="color:#ef4444">⛔ 不執行</td>
             </tr>
             <tr>
-              <td><strong>S2A-RSI</strong></td>
+              <td><strong>S2-RSI</strong></td>
               <td style="color:#ef4444">⚠️ 縮至 0.01 lot（新增）</td>
               <td style="color:#22c55e;font-weight:700">最佳環境 ★ 正常倉位</td>
               <td style="color:#f59e0b">縮倉 0.02 lot</td>
             </tr>
             <tr>
-              <td><strong>S2B-Hammer</strong></td>
+              <td><strong>S2-Hammer</strong></td>
               <td>正常執行</td>
               <td>正常執行</td>
               <td style="color:#f59e0b">縮倉 0.02 lot</td>
@@ -450,8 +450,8 @@
     <div class="subnav">
       <button class="sub-tab active" onclick="showTab('xauusd-opt','overview',this)">綜合對比</button>
       <button class="sub-tab" onclick="showTab('xauusd-opt','s1',this)">S1-AweWithBB</button>
-      <button class="sub-tab" onclick="showTab('xauusd-opt','s2a',this)">S2A-RSI</button>
-      <button class="sub-tab" onclick="showTab('xauusd-opt','s2b',this)">S2B-Hammer</button>
+      <button class="sub-tab" onclick="showTab('xauusd-opt','s2a',this)">S2-RSI</button>
+      <button class="sub-tab" onclick="showTab('xauusd-opt','s2b',this)">S2-Hammer</button>
       <button class="sub-tab" onclick="showTab('xauusd-opt','improve',this)">🔬 改善追蹤</button>
     </div>
 
@@ -483,7 +483,7 @@
           <div style="margin-top:6px;font-size:.8em;color:var(--muted)">回測期間：2024-01-02~2026-07-04 · 過濾器：1H MA ON + BBW High 1H 70% ON · 現已取得 V3.7 真實逐筆交易 CSV（非僅回測彙總）</div>
         </div>
         <div class="card">
-          <div class="card-title">📊 S2A-RSI <span class="badge badge-yellow">V2.3</span></div>
+          <div class="card-title">📊 S2-RSI <span class="badge badge-yellow">V2.3</span></div>
           <div class="grid-2" style="gap:10px">
             <div class="metric-card"><div class="metric-label">勝率</div><div class="metric-val yellow">42.2%</div></div>
             <div class="metric-card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.679</div></div>
@@ -492,13 +492,13 @@
           </div>
           <div style="margin-top:12px;font-size:.82em;color:var(--muted)">主要問題：time_bleed 52% · 161 筆交易</div>
           <div class="report-links">
-            <a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/report.html">完整報告 →</a>
+            <a class="report-link" href="xauusd/XAUUSD-Long-S2-RSI/report.html">完整報告 →</a>
             <a class="report-link" href="#" onclick="goToMacroBacktest();return false;" style="border-color:var(--purple);color:var(--purple)">📊 宏觀回測結果 →</a>
           </div>
           <div style="margin-top:6px;font-size:.8em;color:var(--muted)">⚠️ STRONG BUY 期最差（WR 34.4%）；最佳：NEUTRAL（WR 66.7%，PF 4.71）</div>
         </div>
         <div class="card">
-          <div class="card-title">📊 S2B-Hammer <span class="badge badge-yellow">V2.2</span></div>
+          <div class="card-title">📊 S2-Hammer <span class="badge badge-yellow">V2.2</span></div>
           <div class="grid-2" style="gap:10px">
             <div class="metric-card"><div class="metric-label">勝率</div><div class="metric-val yellow">44.0%</div></div>
             <div class="metric-card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.681</div></div>
@@ -507,7 +507,7 @@
           </div>
           <div style="margin-top:12px;font-size:.82em;color:var(--muted)">主要問題：time_bleed 54% · 200 筆交易</div>
           <div class="report-links">
-            <a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/report.html">完整報告 →</a>
+            <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report.html">完整報告 →</a>
             <a class="report-link" href="#" onclick="goToMacroBacktest();return false;" style="border-color:var(--purple);color:var(--purple)">📊 宏觀回測結果 →</a>
           </div>
           <div style="margin-top:6px;font-size:.8em;color:var(--muted)">各宏觀環境均穩（WR 42–46%）；宏觀敏感度最低</div>
@@ -536,11 +536,11 @@
               </tr>
               <tr>
                 <td rowspan="2"><span class="badge badge-blue">S2 左側跌深</span></td>
-                <td><strong>S2A-RSI</strong></td><td>超賣區逆勢進場（指標）</td>
+                <td><strong>S2-RSI</strong></td><td>超賣區逆勢進場（指標）</td>
                 <td>RSI 交叉 / 背離</td><td><code>S2A_LE</code></td><td class="ver-test">V2.4 🧪</td>
               </tr>
               <tr>
-                <td><strong>S2B-Hammer</strong></td><td>超賣區逆勢進場（K 線）</td>
+                <td><strong>S2-Hammer</strong></td><td>超賣區逆勢進場（K 線）</td>
                 <td>Hammer 錘形蠟燭</td><td><code>S2B_LE</code></td><td class="ver-test">V2.3 🧪</td>
               </tr>
             </tbody>
@@ -558,24 +558,24 @@
               <tr><td>S1-AweWithBB</td><td class="ver-test">V3.6.2</td><td><span class="badge badge-yellow">測試中</span></td><td>BB %B ≥ 0.6 + 4H HTF RSI + lookahead_off 修正 + S1BB_LE 統一 label</td></tr>
               <tr><td>S1-AweWithBB</td><td class="ver-test">V3.6.3</td><td><span class="badge badge-yellow">測試中</span></td><td>Regime 過濾器：阻擋 BEAR_TREND（-0.28R）+ Low BBW&lt;30%（64% 假突破）</td></tr>
               <tr style="background:rgba(34,197,94,.06)"><td>S1-AweWithBB</td><td class="ver-test">V3.7 ★</td><td><span class="badge badge-yellow">測試中</span></td><td>精簡版：移除 GC1!/DXY/HTF 模組；Regime 拆 3 組獨立開關；1H MA(3) ON + BBW High 1H ≥70% ON；TP2 3.5R；時間止損 36 根 ｜ <strong>TV 回測 2024-01-02~2026-07-04：WR 55.12%（253/459）· PF 1.743 · +$7,577（+75.78%） · MDD $391（3.04%）</strong> ｜ <strong style="color:#38bdf8">已取得真實逐筆交易 CSV：歸因分析證實時間止損從未觸發、SL 率 46.8%→44.9%、TP2 佔比與均R同步提升</strong></td></tr>
-              <tr><td>S2A-RSI</td><td class="ver-confirmed">V2.2</td><td><span class="badge badge-green">確認版</span></td><td>統一 S2A_LE + EMA group + 架構對齊</td></tr>
-              <tr><td>S2A-RSI</td><td class="ver-test">V2.3</td><td><span class="badge badge-yellow">測試中</span></td><td>時間止損修正（strategy.close()）+ 4H HTF RSI 過濾器</td></tr>
-              <tr><td>S2A-RSI</td><td class="ver-test">V2.4 ★</td><td><span class="badge badge-yellow">測試中</span></td><td>Regime 過濾器：阻擋 CONSOLIDATION（-0.98R）+ Z-Score 過濾器：阻擋 Z&lt;-2.5 陷阱（20% WR）</td></tr>
-              <tr><td>S2B-Hammer</td><td class="ver-confirmed">V2.1</td><td><span class="badge badge-green">確認版</span></td><td>統一 S2B_LE + EMA group + 架構對齊</td></tr>
-              <tr><td>S2B-Hammer</td><td class="ver-test">V2.2</td><td><span class="badge badge-yellow">測試中</span></td><td>時間止損修正（strategy.close()）+ 4H HTF RSI 過濾器</td></tr>
-              <tr><td>S2B-Hammer</td><td class="ver-test">V2.3 ★</td><td><span class="badge badge-yellow">測試中</span></td><td>Regime 過濾器：阻擋 CONSOLIDATION（-0.98R）+ Z-Score 過濾器：阻擋 Z&lt;-2.5 陷阱（20% WR）</td></tr>
+              <tr><td>S2-RSI</td><td class="ver-confirmed">V2.2</td><td><span class="badge badge-green">確認版</span></td><td>統一 S2A_LE + EMA group + 架構對齊</td></tr>
+              <tr><td>S2-RSI</td><td class="ver-test">V2.3</td><td><span class="badge badge-yellow">測試中</span></td><td>時間止損修正（strategy.close()）+ 4H HTF RSI 過濾器</td></tr>
+              <tr><td>S2-RSI</td><td class="ver-test">V2.4 ★</td><td><span class="badge badge-yellow">測試中</span></td><td>Regime 過濾器：阻擋 CONSOLIDATION（-0.98R）+ Z-Score 過濾器：阻擋 Z&lt;-2.5 陷阱（20% WR）</td></tr>
+              <tr><td>S2-Hammer</td><td class="ver-confirmed">V2.1</td><td><span class="badge badge-green">確認版</span></td><td>統一 S2B_LE + EMA group + 架構對齊</td></tr>
+              <tr><td>S2-Hammer</td><td class="ver-test">V2.2</td><td><span class="badge badge-yellow">測試中</span></td><td>時間止損修正（strategy.close()）+ 4H HTF RSI 過濾器</td></tr>
+              <tr><td>S2-Hammer</td><td class="ver-test">V2.3 ★</td><td><span class="badge badge-yellow">測試中</span></td><td>Regime 過濾器：阻擋 CONSOLIDATION（-0.98R）+ Z-Score 過濾器：阻擋 Z&lt;-2.5 陷阱（20% WR）</td></tr>
             </tbody>
           </table>
         </div>
         <div class="report-links">
           <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.7.pine" style="background:linear-gradient(135deg,#14532d,#16a34a);border-color:#22c55e">S1 V3.7 ★🧪</a>
           <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.6.3.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">S1 V3.6.3 🧪</a>
-          <a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/XAUUSD-Long-S2A-RSI-V2.4.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">S2A V2.4 ★🧪</a>
-          <a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/XAUUSD-Long-S2B-Hammer-V2.3.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">S2B V2.3 ★🧪</a>
+          <a class="report-link" href="xauusd/XAUUSD-Long-S2-RSI/XAUUSD-Long-S2-RSI-V2.4.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">S2-RSI V2.4 ★🧪</a>
+          <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.3.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">S2-Hammer V2.3 ★🧪</a>
           <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.6.2.pine">S1 V3.6.2 🧪</a>
           <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.5.pine">S1 V3.5 ✅</a>
-          <a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/XAUUSD-Long-S2A-RSI-V2.3.pine">S2A V2.3 🧪</a>
-          <a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/XAUUSD-Long-S2B-Hammer-V2.2.pine">S2B V2.2 🧪</a>
+          <a class="report-link" href="xauusd/XAUUSD-Long-S2-RSI/XAUUSD-Long-S2-RSI-V2.3.pine">S2-RSI V2.3 🧪</a>
+          <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.2.pine">S2-Hammer V2.2 🧪</a>
         </div>
       </div>
 
@@ -656,8 +656,8 @@
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.6.3.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">⬇ S1 V3.6.3</a>
-          <a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/XAUUSD-Long-S2A-RSI-V2.4.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">⬇ S2A V2.4</a>
-          <a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/XAUUSD-Long-S2B-Hammer-V2.3.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">⬇ S2B V2.3</a>
+          <a class="report-link" href="xauusd/XAUUSD-Long-S2-RSI/XAUUSD-Long-S2-RSI-V2.4.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">⬇ S2-RSI V2.4</a>
+          <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.3.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">⬇ S2-Hammer V2.3</a>
         </div>
       </div>
 
@@ -669,8 +669,8 @@
             <tbody>
               <tr><td class="td-date">2026-07-05</td><td><span class="tag tag-analysis">分析</span> S1 V3.7 真實逐筆交易歸因分析</td><td>run_s1_v37_real_attribution.py</td><td class="td-memo"><strong>取得 V3.7 真實 TradingView 逐筆交易 CSV（459筆），與 V3.4（504筆）直接比較，取代先前的模擬推論</strong>。關鍵發現：兩版時間止損從未觸發過一次；SL 觸發率 46.8%→44.9%、TP2 佔比與均R同步提升，證實邊際優勢來自出場結構而非時間止損；immediate_loss 佔虧損比例 30.9%→26.7%</td></tr>
               <tr><td class="td-date">2026-07-04</td><td><span class="tag tag-pine">Pine</span> S1 V3.7 TradingView 回測驗證</td><td>WR 55.12% · PF 1.743 · +75.78%</td><td class="td-memo"><strong>回測 2024-01-02~2026-07-04（459筆）：WR 55.12%、PF 1.743、PnL +$7,577（+75.78%）、MDD $391（3.04%）</strong>。vs V3.4：WR+2pp、PF+14%、PnL+23%、MDD改善21%</td></tr>
-              <tr><td class="td-date">2026-07-04</td><td><span class="tag tag-pine">Pine</span> Regime + Z-Score 過濾器（三策略全升版）</td><td>S1 V3.6.3 / S2A V2.4 / S2B V2.3</td><td class="td-memo"><strong>S1 阻擋 BEAR_TREND + Low BBW；S2 阻擋 CONSOLIDATION + Z&lt;-2.5 陷阱</strong>。過濾器預設 OFF，不影響現有回測</td></tr>
-              <tr><td class="td-date">2026-05-02</td><td><span class="tag tag-pine">Pine</span> 策略命名重構 + lookahead 修正</td><td>S1 V3.6.2 / S2A V2.2 / S2B V2.1</td><td class="td-memo"><strong>重繪修正後回測數字可能改變</strong>，全歷史驗證前不算確認版</td></tr>
+              <tr><td class="td-date">2026-07-04</td><td><span class="tag tag-pine">Pine</span> Regime + Z-Score 過濾器（三策略全升版）</td><td>S1 V3.6.3 / S2-RSI V2.4 / S2-Hammer V2.3</td><td class="td-memo"><strong>S1 阻擋 BEAR_TREND + Low BBW；S2 阻擋 CONSOLIDATION + Z&lt;-2.5 陷阱</strong>。過濾器預設 OFF，不影響現有回測</td></tr>
+              <tr><td class="td-date">2026-05-02</td><td><span class="tag tag-pine">Pine</span> 策略命名重構 + lookahead 修正</td><td>S1 V3.6.2 / S2-RSI V2.2 / S2-Hammer V2.1</td><td class="td-memo"><strong>重繪修正後回測數字可能改變</strong>，全歷史驗證前不算確認版</td></tr>
               <tr><td class="td-date">2026-05-01</td><td><span class="tag tag-analysis">分析</span> BB %B 位置分析 + RSI 背離</td><td>bb_analysis.py / divergence.py</td><td class="td-memo"><strong>S1 price > BB 上軌 WR 77.8%</strong>；%B &lt; 0.4 不建議進場</td></tr>
               <tr><td class="td-date">2026-04-29</td><td><span class="tag tag-analysis">分析</span> MTF 共軌分析</td><td>mtf_analysis.py</td><td class="td-memo"><strong>alignment=3/3 → S1 WR ~69%</strong>；空單 4H 過濾 +4.1% ΔWR</td></tr>
               <tr><td class="td-date">2026-04-28</td><td><span class="tag tag-pine">Pine</span> Insight Filters 設計</td><td>S1 V3.5 / S2 V2.1</td><td class="td-memo">DXY RSI &lt; 50 + RSI 動能上升才進場</td></tr>
@@ -1004,9 +1004,9 @@
       </div>
     </div>
 
-    <!-- S2A Tab -->
+    <!-- S2-RSI Tab -->
     <div id="xauusd-opt-s2a" class="tab-panel">
-      <div class="part-label"><span class="part-badge">PART 1</span>S2A-RSI 精華重點</div>
+      <div class="part-label"><span class="part-badge">PART 1</span>S2-RSI 精華重點</div>
       <div class="grid-4">
         <div class="metric-card card"><div class="metric-label">勝率</div><div class="metric-val yellow">42.2%</div><div class="metric-sub">161 筆交易</div></div>
         <div class="metric-card card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.679</div><div class="metric-sub">淨盈虧 +$6,212</div></div>
@@ -1019,15 +1019,15 @@
         <div class="insight good"><strong>✅ 高盈虧比補償低勝率</strong>PF 1.679 — 贏的交易夠大、輸的控制尚可<br>→ 重點是減少 time_bleed 而非提高勝率</div>
       </div>
       <div class="report-links">
-        <a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/report.html">📄 完整報告</a>
-        <a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/XAUUSD-Long-S2A-RSI-V2.4.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">★ V2.4</a>
-        <a class="report-link" href="xauusd/XAUUSD-Long-S2A-RSI/XAUUSD-Long-S2A-RSI-V2.3.pine">🧪 V2.3</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S2-RSI/report.html">📄 完整報告</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S2-RSI/XAUUSD-Long-S2-RSI-V2.4.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">★ V2.4</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S2-RSI/XAUUSD-Long-S2-RSI-V2.3.pine">🧪 V2.3</a>
       </div>
     </div>
 
-    <!-- S2B Tab -->
+    <!-- S2-Hammer Tab -->
     <div id="xauusd-opt-s2b" class="tab-panel">
-      <div class="part-label"><span class="part-badge">PART 1</span>S2B-Hammer 精華重點</div>
+      <div class="part-label"><span class="part-badge">PART 1</span>S2-Hammer 精華重點</div>
       <div class="grid-4">
         <div class="metric-card card"><div class="metric-label">勝率</div><div class="metric-val yellow">44.0%</div><div class="metric-sub">200 筆交易</div></div>
         <div class="metric-card card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.681</div><div class="metric-sub">淨盈虧 +$7,722</div></div>
@@ -1041,9 +1041,9 @@
         <div class="insight good"><strong>✅ DXY 超賣時最佳</strong>DXY RSI &lt; 30：66.7% WR</div>
       </div>
       <div class="report-links">
-        <a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/report.html">📄 完整報告</a>
-        <a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/XAUUSD-Long-S2B-Hammer-V2.3.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">★ V2.3</a>
-        <a class="report-link" href="xauusd/XAUUSD-Long-S2B-Hammer/XAUUSD-Long-S2B-Hammer-V2.2.pine">🧪 V2.2</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report.html">📄 完整報告</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.3.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">★ V2.3</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.2.pine">🧪 V2.2</a>
       </div>
     </div>
     <!-- 改善追蹤 Tab ─────────────────────────────────── -->
@@ -1065,7 +1065,7 @@
         <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
           <div class="insight bad" style="font-size:.86em">
             <strong>盲點 A：S2 的時間止損在 Pine Script 裡幾乎沒作用（avg_hold 140 bars = 70 小時）</strong><br>
-            S2A avg_hold 140 bars，S2B 135 bars——是回測引擎 48-bar 時間止損的 3 倍。V2.3 的 <code>strategy.close()</code> 修正是否有效，尚未用新匯出 CSV 驗證。這是目前最重要的未驗證環節，所有現有 S2 宏觀數據基礎可能需要重做。
+            S2-RSI avg_hold 140 bars，S2-Hammer 135 bars——是回測引擎 48-bar 時間止損的 3 倍。V2.3 的 <code>strategy.close()</code> 修正是否有效，尚未用新匯出 CSV 驗證。這是目前最重要的未驗證環節，所有現有 S2 宏觀數據基礎可能需要重做。
           </div>
           <div class="insight warn" style="font-size:.86em">
             <strong>盲點 B：Score=2（WAIT 邊界）對 S1 是獲利環境，但被錯誤禁止</strong><br>
@@ -1076,16 +1076,16 @@
             GVZ Extreme 時 S1 PF 1.60 &gt; NORMAL 1.47，且持倉僅 14.4 bars（最快）。目前「GVZ Extreme → S1 縮倉」的規則在懲罰一個表現良好的環境。應改為：GVZ Extreme = S2 縮倉，S1 不縮。
           </div>
           <div class="insight info" style="font-size:.86em">
-            <strong>盲點 D：S2A 的 NEUTRAL 樣本只有 21 筆（兩年！），不應作為主要依據</strong><br>
+            <strong>盲點 D：S2-RSI 的 NEUTRAL 樣本只有 21 筆（兩年！），不應作為主要依據</strong><br>
             66.7% WR 的 95% 信賴區間是 [45%, 83%]。整個 NEUTRAL 最佳環境的結論建立在極稀少的樣本上，應視為方向參考，不能作為積極執行的理由。
           </div>
           <div class="insight info" style="font-size:.86em">
             <strong>盲點 E：DXY RSI × Macro Score 組合過濾器從未測試，可能是最強未開採 alpha</strong><br>
-            DXY RSI &lt; 30 時 S2A WR 75%（動量），Macro NEUTRAL 時 S2A WR 66.7%（趨勢）。兩者互補，組合條件「NEUTRAL + DXY RSI &lt; 40」的 WR 從未被量化。腳本基礎已就位。
+            DXY RSI &lt; 30 時 S2-RSI WR 75%（動量），Macro NEUTRAL 時 S2-RSI WR 66.7%（趨勢）。兩者互補，組合條件「NEUTRAL + DXY RSI &lt; 40」的 WR 從未被量化。腳本基礎已就位。
           </div>
           <div class="insight info" style="font-size:.86em">
-            <strong>盲點 F：S2B 是三策略中淨盈虧最高的（+77.6%），但分析投資最少</strong><br>
-            S2B 缺乏 DXY RSI 分組、BB %B 分析、GVZ 分層。S2B 在 GVZ NORMAL 環境 PF 1.95 是三策略最高，值得深挖但尚未被系統化。
+            <strong>盲點 F：S2-Hammer 是三策略中淨盈虧最高的（+77.6%），但分析投資最少</strong><br>
+            S2-Hammer 缺乏 DXY RSI 分組、BB %B 分析、GVZ 分層。S2-Hammer 在 GVZ NORMAL 環境 PF 1.95 是三策略最高，值得深挖但尚未被系統化。
           </div>
         </div>
 
@@ -1111,21 +1111,21 @@
             </tr>
             <tr>
               <td style="font-weight:700;color:var(--yellow)">P3</td>
-              <td><strong>驗證 V2.3 時間止損修正</strong>：TradingView 重跑 S2A/S2B，重新匯出 CSV，確認 avg_hold 是否降至 &lt; 50 bars</td>
+              <td><strong>驗證 V2.3 時間止損修正</strong>：TradingView 重跑 S2-RSI/S2-Hammer，重新匯出 CSV，確認 avg_hold 是否降至 &lt; 50 bars</td>
               <td>改變所有 S2 數據基礎</td>
               <td>中（需 TV 操作）</td>
               <td><span style="border:1px solid #475569;color:#94a3b8;background:rgba(100,116,139,.12);padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
             </tr>
             <tr>
               <td style="font-weight:700;color:var(--yellow)">P4</td>
-              <td><strong>S2B 深度分析</strong>：補 DXY RSI 分組、BB %B 分析、GVZ NORMAL vs Extreme 分層（S2B 是最高淨盈虧策略）</td>
+              <td><strong>S2-Hammer 深度分析</strong>：補 DXY RSI 分組、BB %B 分析、GVZ NORMAL vs Extreme 分層（S2-Hammer 是最高淨盈虧策略）</td>
               <td>可能找到更強過濾條件</td>
               <td>中（寫分析腳本）</td>
               <td><span style="border:1px solid #475569;color:#94a3b8;background:rgba(100,116,139,.12);padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
             </tr>
             <tr>
               <td style="font-weight:700;color:var(--yellow)">P5</td>
-              <td><strong>DXY RSI + Macro Score 組合過濾器</strong>：測試「NEUTRAL + DXY RSI &lt; 40」對 S2A 的 WR 影響</td>
+              <td><strong>DXY RSI + Macro Score 組合過濾器</strong>：測試「NEUTRAL + DXY RSI &lt; 40」對 S2-RSI 的 WR 影響</td>
               <td>未知，潛力高</td>
               <td>低（修改現有腳本）</td>
               <td><span style="border:1px solid #475569;color:#94a3b8;background:rgba(100,116,139,.12);padding:2px 8px;border-radius:10px;font-size:.82em">🔲 待處理</span></td>
@@ -1291,7 +1291,7 @@
 
       <div class="insight-grid">
         <div class="insight good"><strong>✅ WR 66.7%，PF 1.66</strong>42 筆多單，統計意義穩定，優於 S1/S2 的 44–53% WR。</div>
-        <div class="insight good"><strong>✅ FVG 作為 S2 補充進場工具</strong>FVG 提供明確的 SL 錨點（FVG Natural）+ 流動性缺口回填邏輯，與 S2B 蜂鳥錘互補。</div>
+        <div class="insight good"><strong>✅ FVG 作為 S2 補充進場工具</strong>FVG 提供明確的 SL 錨點（FVG Natural）+ 流動性缺口回填邏輯，與 S2-Hammer 蜂鳥錘互補。</div>
         <div class="insight warn"><strong>⚠ 資料期間僅 3 個月</strong>2026-01-21 至 04-27，建議取更長 CSV（2年+）重跑確認穩定性。</div>
         <div class="insight info"><strong>📊 SL=1.5% Fixed 最佳</strong>FVG Natural SL 在此數據集表現不如 Fixed %。TP1=0.5R 快速鎖利後讓利潤飛。</div>
       </div>

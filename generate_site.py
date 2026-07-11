@@ -537,7 +537,7 @@ def _xauusd_fvg_html() -> str:
 
       <div class="insight-grid">
         <div class="insight good"><strong>✅ WR 66.7%，PF 1.66</strong>42 筆多單，統計意義穩定，優於 S1/S2 的 44–53% WR。</div>
-        <div class="insight good"><strong>✅ FVG 作為 S2 補充進場工具</strong>FVG 提供明確的 SL 錨點（FVG Natural）+ 流動性缺口回填邏輯，與 S2B 蜂鳥錘互補。</div>
+        <div class="insight good"><strong>✅ FVG 作為 S2 補充進場工具</strong>FVG 提供明確的 SL 錨點（FVG Natural）+ 流動性缺口回填邏輯，與 S2-Hammer 蜂鳥錘互補。</div>
         <div class="insight warn"><strong>⚠ 資料期間僅 3 個月</strong>2026-01-21 至 04-27，建議取更長 CSV（2年+）重跑確認穩定性。</div>
         <div class="insight info"><strong>📊 SL=1.5% Fixed 最佳</strong>FVG Natural SL 在此數據集表現不如 Fixed %。TP1=0.5R 快速鎖利後讓利潤飛。</div>
       </div>
@@ -1649,7 +1649,7 @@ def build_hub() -> str:
   <div class="hub-grid">
     <div class="hub-card" style="border-top:4px solid #2563eb">
       <h2>🟡 XAUUSD 黃金</h2>
-      <div class="sub">黃金/美元 · 30m · S1/S2A/S2B 三策略 + 20L/20S 實驗 + FVG</div>
+      <div class="sub">黃金/美元 · 30m · S1/S2-RSI/S2-Hammer 三策略 + 20L/20S 實驗 + FVG</div>
       <div class="hub-links">
         <a class="report-link" href="xauusd.html">主頁 →</a>
         <a class="report-link" href="xauusd.html#xauusd-main-opt">已確認策略</a>

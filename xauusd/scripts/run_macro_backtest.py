@@ -565,7 +565,7 @@ tbody tr:hover td{{background:#f8fafc}}
     <div class="insight info">
       <strong>📊 S2 策略代理結果不理想</strong>
       E18 Hammer（WR 15.0%）和 E06 RSI Oversold（WR 30.2%）在本期間均虧損。
-      這可能反映：(1) 這兩個實驗策略不是 S2B/S2A 的好代理；(2) 史詩牛市中左側反轉信號失效。
+      這可能反映：(1) 這兩個實驗策略不是 S2-Hammer/S2-RSI 的好代理；(2) 史詩牛市中左側反轉信號失效。
       S2 真正的進場條件（SSL Sweep + 錘頭 + SMC 確認）是人工辨識的，程式化代理難以完整複現。
     </div>
 

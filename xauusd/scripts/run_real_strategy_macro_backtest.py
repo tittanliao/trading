@@ -1,7 +1,7 @@
 """
 XAUUSD Real Strategy Macro-Filtered Backtest
 =============================================
-用真實策略交易 CSV（S1-AweWithBB / S2A-RSI / S2B-Hammer）搭配
+用真實策略交易 CSV（S1-AweWithBB / S2-RSI / S2-Hammer）搭配
 每日 Macro Score（v3.7 邏輯），分析宏觀過濾對各策略真實績效的影響。
 
 執行（20260705 移至 scripts/ 子資料夾，仍需在 trading/ 根目錄執行）：python3.12 xauusd/scripts/run_real_strategy_macro_backtest.py
@@ -36,15 +36,15 @@ STRATEGIES = {
         "win_signal": ["TP"],   # 含 TP 的 exit signal = 勝
         "loss_signal": ["SL"],  # 含 SL = 敗
     },
-    "S2A-RSI": {
-        "csv": ROOT / "XAUUSD-Long-S2A-RSI" / "S2-Hybrid-V2.0_FX_IDC_XAUUSD_2026-04-26.csv",
+    "S2-RSI": {
+        "csv": ROOT / "XAUUSD-Long-S2-RSI" / "S2-Hybrid-V2.0_FX_IDC_XAUUSD_2026-04-26.csv",
         "type": "S2",
         "version": "V2.0",
         "win_signal": ["TP"],
         "loss_signal": ["SL"],
     },
-    "S2B-Hammer": {
-        "csv": ROOT / "XAUUSD-Long-S2B-Hammer" / "S2-Pullback-V1.9_FX_IDC_XAUUSD_2026-04-26.csv",
+    "S2-Hammer": {
+        "csv": ROOT / "XAUUSD-Long-S2-Hammer" / "S2-Pullback-V1.9_FX_IDC_XAUUSD_2026-04-26.csv",
         "type": "S2",
         "version": "V1.9",
         "win_signal": ["TP"],
@@ -565,7 +565,7 @@ html = f"""<!DOCTYPE html>
     若 WAIT 期表現反而好（如 2026 Q1 牛市），代表宏觀邏輯被強勢趨勢覆蓋，仍應謹慎縮倉觀察。
   </div>
   <div class="insight info">
-    <strong>📌 S2（S2A-RSI / S2B-Hammer）操作原則</strong>
+    <strong>📌 S2（S2-RSI / S2-Hammer）操作原則</strong>
     S2 屬左側逆勢，宏觀 WAIT 時建議縮至 0.02 手（風控決定），不完全停止。
     若 STRONG BUY 期 S2 勝率明顯高於 WAIT 期，代表宏觀支撐確實提升 S2 的成功率。
   </div>

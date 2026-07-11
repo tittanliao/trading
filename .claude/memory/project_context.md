@@ -13,7 +13,7 @@ metadata:
 **How to apply:** 商品代碼分別在 `xauusd/` 和 `tx/` 子目錄；master index.html 在根目錄。
 
 ## 目錄規則
-- `trading/` — 根目錄，含 index.html + generate_index.py + CLAUDE.md
+- `trading/` — 根目錄，含 generate_site.py + 6 個生成頁 + CLAUDE.md + DEVELOPMENT.md
 - `trading/xauusd/` — XAUUSD 所有程式碼和資料
 - `trading/tx/` — TX 所有程式碼和資料
 - `trading/.claude/memory/` — **git 追蹤的記憶**，新電腦 clone 後需執行 symlink（見 CLAUDE.md）
@@ -30,7 +30,7 @@ metadata:
 策略版本/績效持續迭代中，這裡不重複列數字（避免和其他三處打架）。
 最新狀態請看 `xauusd/claude/ANALYSIS_SKILL.md`（單一事實來源，每次「請分析」都會讀取更新）
 或 `xauusd/CLAUDE.md`「現有策略最新績效」表。截至 2026-07-05：S1-AweWithBB 已升級到 V3.7（確認版），
-S2A-RSI / S2B-Hammer 仍在測試新的 Regime+Z-Score 過濾器版本（V2.4 / V2.3，尚未做真實逐筆歸因）。
+S2-RSI / S2-Hammer 仍在測試新的 Regime+Z-Score 過濾器版本（V2.4 / V2.3，尚未做真實逐筆歸因）。
 
 ## FVG 策略（2026-06-14 完成）
 - **FVG V1.0**：單 FVG 追蹤，Pine Script v6，Long/Short 可設定，Profit Flyer 出場
@@ -42,7 +42,7 @@ S2A-RSI / S2B-Hammer 仍在測試新的 Regime+Z-Score 過濾器版本（V2.4 / 
   - 42 筆交易、WR 66.7%、PF 2.741、淨損益 +18.24%
 - V2.0 Pine Script 預設值已更新為多單最佳參數
 - Hub index.html 新增「🔍 FVG 策略」Tab，連結到 report_fvg_long.html
-- FVG 定位：SMC 補充工具，與 S2B 錘頭共用流動性缺口邏輯
+- FVG 定位：SMC 補充工具，與 S2-Hammer 錘頭共用流動性缺口邏輯
 
 **Pine v6 重要注意事項（踩坑紀錄）：**
 - `and`/`or` 不能作為行尾接續 → 拆成多個變數
@@ -120,8 +120,8 @@ S2A-RSI / S2B-Hammer 仍在測試新的 Regime+Z-Score 過濾器版本（V2.4 / 
 - 選舉年效應存在，選舉年Q1勝率高於非選舉年
 - 結論：TX多個月份資料都WR>65%，可能受2012-2026大多頭期偏差影響；五月弱的結論需更長週期驗證
 
-## 新增商品流程
+## 新增商品流程（20260711 拆頁後）
 1. 建立 `trading/<商品>/` 子目錄
-2. 在 `generate_index.py` 的 `COMMODITIES` 清單新增一筆
-3. 視需要新增對應的 HTML 生成函式
-4. 執行 `python generate_index.py` 更新 index.html
+2. 在 `generate_site.py` 的 `COMMODITIES` 新增一筆 + `build_<商品>()` 函式 + `PAGES`/`NAV_LINKS` 登記
+3. 手寫區塊放 `content/<商品>/`；`content/sitemap.html` 登記
+4. 執行 `python3.12 generate_site.py`（詳見 DEVELOPMENT.md §4-C）

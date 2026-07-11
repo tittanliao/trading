@@ -78,7 +78,7 @@
 
 ### 宏觀層（每週日必查，Macro v3.7 截圖）
 - **Macro Score 0–6**（Real Rate ×2 + US10Y + DXY + VIX + Gold MA50）
-  - ≥ 5 → STRONG BUY；3–4 → NEUTRAL；2 → 視策略而定（S1 正常執行，S2A/S2B 縮倉，20260621 修正，Score=2 不再等同 WAIT）；0–1 → WAIT 深度
+  - ≥ 5 → STRONG BUY；3–4 → NEUTRAL；2 → 視策略而定（S1 正常執行，S2-RSI/S2-Hammer 縮倉，20260621 修正，Score=2 不再等同 WAIT）；0–1 → WAIT 深度
 - **GVZ**：< 13 Squeeze（S1 優先）；13–20 Normal；> 20 Extreme（**S1 不縮倉**，PF 仍佳；**S2 縮倉 50%**，20260621 修正）
 - 截圖放 `googledrive/XAUUSD/weekly report/macro/`，合併週報時 AI 自動解讀
 
@@ -101,14 +101,14 @@
 
 ## 宏觀過濾規則（2024-2026 真實回測，N=504/160/199，20260705 對齊 ANALYSIS_SKILL.md）
 
-| 宏觀環境 | Score | S1-AweWithBB | S2A-RSI | S2B-Hammer |
+| 宏觀環境 | Score | S1-AweWithBB | S2-RSI | S2-Hammer |
 |---------|-------|-------------|---------|-----------|
 | STRONG BUY | 5–6 | 正常執行（WR 52.1%）| ⚠️ **縮倉 0.01 手**（WR 34.4%，最差）| 正常執行 |
 | NEUTRAL | 3–4 | ✅ **最佳**（WR 58.7%，PF 2.08）| ✅ **最佳**（WR 66.7%，PF 4.71）| 正常執行 |
 | Score=2 | 2 | ✅ 正常執行（WR 54.9%，優於 STRONG BUY，20260621 解禁）| 縮倉 0.02 手 | 縮倉 0.02 手 |
 | WAIT 深度 | 0–1 | ⛔ **不執行** | 縮倉 0.02 手 | 縮倉 0.02 手 |
 
-**S2A 反直覺發現**：STRONG BUY（宏觀順風）是 S2A 最危險的環境。黃金強勢趨勢下，RSI 逆勢信號頻繁假突破，不應積極執行。
+**S2-RSI 反直覺發現**：STRONG BUY（宏觀順風）是 S2-RSI 最危險的環境。黃金強勢趨勢下，RSI 逆勢信號頻繁假突破，不應積極執行。
 
 > ⚠️ 此表僅供個人檔案速覽；數字若有更新，以 `xauusd/claude/ANALYSIS_SKILL.md`「宏觀過濾規則」為單一事實來源，兩處不一致時以 ANALYSIS_SKILL.md 為準。
 
@@ -160,5 +160,5 @@
 - 20260609：初版建立
 - 20260609：填入基本交易習慣（盤別/進場等級/風控）
 - 20260609：從 googledrive/XAUUSD/ai/ 整合完整 Persona、Gem Prompt、NotebookLM Prompt
-- 20260621：新增宏觀過濾框架（Macro v3.7）；加入真實策略 × 宏觀回測規則表（504/160/199 筆）；S2A STRONG BUY 期縮倉 0.01 手（反直覺發現）；週日流程加入 Macro 截圖步驟
+- 20260621：新增宏觀過濾框架（Macro v3.7）；加入真實策略 × 宏觀回測規則表（504/160/199 筆）；S2-RSI STRONG BUY 期縮倉 0.01 手（反直覺發現）；週日流程加入 Macro 截圖步驟
 - 20260705：對齊 ANALYSIS_SKILL.md 現行 H2 規則（此檔先前未同步）：每筆風險改為 0.75%（雙策略合計上限 1.5%）；同時持倉改為 H2 雙倉制（Lot1/Lot2），S1+S2 可並存；每週交易次數改為 S1 無限制/S2 最多 2 次；S2 進場等級補上 B 級（縮量 0.02 手）；Score=2 從 WAIT 分離為 S1 正常執行；GVZ Extreme 改為 S1 不縮倉、僅 S2 縮倉 50%

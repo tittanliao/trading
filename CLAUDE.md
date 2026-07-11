@@ -41,8 +41,8 @@ trading/
 │   ├── run_experiments.py       # 多單 20 策略實驗入口
 │   ├── run_short_experiments.py # 空單 20 策略實驗入口
 │   ├── XAUUSD-Long-S1-AweWithBB/   # S1 右側突破：交易 CSV + report.html + Pine
-│   ├── XAUUSD-Long-S2A-RSI/        # S2A 左側（指標）：原 S2-Hybrid
-│   ├── XAUUSD-Long-S2B-Hammer/     # S2B 左側（型態）：原 S2-Pullback
+│   ├── XAUUSD-Long-S2-RSI/        # S2-RSI 左側（指標）：原 S2-Hybrid
+│   ├── XAUUSD-Long-S2-Hammer/     # S2-Hammer 左側（型態）：原 S2-Pullback
 │   ├── XAUUSD-Long-Experiments/    # 多單實驗：report.html + pine/ × 20
 │   └── XAUUSD-Short-Experiments/   # 空單實驗：report.html + pine/ × 20
 │
@@ -129,7 +129,7 @@ python3 tx/run_experiments.py --sl 40 --tp 80   # 自訂 SL/TP
 | 交易時段 | 24/5 | 日盤 08:45–13:45 + 夜盤 15:00–05:00 |
 | 時間止損 | 48 bars（24h） | 48 bars（24h，跨日夜盤） |
 | 特有分析 | DXY 相關性 | session_analysis.py + macro_analysis.py |
-| 已開發策略 | S1-AweWithBB / S2A-RSI / S2B-Hammer | 無（實驗階段） |
+| 已開發策略 | S1-AweWithBB / S2-RSI / S2-Hammer | 無（實驗階段） |
 
 ---
 

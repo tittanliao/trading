@@ -1,12 +1,12 @@
 // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
 // © Tittan
-// Strategy: XAUUSD-Long-S2B-Hammer-V2.1
-// Renamed from S2-Pullback. S2B = Left-side reversion, price-action triggered (hammer candle)
+// Strategy: XAUUSD-Long-S2-Hammer-V2.1
+// Renamed from S2-Pullback. S2-Hammer = Left-side reversion, price-action triggered (hammer candle)
 // Update: Unified entry/exit label naming
 // Entry label: S2B_LE  Exit labels: S2B_TP1 / S2B_TP2 / S2B_SL / S2B_TimeWin / S2B_TimeLoss
 //@version=6
-strategy(title="XAUUSD-Long-S2B-Hammer-V2.1",
- shorttitle="S2B-Hammer-V2.1",
+strategy(title="XAUUSD-Long-S2-Hammer-V2.1",
+ shorttitle="S2-Hammer-V2.1",
  overlay = true,
  format=format.price,
  precision=2,
@@ -32,8 +32,8 @@ Profit_Ratio_1 = input.float(2.0, title="TP1 盈虧比 (Ratio)", step=0.1, group
 Profit_Ratio_2 = input.float(4.0, title="TP2 盈虧比 (Ratio)", step=0.1, group=grp_risk)
 out_k_count    = input.int(48, "時間出場 (K棒數)", group=grp_risk)
 
-// --- S2B 核心：錘頭線定義 ---
-grp_core = "=== S2B 核心: 錘頭線設定 (Core) ==="
+// --- S2-Hammer 核心：錘頭線定義 ---
+grp_core = "=== S2-Hammer 核心: 錘頭線設定 (Core) ==="
 hammer_tail_ratio  = input.float(2.0, "下影線/實體 比例",  minval=1.0, step=0.1, group=grp_core)
 hammer_upper_ratio = input.float(0.5, "上影線/實體 比例",  maxval=1.0, step=0.1, group=grp_core)
 min_body_atr_mult  = input.float(0.3, "最小 K 棒波動濾網 (ATR Mult)", minval=0.0, group=grp_core)
@@ -54,7 +54,7 @@ use_insight = input.bool(false, "啟用洞察濾網",
  tooltip="關閉 = 原始邏輯\n打開 = DXY RSI + RSI情境 過濾\n目的：減少 time_bleed（持倉超過24h無方向）比例")
 dxy_rsi_thresh = input.int(50, "DXY RSI 日線門檻 (< 此值才進場)",
  minval=20, maxval=80, group=grp_insight,
- tooltip="S2B 在 DXY RSI 30-50 區間勝率僅 38.2%，設為 50 可過濾掉美元中強期")
+ tooltip="S2-Hammer 在 DXY RSI 30-50 區間勝率僅 38.2%，設為 50 可過濾掉美元中強期")
 rsi_ctx_low  = input.int(25, "RSI 情境 下限 (≥ 此值才進場)", minval=10, maxval=40, group=grp_insight,
  tooltip="RSI 過低（< 25）代表可能仍在下跌中，錘頭出現但方向未確認")
 rsi_ctx_high = input.int(55, "RSI 情境 上限 (≤ 此值才進場)", minval=40, maxval=70, group=grp_insight,
@@ -140,7 +140,7 @@ if MP > 0
             exit_stop_price := low
             strategy.exit("S2B_TimeLoss", from_entry="S2B_LE", stop=exit_stop_price, comment="S2B_TimeLoss")
 
-alertcondition(LongEntry, title="S2B Entry", message="S2B Hammer Detected, Price={{close}}")
+alertcondition(LongEntry, title="S2-Hammer Entry", message="S2-Hammer Hammer Detected, Price={{close}}")
 
 //------------------------------------------------------------------------------
 // 5. 視覺化 (Visualization)
@@ -155,13 +155,13 @@ plotshape(is_hammer and not LongEntry, title="Hammer (Filtered)",
 // 實際進場訊號
 plotshape(LongEntry, title="Hammer (Entry)",
  location=location.belowbar, color=color.green,
- style=shape.triangleup, size=size.small, text="S2B")
+ style=shape.triangleup, size=size.small, text="S2-Hammer")
 
 bgcolor(use_insight and dxy_rsi_d < dxy_rsi_thresh ? color.new(color.green, 95) : na, title="DXY Favorable")
 
 if strategy.opentrades > 0 and strategy.opentrades.entry_bar_index(0) == bar_index
     yPos = high * 1.003
-    txt_spot = "S2B Hammer\n" +
+    txt_spot = "S2-Hammer Hammer\n" +
                "LE: "   + str.tostring(EntryPrice, "#.##") +
                "\nSL: "  + str.tostring(SLPrice,   "#.##") +
                "\nTP1: " + str.tostring(PTPrice1,  "#.##") +
