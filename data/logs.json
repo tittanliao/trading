@@ -2,6 +2,17 @@
   {
     "date": "2026-07-11",
     "tag": "xauusd",
+    "title": "S2-Hammer V2.4.1 測試版 — S2-RSI 互斥過濾器 + 提早保本",
+    "items": [
+      "<b>S2-RSI 互斥過濾器（預設ON，本版核心）</b>：RSI14上穿30後24根K棒（12h）內出現的錘頭一律跳過——依據歸因：合流錘頭 WR30.8%/PF1.03 vs 單獨錘頭 WR50.4%/PF2.14",
+      "<b>提早保本（預設ON）</b>：浮盈曾達+0.3% → SL移至保本，出場獨立標記 S2B_BE 方便歸因——攔截83%拖≥12h的虧損單，且不用時間止損（會殺死90%慢贏）",
+      "Z-Score 過濾器降級保留：效果被互斥涵蓋（疊加無增益），tooltip 註記不建議同開；甜蜜區嚴格模式標注已被大樣本推翻",
+      "⚠️ 統計檢驗用對稱±12h窗口，Pine實盤只能回看12h（單向近似），待 TradingView 回測確認實際效果。<a href='xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.4.1.pine' target='_blank'>V2.4.1 Pine →</a>"
+    ]
+  },
+  {
+    "date": "2026-07-11",
+    "tag": "xauusd",
     "title": "S2 更名（S2-RSI/S2-Hammer）+ 真實逐筆歸因 + 濾網對決 + time_bleed 解剖",
     "items": [
       "<b>更名</b>：S2A-RSI→S2-RSI、S2B-Hammer→S2-Hammer（資料夾/pine/活文件全面更新；Pine entry ID S2A_LE/S2B_LE 不動，TV alert 與歷史 CSV 依賴）",
