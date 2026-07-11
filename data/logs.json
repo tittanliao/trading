@@ -2,6 +2,18 @@
   {
     "date": "2026-07-11",
     "tag": "xauusd",
+    "title": "S2-Hammer CSV重匯發現OOS未過 + S1 V3.9真實回測對照",
+    "items": [
+      "<b>S2-Hammer V1.9 基準重匯到最新日期（200→225筆，2024-01~2026-07-11）</b>：全樣本WR 44.0%→41.1%、PF 1.681→1.53；<b>⚠️ OOS（後30%）勝率僅27.9%/PF 0.92，低於損益兩平</b>——過去邊際優勢在近2.5個月新資料中未延續，PF門檻與勝率落差門檻雙雙未過，列為目前最高優先待處理項目",
+      "time_bleed 惡化：132筆虧損中75筆（57%，先前54%）拖倉≥12h，85%曾有MFE≥0.3%理論可救回——對應V2.4.1提早保本過濾器；S2-RSI互斥過濾器效果在新樣本仍成立（PF 1.51→1.75），Z-Score過濾器效果較小且被涵蓋，與既有結論一致",
+      "新增 S1-AweWithBB V3.9 Pine（測試版）：Filter編號化排序（①1H MA②BBW高檔預設ON）、進場Label精簡為藍底四點位、BB Source改ohlc4、持倉中訊號藍色tiny提示、被過濾訊號x→A",
+      "<b>S1 V3.7 vs V3.9 真實回測對照（共同期間459 vs 445筆）</b>：V3.9全面小幅優於V3.7——WR 55.1%→56.4%、PF 1.743→1.888、淨利+,578→+,504，但MDD微升-→-；核心變因為BB Source close→ohlc4，尚未完整驗證，維持V3.7為現行確認版",
+      "新增 S2-Hammer/S1-AweWithBB V3.0-V3.2/V3.9 Pine 系列（2.x功能全部改為編號化FILTER，預設OFF保持原始獲利，tooltip附公式與理由）。<a href='xauusd/XAUUSD-Long-S2-Hammer/report_s2_attribution.html' target='_blank'>S2歸因報告 →</a> <a href='xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.9_real.html' target='_blank'>S1 V3.9歸因報告 →</a>"
+    ]
+  },
+  {
+    "date": "2026-07-11",
+    "tag": "xauusd",
     "title": "S2-Hammer V2.4.1 測試版 — S2-RSI 互斥過濾器 + 提早保本",
     "items": [
       "<b>S2-RSI 互斥過濾器（預設ON，本版核心）</b>：RSI14上穿30後24根K棒（12h）內出現的錘頭一律跳過——依據歸因：合流錘頭 WR30.8%/PF1.03 vs 單獨錘頭 WR50.4%/PF2.14",

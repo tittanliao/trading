@@ -1,21 +1,38 @@
 ---
 name: project-wip
-description: 進行中工作狀態（20260711 更新）：等待使用者 TradingView 匯出 CSV，收到後的分析步驟
+description: 進行中工作狀態（20260711 晚間更新）：S2-Hammer OOS未過為最高優先，等待更多TV匯出CSV
 metadata:
   type: project
 ---
 
-# 進行中工作（20260711 晚間狀態）
+# 進行中工作（20260711 晚間狀態，第二次更新）
 
-## 等待使用者提供（TradingView 匯出，CSV 放對應策略資料夾）
+## 本輪已完成（20260711 晚間）
+- ✅ S2-Hammer V1.9 基準版重匯到 2026-07-11（200→225筆），`run_s2_attribution.py` 用新 CSV
+  重跑，**發現 OOS 未通過**（後30%WR 27.9%/PF 0.92）——見下方「新的最高優先」
+- ✅ S1 V3.9（測試版：Filter編號化＋BB Source改ohlc4＋持倉中提示等 UI 改動）真實回測 CSV
+  已匯入，新增 `run_s1_v39_real_attribution.py` 對照 V3.7（共同期間內 V3.9 全面小幅優於 V3.7）
+- ✅ 兩份報告與 xauusd.html / sitemap.html / ANALYSIS_SKILL.md 已同步更新
 
-1. **最優先：S2-Hammer V2.4.1 的 2×2 對照**（4 份 CSV，檔名帶 A/B/C/D）：
+## 🔴 新的最高優先：S2-Hammer OOS 失敗待處理
+V1.9 原始邏輯（未開任何 V2.x 過濾器）在新樣本外資料（近 2.5 個月）勝率僅 27.9%、PF 0.92，
+低於損益兩平。下一步：
+1. 驗證 V2.4.1（互斥過濾器 ON + 提早保本 ON，預設值）套用後能否挽回 OOS 表現
+   ——需要使用者在 TradingView 用 V2.4.1（或功能對等的 V3.2）重新匯出同期間 CSV
+2. 若 V2.4.1/V3.2 仍未過 OOS，需重新檢視 S2-Hammer 錘頭型態本身在近期市場結構下是否失效
+   （例如：近期波動度/趨勢特徵改變，型態辨識邏輯可能需要調整，不只是加過濾器）
+
+## 仍等待使用者提供（TradingView 匯出，CSV 放對應策略資料夾）
+
+1. S2-Hammer V2.4.1 或 V3.2（功能對等）用最新資料期間重新回測匯出，驗證 OOS 是否轉正
+   （見上方「新的最高優先」）
+2. S2-Hammer V2.4.1 的 2×2 對照（4 份 CSV，檔名帶 A/B/C/D）：
    - A=互斥OFF/保本OFF（≈V2.3基準）、B=互斥ON、C=保本ON、D=全ON
    - 放 `xauusd/XAUUSD-Long-S2-Hammer/`
-2. S1 V3.8.1：BBW高檔回看20 一份、BBW低檔ON+回看90 一份
-3. S1 ABCD 診斷（V3.7-ABCD-Diagnostic.pine）四種組合各一份
+3. S1 V3.8.1：BBW高檔回看20 一份、BBW低檔ON+回看90 一份
+4. S1 ABCD 診斷（V3.7-ABCD-Diagnostic.pine）四種組合各一份
    - ⚠️ 此 pine 寫於語法修復之前，可能有 V2.3 同款壞語法（行接續/plotshape參數順序），使用者回報編譯錯誤就照 V2.4.1 的修法處理
-4. 加分：S2-RSI V2.0 / S2-Hammer V1.9 基準版重匯到最新日期
+5. S2-RSI V2.0 基準版重匯到最新日期（S2-Hammer 已完成，S2-RSI 尚未）
 
 ## CSV 到手後的分析步驟
 

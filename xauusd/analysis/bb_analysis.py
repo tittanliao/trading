@@ -287,12 +287,17 @@ def bb_stats(enriched: pd.DataFrame) -> dict[str, pd.DataFrame]:
     width_valid = enriched.dropna(subset=["bb_width"]).copy()
 
     if len(width_valid) >= 4:
-        width_valid["_q"] = pd.qcut(
-            width_valid["bb_width"],
-            q=4,
-            labels=["Q1 (tight)", "Q2", "Q3", "Q4 (wide)"],
-            duplicates="drop",
-        )
+        try:
+            width_valid["_q"] = pd.qcut(
+                width_valid["bb_width"],
+                q=4,
+                labels=["Q1 (tight)", "Q2", "Q3", "Q4 (wide)"],
+                duplicates="drop",
+            )
+        except ValueError:
+            # duplicates="drop" collapsed below 4 edges (low-coverage sample) —
+            # fall back to auto interval labels instead of crashing.
+            width_valid["_q"] = pd.qcut(width_valid["bb_width"], q=4, duplicates="drop")
         quartile_rows: list[dict] = []
         for label, grp in width_valid.groupby("_q", observed=True):
             total = len(grp)

@@ -176,15 +176,17 @@ Regular Bullish, Regular Bullish Label, Regular Bearish, Regular Bearish Label
 
 **版本命名規則**：`VX.Y`（確認版）→ `VX.Y+1.1`（測試版）→ `VX.Y+1`（確認後升版）
 
-## 現有策略最新績效（S1 為 2026-07-05 真實逐筆歸因；S2-RSI/S2-Hammer 仍為 2026-04-27 基準數據，尚未做同等歸因）
+## 現有策略最新績效（S1 為 2026-07-05 真實逐筆歸因；S2-Hammer 為 2026-07-11 重匯基準；S2-RSI 仍為 2026-04-27 基準數據，尚未重匯）
 
 | ID | 策略名稱 | 版本 | 交易筆數 | 勝率 | 獲利因子 | 淨盈虧 | 最大回撤 | 主要問題 |
 |----|---------|------|---------|------|---------|--------|---------|---------|
 | S1-AweWithBB | AweWithBB | **V3.7（已確認）** | 459 | 55.1% | 1.743 | +$7,578 | -$346 | immediate_loss 27%（V3.4為31%，已改善） |
 | S2-RSI | RSI Reversion | V2.0（基準，V2.4測試中） | 161 | 42.2% | 1.679 | +$6,212 | -$1,177 | time_bleed 52% |
-| S2-Hammer | Hammer Pullback | V1.9（基準，V2.3測試中） | 200 | 44.0% | 1.681 | +$7,722 | -$1,431 | time_bleed 54% |
+| S2-Hammer | Hammer Pullback | V1.9（基準，V2.3測試中） | 225 | 41.1% | 1.53 | +$7,216 | -$2,414 | ⚠️ time_bleed 57%，**OOS未過**（後30%WR27.9%/PF0.92） |
 
 > S1 V3.4→V3.7 真實逐筆歸因結論：淨利改善主因是出場結構（SL觸發率↓、TP2佔比↑），時間止損縮短(48→36 bars)從未觸發、非貢獻來源；進場過濾器確實降低immediate_loss。詳見 `XAUUSD-Long-S1-AweWithBB/report_v3.7_real.html` 與 `xauusd/claude/ANALYSIS_SKILL.md`「V3.7 真實逐筆歸因結論」。
+> S1 V3.9（測試版，BB Source close→ohlc4）真實回測共同期間對照優於 V3.7（WR+1.3pp/PF+0.145/淨利+$926，MDD微升），尚未完整驗證，維持V3.7為現行版。詳見 `report_v3.9_real.html`。
+> S2-Hammer V1.9 基準 20260711 重匯到最新日期（200→225筆）後，**OOS（樣本外）檢驗未通過**——過去邊際優勢在近2.5個月新資料中未延續，為目前最高優先待處理項目。詳見 `report_s2_attribution.html` 與 `xauusd/claude/ANALYSIS_SKILL.md`「S2-Hammer V1.9 真實逐筆歸因結論」。
 
 > **單一事實來源（20260705 起）**：策略版本/參數/績效數字以 `xauusd/claude/ANALYSIS_SKILL.md` 為準（每次「請分析」都會讀取，更新最頻繁）。本檔（CLAUDE.md）與 `xauusd/index.html`、`xauusd/.claude/memory/project_context.md` 的對應數字都應該「從 ANALYSIS_SKILL.md 抄過來」，不要三處各自維護；發現三處數字不一致時，以 ANALYSIS_SKILL.md 為準並回頭修正其他兩處。
 

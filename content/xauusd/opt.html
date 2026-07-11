@@ -24,7 +24,14 @@
             <span style="color:var(--muted)">V3.4（504 筆）：WR 53.2% / PF 1.525 / +$6,137 / MDD $494</span><br>
             <span style="color:#86efac">V3.7（459 筆）：WR 55.12% / PF 1.743 / +$7,577 / MDD $391</span>
           </div>
+          <div style="margin-top:8px;font-size:.8em;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);border-radius:6px;padding:8px">
+            <strong style="color:#7dd3fc">V3.9（測試版）vs V3.7 對比（共同期間）</strong><br>
+            <span style="color:var(--muted)">V3.7（459 筆）：WR 55.1% / PF 1.743 / +$7,578 / MDD $346</span><br>
+            <span style="color:#7dd3fc">V3.9（445 筆）：WR 56.4% / PF 1.888 / +$8,504 / MDD $378</span><br>
+            <span style="color:var(--muted);font-size:.9em">核心變因：BB Source close→ohlc4；filter①②（1H MA + BBW高檔）與 V3.7 相同</span>
+          </div>
           <div class="report-links" style="margin-top:10px">
+            <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.9_real.html" style="background:linear-gradient(135deg,#0c4a6e,#38bdf8);border-color:#38bdf8;color:white">🔬 V3.7 vs V3.9 真實逐筆歸因 🧪</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7_real.html" style="background:linear-gradient(135deg,#0c4a6e,#0284c7);border-color:#38bdf8;color:white">🔬 V3.4 vs V3.7 真實逐筆歸因 ★</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7.html" style="background:linear-gradient(135deg,#14532d,#16a34a);border-color:#22c55e;color:white">📄 V3.7 完整報告</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report.html">📄 V3.4 完整報告</a>
@@ -50,15 +57,20 @@
           <div style="margin-top:6px;font-size:.8em;color:var(--muted)">⚠️ STRONG BUY 期最差（WR 34.4%）；最佳：NEUTRAL（WR 66.7%，PF 4.71）</div>
         </div>
         <div class="card">
-          <div class="card-title">📊 S2-Hammer <span class="badge badge-yellow">V2.2</span></div>
+          <div class="card-title">📊 S2-Hammer <span class="badge badge-yellow">V1.9</span></div>
           <div class="grid-2" style="gap:10px">
-            <div class="metric-card"><div class="metric-label">勝率</div><div class="metric-val yellow">44.0%</div></div>
-            <div class="metric-card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.681</div></div>
-            <div class="metric-card"><div class="metric-label">淨盈虧</div><div class="metric-val green">+$7,722</div></div>
-            <div class="metric-card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$1,431</div></div>
+            <div class="metric-card"><div class="metric-label">勝率</div><div class="metric-val yellow">41.3%</div></div>
+            <div class="metric-card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.54</div></div>
+            <div class="metric-card"><div class="metric-label">淨盈虧</div><div class="metric-val green">+$7,216</div></div>
+            <div class="metric-card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$2,414</div></div>
           </div>
-          <div style="margin-top:12px;font-size:.82em;color:var(--muted)">主要問題：time_bleed 54% · 200 筆交易</div>
+          <div style="margin-top:12px;font-size:.82em;color:var(--muted)">主要問題：time_bleed 57% · 225 筆交易（20260711 重匯到最新日期，較先前 200 筆基準）</div>
+          <div style="margin-top:8px;font-size:.8em;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:6px;padding:8px">
+            <strong style="color:#fca5a5">⚠ 新樣本 OOS 檢驗未通過</strong><br>
+            <span style="color:var(--muted)">全樣本 WR 41.1%/PF 1.53（較 200 筆基準的 44.0%/1.681 下滑）；OOS（後30%）WR 27.9%/PF 0.92——低於損益兩平，過去邊際優勢在最新 2.5 個月樣本外資料中未延續</span>
+          </div>
           <div class="report-links">
+            <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_s2_attribution.html" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);border-color:#ef4444;color:white">🔬 真實逐筆歸因 + OOS ⚠</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report.html">完整報告 →</a>
             <a class="report-link" href="#" onclick="goToMacroBacktest();return false;" style="border-color:var(--purple);color:var(--purple)">📊 宏觀回測結果 →</a>
           </div>
@@ -583,18 +595,20 @@
     <div id="xauusd-opt-s2b" class="tab-panel">
       <div class="part-label"><span class="part-badge">PART 1</span>S2-Hammer 精華重點</div>
       <div class="grid-4">
-        <div class="metric-card card"><div class="metric-label">勝率</div><div class="metric-val yellow">44.0%</div><div class="metric-sub">200 筆交易</div></div>
-        <div class="metric-card card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.681</div><div class="metric-sub">淨盈虧 +$7,722</div></div>
-        <div class="metric-card card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$1,431</div><div class="metric-sub">三策略中最高</div></div>
-        <div class="metric-card card"><div class="metric-label">time_bleed</div><div class="metric-val red">54%</div><div class="metric-sub">持倉超時的虧損</div></div>
+        <div class="metric-card card"><div class="metric-label">勝率</div><div class="metric-val yellow">41.3%</div><div class="metric-sub">225 筆交易（20260711更新）</div></div>
+        <div class="metric-card card"><div class="metric-label">獲利因子</div><div class="metric-val green">1.54</div><div class="metric-sub">淨盈虧 +$7,216</div></div>
+        <div class="metric-card card"><div class="metric-label">最大回撤</div><div class="metric-val red">-$2,414</div><div class="metric-sub">三策略中最高</div></div>
+        <div class="metric-card card"><div class="metric-label">time_bleed</div><div class="metric-val red">57%</div><div class="metric-sub">持倉超時的虧損</div></div>
       </div>
       <div class="insight-grid">
-        <div class="insight bad"><strong>❌ time_bleed 最嚴重</strong>54% 虧損是超時持倉，三策略中最高<br>→ V2.2 已加入 strategy.close() 時間止損</div>
+        <div class="insight bad"><strong>⚠ OOS 未通過（20260711 新樣本）</strong>後30%樣本外 WR 27.9%/PF 0.92，低於損益兩平<br>→ 見「真實逐筆歸因 + OOS」報告，優化路線最高優先</div>
+        <div class="insight bad"><strong>❌ time_bleed 最嚴重</strong>57% 虧損是超時持倉，三策略中最高；85% 曾有 MFE≥0.3% 理論可救回<br>→ V2.4.1 已加入互斥過濾器 + 提早保本（測試中）</div>
         <div class="insight warn"><strong>⚠ near_upper 有陷阱</strong>near_upper（%B 0.8–1.0）WR 只有 14.3%（n=7）<br>lower_mid（%B 0.2–0.4）WR 50.0%（n=10）最好</div>
         <div class="insight info"><strong>📊 時段差異</strong>亞盤勝率 39.5%（最差）；美盤 49.3%（最佳）<br>→ 考慮關閉亞盤進場</div>
         <div class="insight good"><strong>✅ DXY 超賣時最佳</strong>DXY RSI &lt; 30：66.7% WR</div>
       </div>
       <div class="report-links">
+        <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_s2_attribution.html" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);border-color:#ef4444;color:white">🔬 真實逐筆歸因 + OOS ⚠</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report.html">📄 完整報告</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.3.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">★ V2.3</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.2.pine">🧪 V2.2</a>

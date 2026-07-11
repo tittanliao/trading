@@ -29,8 +29,12 @@ metadata:
 ## XAUUSD 現況
 策略版本/績效持續迭代中，這裡不重複列數字（避免和其他三處打架）。
 最新狀態請看 `xauusd/claude/ANALYSIS_SKILL.md`（單一事實來源，每次「請分析」都會讀取更新）
-或 `xauusd/CLAUDE.md`「現有策略最新績效」表。截至 2026-07-05：S1-AweWithBB 已升級到 V3.7（確認版），
-S2-RSI / S2-Hammer 仍在測試新的 Regime+Z-Score 過濾器版本（V2.4 / V2.3，尚未做真實逐筆歸因）。
+或 `xauusd/CLAUDE.md`「現有策略最新績效」表。截至 2026-07-11：S1-AweWithBB 現行確認版仍是 V3.7；
+V3.9（測試版，BB Source close→ohlc4）初步真實回測共同期間對照優於 V3.7（WR/PF/淨利皆升，MDD 微升），
+但未經完整驗證流程，不算升版。**S2-Hammer V1.9 基準 CSV 重匯到 2026-07-11（200→225筆）後，
+OOS（樣本外）檢驗未通過**（後30%勝率僅27.9%/PF 0.92，低於損益兩平）——過去邊際優勢在近 2.5 個月
+新資料中未延續，是目前最高優先待處理項目；詳見 `report_s2_attribution.html`。
+S2-RSI 仍在測試 Regime+Z-Score 過濾器版本（V2.4，尚未重匯 CSV 做同等驗證）。
 
 ## FVG 策略（2026-06-14 完成）
 - **FVG V1.0**：單 FVG 追蹤，Pine Script v6，Long/Short 可設定，Profit Flyer 出場

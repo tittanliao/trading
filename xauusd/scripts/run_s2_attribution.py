@@ -47,7 +47,7 @@ sys.path.insert(0, str(ROOT / "xauusd"))
 from analysis import loader, fail_patterns, metrics
 
 RSI_CSV    = ROOT / "xauusd/XAUUSD-Long-S2-RSI/S2-Hybrid-V2.0_FX_IDC_XAUUSD_2026-04-26.csv"
-HAMMER_CSV = ROOT / "xauusd/XAUUSD-Long-S2-Hammer/S2-Pullback-V1.9_FX_IDC_XAUUSD_2026-04-26.csv"
+HAMMER_CSV = ROOT / "xauusd/XAUUSD-Long-S2-Hammer/S2-Pullback-V1.9_FX_IDC_XAUUSD_2026-07-11.csv"  # 20260711 重匯到最新日期，200→225筆
 H4_CSV     = ROOT / "xauusd/csv/FX_IDC_XAUUSD, 240.csv"
 OUT_HTML   = ROOT / "xauusd/XAUUSD-Long-S2-Hammer/report_s2_attribution.html"
 

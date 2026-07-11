@@ -26,7 +26,7 @@ STRATEGIES = [
         "id": "S2-Hammer",         # Left-side reversion: price-action triggered (hammer candle)
         "version": "1.9",
         "folder": ROOT / "XAUUSD-Long-S2-Hammer",
-        "trades_csv": "S2-Pullback-V1.9_FX_IDC_XAUUSD_2026-04-26.csv",
+        "trades_csv": "S2-Pullback-V1.9_FX_IDC_XAUUSD_2026-07-11.csv",  # 20260711 重匯到最新日期，200→225筆
     },
 ]
 
