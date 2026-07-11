@@ -2,6 +2,18 @@
   {
     "date": "2026-07-11",
     "tag": "xauusd",
+    "title": "S2-Hammer V3.2 逐筆OOS雙重驗證：真實改善但未完全解決",
+    "items": [
+      "使用者提供 V3.2（HTF 1H RSI bearish阻擋+S2-RSI互斥30m RSI上穿20，TP1/TP2=2R/4R）逐筆List of Trades CSV（157筆），新增 run_s2_hammer_v32_oos.py 做雙重OOS驗證",
+      "<b>驗證A（V3.2自己的70/30切分）</b>：IS(n=109) WR53.2%/PF2.49 → OOS(n=48) WR33.3%/PF1.35——PF勉強過門檻，但勝率落差-19.9pp遠超8pp門檻，仍未通過",
+      "<b>驗證B（V3.2在V1.9-OOS相同日曆區間2026-01-22後的表現，更嚴格對照）</b>：V3.2有39筆交易WR30.8%/PF1.23/淨利+——比V1.9同期間（WR27.9%/PF0.92）確實進步，但仍是脆弱的邊際優勢",
+      "<b>結論：真實、可量化的改善（不是全樣本數字假象），但不是「問題解決」</b>——IS→OOS勝率大幅衰退的模式依然存在，暗示錘頭型態本身在近期市場結構下的辨識力可能也在減弱，不只是合流訊號需要過濾。不建議急著升版確認",
+      "報告 report_v32_oos.html 已生成，ANALYSIS_SKILL.md/CLAUDE.md/project_wip.md/xauusd.html已同步更新，下一步方向：疊加提早保本規則、持續觀察V3.2穩定性、或重新檢視錘頭型態定義"
+    ]
+  },
+  {
+    "date": "2026-07-11",
+    "tag": "xauusd",
     "title": "解析TradingView手動回測記錄xlsx，S2-Hammer V3.2全樣本大幅改善但OOS待驗證",
     "items": [
       "解析使用者提供的 Strategy_analysis_by_tittan.xlsx（8組S1/S2 TradingView Strategy Tester手動記錄）",
