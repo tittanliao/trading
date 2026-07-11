@@ -2,6 +2,19 @@
   {
     "date": "2026-07-11",
     "tag": "xauusd",
+    "title": "S2 更名（S2-RSI/S2-Hammer）+ 真實逐筆歸因 + 濾網對決 + time_bleed 解剖",
+    "items": [
+      "<b>更名</b>：S2A-RSI→S2-RSI、S2B-Hammer→S2-Hammer（資料夾/pine/活文件全面更新；Pine entry ID S2A_LE/S2B_LE 不動，TV alert 與歷史 CSV 依賴）",
+      "<b>Step 0 歸因+OOS</b>：兩策略均通過門檻但 OOS 段皆走弱——S2-RSI PF 1.71→1.58、S2-Hammer PF 1.82→1.42（勝率落差 7.7pp 貼著 8pp 門檻），edge 存在但近期變薄",
+      "<b>Step 1 濾網對決（意外結論）</b>：S2-RSI 互斥過濾（PF 2.09）完勝 Z-Score 過濾（PF 1.72）；兩者重疊度僅 9%、疊加無增益——互斥抓的是更廣的「深回檔環境」（合流組 Z 中位 -1.22 vs 單獨組 +1.08），不是 Z 陷阱區的另一種寫法",
+      "<b>推翻舊結論</b>：H1 分析的「Z -1.5~-0.5 甜蜜區 73%」在完整 2 年回測不成立（S2-RSI 該區僅 34%，n=44）——又一個小樣本結論被大樣本修正",
+      "<b>Step 2 time_bleed 解剖（方向反轉）</b>：贏單持倉中位 176-188 bars、90% 贏單都是慢贏——<b>激進時間止損會殺死 9 成贏單，不可行</b>；正解是提早移保本：83-84% 拖死虧損單曾有 MFE≥0.3%，「+0.3% 即移保本」可攔截大部分 time_bleed 而不傷慢贏（需 bar-level 驗證）",
+      "下一步：S2-Hammer V2.4.1 測試版實作「S2-RSI 互斥過濾器」+ 提早保本觸發，TradingView 驗證。<a href='xauusd/XAUUSD-Long-S2-Hammer/report_s2_attribution.html' target='_blank'>S2 歸因報告 →</a>"
+    ]
+  },
+  {
+    "date": "2026-07-11",
+    "tag": "xauusd",
     "title": "S2A×S2B 合流分析 — 合併假設被推翻，合流是反指標",
     "items": [
       "<b>檢驗「S2A+S2B 合併」假設</b>：用兩份真實逐筆 CSV（S2A 161筆 / S2B 200筆，2024-01~2026-04）分析兩策略同時觸發（±12h）的交易品質",
