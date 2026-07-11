@@ -273,11 +273,17 @@ if show_regime_table and barstate.islast
 //------------------------------------------------------------------------------
 // 6. 統計表格 (Stats)
 //------------------------------------------------------------------------------
-var wins_total = array.new_int(5,0), var losses_total = array.new_int(5,0)
-var wins_asia  = array.new_int(5,0), var losses_asia  = array.new_int(5,0)
-var wins_euro  = array.new_int(5,0), var losses_euro  = array.new_int(5,0)
-var wins_us    = array.new_int(5,0), var losses_us    = array.new_int(5,0)
-var entryWeekdays = array.new_int(), var entrySessions = array.new_int(), var entryPrices = array.new_float()
+var wins_total = array.new_int(5,0)
+var losses_total = array.new_int(5,0)
+var wins_asia = array.new_int(5,0)
+var losses_asia = array.new_int(5,0)
+var wins_euro = array.new_int(5,0)
+var losses_euro = array.new_int(5,0)
+var wins_us = array.new_int(5,0)
+var losses_us = array.new_int(5,0)
+var entryWeekdays = array.new_int()
+var entrySessions = array.new_int()
+var entryPrices = array.new_float()
 
 t_us   = time(timeframe.period, "2030-0500", "Asia/Taipei")
 t_euro = time(timeframe.period, "1500-2030", "Asia/Taipei")
@@ -287,8 +293,10 @@ if strategy.position_size[1] == 0 and strategy.position_size > 0
     array.push(entryWeekdays, wd)
     array.push(entryPrices, strategy.position_avg_price)
     sess_id = 0
-    if not na(t_us),   sess_id := 2
-    else if not na(t_euro), sess_id := 1
+    if not na(t_us)
+        sess_id := 2
+    else if not na(t_euro)
+        sess_id := 1
     array.push(entrySessions, sess_id)
 
 if strategy.position_size[1] > 0 and strategy.position_size == 0 and array.size(entryWeekdays) > 0
@@ -298,17 +306,25 @@ if strategy.position_size[1] > 0 and strategy.position_size == 0 and array.size(
     idx  = wd - 2
     if idx >= 0 and idx < 5
         is_win = close - ep > 0
-        if is_win, array.set(wins_total, idx, array.get(wins_total,idx)+1)
-        else,      array.set(losses_total,idx, array.get(losses_total,idx)+1)
+        if is_win
+            array.set(wins_total, idx, array.get(wins_total,idx)+1)
+        else
+            array.set(losses_total, idx, array.get(losses_total,idx)+1)
         if sess==0
-            if is_win, array.set(wins_asia, idx, array.get(wins_asia, idx)+1)
-            else,      array.set(losses_asia,idx, array.get(losses_asia,idx)+1)
+            if is_win
+                array.set(wins_asia, idx, array.get(wins_asia, idx)+1)
+            else
+                array.set(losses_asia, idx, array.get(losses_asia,idx)+1)
         else if sess==1
-            if is_win, array.set(wins_euro, idx, array.get(wins_euro, idx)+1)
-            else,      array.set(losses_euro,idx, array.get(losses_euro,idx)+1)
+            if is_win
+                array.set(wins_euro, idx, array.get(wins_euro, idx)+1)
+            else
+                array.set(losses_euro, idx, array.get(losses_euro,idx)+1)
         else if sess==2
-            if is_win, array.set(wins_us,   idx, array.get(wins_us,  idx)+1)
-            else,      array.set(losses_us,  idx, array.get(losses_us,  idx)+1)
+            if is_win
+                array.set(wins_us, idx, array.get(wins_us, idx)+1)
+            else
+                array.set(losses_us, idx, array.get(losses_us, idx)+1)
 
 var table stats = table.new(position.bottom_right, show_detail_stats?5:2, 6, border_width=1, frame_color=color.black, frame_width=1)
 f_txt(w,l) =>
@@ -325,10 +341,14 @@ if show_table
     else
         table.cell(stats,1,0,"Win/Loss",text_color=color.white,bgcolor=color.gray)
     for i = 0 to 4
-        wa=array.get(wins_asia,i),  la=array.get(losses_asia,i)
-        we=array.get(wins_euro,i),  le=array.get(losses_euro,i)
-        wu=array.get(wins_us,i),    lu=array.get(losses_us,i)
-        wt=array.get(wins_total,i), lt=array.get(losses_total,i)
+        wa = array.get(wins_asia,i)
+        la = array.get(losses_asia,i)
+        we = array.get(wins_euro,i)
+        le = array.get(losses_euro,i)
+        wu = array.get(wins_us,i)
+        lu = array.get(losses_us,i)
+        wt = array.get(wins_total,i)
+        lt = array.get(losses_total,i)
         dl = i==0?"Mon":i==1?"Tue":i==2?"Wed":i==3?"Thu":"Fri"
         table.cell(stats,0,i+1,dl,text_color=color.black,bgcolor=color.new(color.gray,90))
         if show_detail_stats
