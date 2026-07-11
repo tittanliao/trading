@@ -100,7 +100,7 @@ def _exp_row_tx(r: dict, direction: str) -> str:
     )
 
 def _xauusd_macro_html() -> str:
-    csv_path = ROOT / "xauusd/csv/FX_IDC_XAUUSD, 1W.csv"
+    csv_path = ROOT / "xauusd/csv/20260711/FX_IDC_XAUUSD, 1W.csv"  # 20260711 重匯到最新日期
     if not csv_path.exists():
         return '<div id="xauusd-main-macro" class="main-section"><div class="tab-panel active"><p style="padding:24px;color:var(--muted)">週線 CSV 未找到</p></div></div>'
 
@@ -110,7 +110,8 @@ def _xauusd_macro_html() -> str:
     df = df.sort_values('time').reset_index(drop=True)
     df['close'] = pd.to_numeric(df['close'], errors='coerce')
     df['open']  = pd.to_numeric(df['open'],  errors='coerce')
-    df['RSI']   = pd.to_numeric(df['RSI'],   errors='coerce')
+    # 20260711 起匯出可能是純OHLC（無RSI欄位）；rsi_end 目前無下游消費者，缺欄位時填NaN即可
+    df['RSI']   = pd.to_numeric(df['RSI'], errors='coerce') if 'RSI' in df.columns else float('nan')
     df['year']  = df['time'].dt.year
     df['month'] = df['time'].dt.month
     df['week_of_month'] = df.groupby(['year', 'month']).cumcount() + 1

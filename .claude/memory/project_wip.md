@@ -13,6 +13,20 @@ metadata:
 - ✅ S1 V3.9（測試版：Filter編號化＋BB Source改ohlc4＋持倉中提示等 UI 改動）真實回測 CSV
   已匯入，新增 `run_s1_v39_real_attribution.py` 對照 V3.7（共同期間內 V3.9 全面小幅優於 V3.7）
 - ✅ 兩份報告與 xauusd.html / sitemap.html / ANALYSIS_SKILL.md 已同步更新
+- ✅ **價格 CSV 重匯到 20260711**（30/60/240/1D/1W × XAUUSD+DXY），舊版移到 `csv/20260705/`，
+  新版放 `csv/20260711/`；`analysis/config.py` 的 `CSV_DIR` 已指向新資料夾
+  - ⚠️ **重要發現**：新匯出是純 OHLC，**沒有 RSI/RSI-based MA/背離欄位**（舊版有）。
+    已在 `loader.py` 加上自動 fallback：偵測到缺欄位時本地計算 Wilder RSI(14)+SMA(14)
+    （公式取自 `XAUUSD-Macro-v3.7.pine` 的指標定義），下次「請分析」或匯出新CSV前不用特別注意，
+    這是永久性修復——但若之後想要更精確的背離訊號，仍建議請 TradingView 匯出時帶上 RSI 指標疊加
+  - main.py 全策略 + run_s2_attribution.py 已用新資料重跑，K-bar/MTF/DXY 覆蓋率從 April 27
+    延伸到 July 11（S2-Hammer K-bar coverage 19%→52%、60m MTF 覆蓋率大幅提升），
+    OOS/勝率/PF等頭條數字不受影響（交易CSV本身沒變，只是進場前情境補完整）
+  - ⚠️ **尚未修復**：`scripts/macro_analysis.py`、`run_macro_backtest.py`、
+    `run_real_strategy_macro_backtest.py`、`analyze_h1_regime.py`、`run_fvg_experiments.py`
+    這幾支腳本各自寫死 `xauusd/csv/`（不走 config.py），舊檔案已被搬走，**目前會
+    FileNotFoundError**。這幾支不在本輪常跑清單內所以沒動，若之後要跑要記得先改路徑
+    （部分還讀取 GVZ/VIX/T10Y，這些檔案沒被搬動，改路徑前要逐一確認別break）
 
 ## 🔴 新的最高優先：S2-Hammer OOS 失敗待處理
 V1.9 原始邏輯（未開任何 V2.x 過濾器）在新樣本外資料（近 2.5 個月）勝率僅 27.9%、PF 0.92，

@@ -7,7 +7,9 @@ The analysis pipeline will automatically pick it up.
 from pathlib import Path
 
 ROOT    = Path(__file__).parent.parent
-CSV_DIR = ROOT / "csv"
+CSV_DIR = ROOT / "csv" / "20260711"  # 20260711 重匯到最新日期；舊版存於 csv/20260705/
+                                       # ⚠️ 新匯出無 RSI/RSI-based MA/背離欄位（純OHLC），
+                                       # loader._parse_price_df 會自動用 close 本地補算 RSI(14)+SMA(14)
 
 STRATEGIES = [
     {

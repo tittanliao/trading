@@ -2,6 +2,18 @@
   {
     "date": "2026-07-11",
     "tag": "xauusd",
+    "title": "價格CSV重匯到最新日期 + 發現新匯出缺RSI欄位，加自動補算fallback",
+    "items": [
+      "價格CSV（30/60/240/1D/1W × XAUUSD+DXY）重匯到2026-07-11，舊版存 csv/20260705/，新版 csv/20260711/，config.py CSV_DIR已指向新資料夾",
+      "<b>⚠️ 發現新匯出是純OHLC，缺RSI/RSI-based MA/背離欄位</b>（舊版有）——若直接切換會讓 divergence.py 的 swing 偵測 KeyError 崩潰，其餘模組會靜默退化成NaN/0%覆蓋率（更危險，不會報錯但數字失真）",
+      "<b>永久修復</b>：loader.py 新增自動fallback，偵測缺欄位時用close本地計算Wilder RSI(14)+SMA(14)（公式取自XAUUSD-Macro-v3.7.pine指標定義）；已確認divergence.py不依賴TradingView原生背離標籤欄位，只需要rsi欄位即可正常運作",
+      "main.py全策略+run_s2_attribution.py用新資料重跑：S2-Hammer K-bar覆蓋率19%→52%、60m MTF覆蓋率大幅提升、4H覆蓋率93%；OOS/WR/PF等頭條數字不受影響（交易CSV沒變，只是進場前情境補完整）",
+      "⚠️ 尚未修復：macro_analysis.py/run_macro_backtest.py/run_real_strategy_macro_backtest.py/analyze_h1_regime.py/run_fvg_experiments.py 寫死舊版xauusd/csv/路徑（不走config.py），檔案已搬走會FileNotFoundError，非本輪常跑清單暫緩處理"
+    ]
+  },
+  {
+    "date": "2026-07-11",
+    "tag": "xauusd",
     "title": "S2-Hammer CSV重匯發現OOS未過 + S1 V3.9真實回測對照",
     "items": [
       "<b>S2-Hammer V1.9 基準重匯到最新日期（200→225筆，2024-01~2026-07-11）</b>：全樣本WR 44.0%→41.1%、PF 1.681→1.53；<b>⚠️ OOS（後30%）勝率僅27.9%/PF 0.92，低於損益兩平</b>——過去邊際優勢在近2.5個月新資料中未延續，PF門檻與勝率落差門檻雙雙未過，列為目前最高優先待處理項目",

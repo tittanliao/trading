@@ -107,6 +107,28 @@ def load_trades(csv_path: Path) -> pd.DataFrame:
     return trades.sort_values("entry_time").reset_index(drop=True)
 
 
+def _compute_rsi_locally(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Recompute RSI(14) + RSI-based MA(14) from close when the TradingView export
+    is plain OHLC (no indicator overlay columns) — e.g. 20260711 XAUUSD/DXY exports.
+
+    Matches XAUUSD-Macro-v3.7.pine's indicator definition: Wilder's RSI(14) on
+    close (RMA smoothing) + SMA(14) of RSI as the "RSI-based MA". Uses
+    ewm(alpha=1/14, adjust=False) as a vectorized approximation of RMA — the
+    seed differs slightly from TradingView's SMA-seeded warm-up, but the
+    transient decays within ~50 bars, well before MaxUseBars-gated trades begin.
+    """
+    delta = df["close"].diff()
+    gain = delta.clip(lower=0)
+    loss = -delta.clip(upper=0)
+    avg_gain = gain.ewm(alpha=1 / 14, adjust=False, min_periods=14).mean()
+    avg_loss = loss.ewm(alpha=1 / 14, adjust=False, min_periods=14).mean()
+    rs = avg_gain / avg_loss
+    df["rsi"] = 100 - 100 / (1 + rs)
+    df["rsi_ma"] = df["rsi"].rolling(14).mean()
+    return df
+
+
 def _parse_price_df(df: pd.DataFrame) -> pd.DataFrame:
     """Normalise a raw TradingView price/indicator CSV into a clean DataFrame."""
     df["time"] = (
@@ -121,6 +143,13 @@ def _parse_price_df(df: pd.DataFrame) -> pd.DataFrame:
         "Regular Bearish": "bear_div",
     }
     df = df.rename(columns=rename_map)
+
+    if "rsi" not in df.columns:
+        # Export has no indicator overlay (plain OHLC) — compute locally so
+        # divergence/MTF/DXY-RSI analysis downstream still has real values
+        # instead of silently degrading to NaN/"unknown".
+        print("  [loader] RSI/RSI-MA missing from CSV — computed locally (Wilder RSI14 + SMA14)")
+        df = _compute_rsi_locally(df)
 
     keep = ["time", "open", "high", "low", "close"]
     for col in ["rsi", "rsi_ma", "bull_div", "bear_div"]:
