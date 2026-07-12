@@ -1,11 +1,28 @@
 ---
 name: project-wip
-description: 進行中工作狀態（20260711 晚間，第五次更新）：提早保本已證實無效（推翻V2.4.1假設），time_bleed可能是結構性代價
+description: 進行中工作狀態（20260712 更新）：Footprint D模式實測PF 2.2、V4.1發布（含Gemini建議整合）；最優先=索取D模式逐筆CSV做OOS
 metadata:
   type: project
 ---
 
-# 進行中工作（20260711 晚間狀態）
+# 進行中工作（20260712 狀態）
+
+## 🚀 Footprint 主線（20260712 新增，目前最活躍）
+- **V4.0 實測**：S2-Hammer Footprint D 模式（POC上半部+低檔買方吸收堆疊）**PF 2.047→2.2**，
+  其他模式無明顯變化；`request.footprint(ticks_per_row, va_percent, imbalance_percent)` API 已確認可編譯
+- **V4.1 已發布**（S1 + S2-Hammer，皆基於 xlsx 最佳參數版）：
+  - S2：fp_mode 預設改 D；新增 G（D+恐慌爆量）/H（trapped sellers）/I（收回價值區）；
+    FILTER⑩ Volume Climax、⑪ DXY死亡區間阻擋（數據驅動：阻擋 DXY RSI 30-50，非 Gemini 直覺的強勢區）
+  - S1：FILTER⑦ Weekly VWAP、⑧ Volume Surge、⑨ DXY Alignment（Gemini 建議採納，全預設 OFF）
+  - Gemini 的 Micro Bounce（1m array）未採納：security_lower_tf 歷史深度限制 + 資訊劣於 footprint
+- **🔴 下一步最優先**：請使用者匯出 V4.0/V4.1 D 模式的逐筆 List of Trades CSV
+  （命名建議 `S2-Hammer-V4.0-FPD_FX_IDC_XAUUSD_<日期>.csv`），用 `run_s2_hammer_v32_oos.py`
+  同款雙重方法驗證 PF 2.2 是否過 OOS——**先確認 footprint 資料覆蓋率**（狀態表格有顯示）：
+  若歷史K棒多為 na（na→pass），則 D 模式實際只作用在近期資料，PF 提升反而更可能是真實近期改善
+- 次要：TV 測 G/H 模式與 D 對照；D 參數粗掃（poc_min_pos 50/55/60、stack_n 2/3、imbalance 200/300/400，
+  警惕過擬合，只做粗網格）
+
+# 20260711 晚間狀態（保留備查）
 
 ## 🟡 S2-Hammer OOS 問題現況：V3.2 有改善但未解決，非阻塞性持續觀察
 最新結論（詳見 `report_v32_oos.html` 與 ANALYSIS_SKILL.md「V3.2 逐筆 OOS 驗證結論」）：

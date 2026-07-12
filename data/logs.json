@@ -1,5 +1,17 @@
 [
   {
+    "date": "2026-07-12",
+    "tag": "xauusd",
+    "title": "Footprint V4.0 實測D模式PF 2.05→2.2 + V4.1整合Gemini雙核心建議",
+    "items": [
+      "<b>V4.0 實測回報</b>：S2-Hammer Footprint 模式 D（POC上半部+低檔買方吸收堆疊）PF 2.047→2.2，其他模式無明顯變化——「吸收邏輯」獲得初步驗證；request.footprint() API 簽名確認可編譯",
+      "<b>V4.1（S1+S2）發布</b>：S2 fp_mode 預設改 D、新增 G（D+恐慌爆量）/H（trapped sellers）/I（收回價值區）三模式；新增 FILTER⑩ Volume Climax、⑪ DXY死亡區間阻擋",
+      "<b>Gemini 建議逐項評估</b>：S1 Weekly VWAP/Volume Surge/DXY Alignment 三項採納（V4.1 FILTER⑦⑧⑨，全預設OFF）；S2 Volume Climax 採納；<b>S2 DXY Block 依數據修正</b>——歸因實測 DXY RSI 30-50 才是死亡區間（WR 34.6%），RSI>70 反而 44.4%，故改為「阻擋30-50區間」而非 Gemini 直覺的「阻擋強勢區」",
+      "<b>Micro Bounce（1m array）未採納</b>：與 Footprint C/D 同機制但 request.security_lower_tf 歷史深度受限（2年回測僅覆蓋最近數月），且 footprint 每價位買賣量+失衡資訊嚴格優於 1m close 序列",
+      "下一步：①匯出 D 模式逐筆 CSV 做雙重 OOS 驗證（PF 2.2 需確認非 IS 幻覺）②檢查狀態表格 footprint 覆蓋率 ③测 G/H 模式與 D 對照"
+    ]
+  },
+  {
     "date": "2026-07-11",
     "tag": "xauusd",
     "title": "提早保本參數掃描：所有門檻皆無效，推翻V2.4.1「不傷慢贏」假設",
