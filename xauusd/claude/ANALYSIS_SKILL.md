@@ -242,6 +242,21 @@ V4.1 = V3.2 + Footprint FILTER③ D 模式（POC上半部+低檔買方吸收堆�
   建議：不急升版，讓 V4.1 繼續累積 footprint 覆蓋期的實測資料，每月重匯 CSV 追蹤
   「footprint 生效段」的 WR/PF 是否維持在 PF>1.4 水準；同時可測模式 G（D+恐慌爆量）對照。
 
+#### Python 全 filter 最佳化首跑（20260712，2.5年完整匯出資料，詳見 `report_s1s2_optimizer.html`）
+工作流：TV 30m 圖掛 `XAUUSD-S1S2-Export-V1.pine` → Export chart data（29,809根，2024-01~2026-07）→
+`run_s1s2_filter_optimizer.py` 網格掃描。校驗 6/8 完美（corr≈1.0000）；引擎吻合率 S1 92%/S2 87%
+（絕對值略偏、相對排序可信）。
+- **S2 最強發現：DXYband(block DXY RSI 30-50) 出現在 n≥60 前10名全部組合**——死亡區間濾網被
+  獨立驗證。n≥60 榜首 = HTFRSIbear(60m)+Mutex20+DXYband+FP_D(stack≥3)：n=102 WR47.1%
+  **PF2.95** OOS PF2.85（現行 V4.1 約 2.2）。改動只需在 V4.1 pine 開 FILTER⑪ + fp_stack_n=3。
+- **S2 小樣本警示**：VolClimax(2×) 單獨 n=23/PF5.9 是 score 榜首但 OOS 僅4-5筆——幻覺，
+  不可作主配置；但「恐慌爆量錘頭」為 2.5 年僅 23 次的稀有高品質 setup，適合獨立 sniper alert。
+- **S1 兩條路線**：量產線 = HTF_MA(240m,3)+BBWHigh（n=413 PF2.07 netR182 總利潤最大，
+  等於把現行 FILTER① 時框 60→240）；精兵線 = +WeeklyVWAP+DXYweak(+FP_S1A Δ≥20%)
+  （n=153-163 PF2.29-2.34 OOS2.47-2.86 質量最高）。Gemini 的 VWAP/DXY 建議雙雙通過 OOS。
+- 注意：多重比較下前幾名差異可能是雜訊，**可信的是反覆出現的 filter**（S2=DXYband/FP_D、
+  S1=WVWAP+DXYweak）；最終入選配置仍需回 TV 全歷史逐筆驗證。
+
 #### V3.2 fail-pattern 對照（20260711，暫切 `analysis/config.py` 到 V3.2 重跑 main.py 產生，詳見 `report_v3.2.html`）
 - **過濾器只砍到 immediate_loss，time_bleed 完全沒被處理**：immediate_loss 佔虧損單比例
   16.8%→10.8%（HTF bearish 阻擋確實在防止方向性錯誤進場）；但 time_bleed 佔比 ~54-57%→57.8%，

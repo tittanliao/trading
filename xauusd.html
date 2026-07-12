@@ -478,7 +478,12 @@
             <span style="color:#7dd3fc">V3.9（445 筆）：WR 56.4% / PF 1.888 / +$8,504 / MDD $378</span><br>
             <span style="color:var(--muted);font-size:.9em">核心變因：BB Source close→ohlc4；filter①②（1H MA + BBW高檔）與 V3.7 相同</span>
           </div>
+          <div style="margin-top:8px;font-size:.8em;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25);border-radius:6px;padding:8px">
+            <strong style="color:#c4b5fd">🧮 Python 最佳化（20260712）：兩條路線</strong><br>
+            <span style="color:var(--muted)">量產線 = HTF MA 60m→240m（n=413 PF2.07 總利潤最大）；精兵線 = +Weekly VWAP+DXY弱勢(+FP Δ≥20%)（n=153 PF2.34/OOS2.86 質量最高）——Gemini 的 VWAP/DXY 建議雙雙通過 OOS</span>
+          </div>
           <div class="report-links" style="margin-top:10px">
+            <a class="report-link" href="xauusd/report_s1s2_optimizer.html" style="background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-color:#a78bfa;color:white">🧮 Python 全filter最佳化</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.9_real.html" style="background:linear-gradient(135deg,#0c4a6e,#38bdf8);border-color:#38bdf8;color:white">🔬 V3.7 vs V3.9 真實逐筆歸因 🧪</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7_real.html" style="background:linear-gradient(135deg,#0c4a6e,#0284c7);border-color:#38bdf8;color:white">🔬 V3.4 vs V3.7 真實逐筆歸因 ★</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7.html" style="background:linear-gradient(135deg,#14532d,#16a34a);border-color:#22c55e;color:white">📄 V3.7 完整報告</a>
@@ -525,7 +530,13 @@
             <strong style="color:#fca5a5">❌ 提早保本已證實無效（推翻V2.4.1假設）</strong><br>
             <span style="color:var(--muted)">真實K棒逐bar重建掃描0.10%~1.75%共12個門檻，V1.9/V3.2/OOS段全部淨損，最佳門檻也只接近打平。原因：慢贏單（持倉90h+）常見先小賺拉回進場價再反轉大漲，保本會腰斬這類單，砍贏家代價>救輸家好處——time_bleed可能是「讓贏家跑」的結構性代價，不建議開啟</span>
           </div>
+          <div style="margin-top:8px;font-size:.8em;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);border-radius:6px;padding:8px">
+            <strong style="color:#7dd3fc">🚀 V4.1（Footprint D 訂單流）：🟡 接近通過，方向強烈正向</strong><br>
+            <span style="color:var(--muted)">三版階梯 PF 1.53→2.05→<strong>2.27</strong>；footprint 資料僅2026/4起，改善全部集中在最需要救的近期（D篩掉14筆中11筆是輸單，精度79%）；V1.9-OOS同區間 PF 0.90→1.23→<strong>1.64</strong>。Python 2.5年網格最佳化榜首 = V4.1 + DXY死亡區間阻擋 + stack≥3（PF2.95/OOS2.85）</span>
+          </div>
           <div class="report-links">
+            <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_v41_oos.html" style="background:linear-gradient(135deg,#0c4a6e,#0284c7);border-color:#38bdf8;color:white">🔬 V4.1 Footprint OOS 🚀</a>
+            <a class="report-link" href="xauusd/report_s1s2_optimizer.html" style="background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-color:#a78bfa;color:white">🧮 Python 全filter最佳化</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_early_be_sweep.html" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);border-color:#ef4444;color:white">🔬 提早保本掃描 ❌</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_v32_oos.html" style="background:linear-gradient(135deg,#78350f,#eab308);border-color:#eab308;color:white">🔬 V3.2 OOS 雙重驗證 🟡</a>
             <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_s2_attribution.html" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);border-color:#ef4444;color:white">🔬 真實逐筆歸因 + OOS ⚠</a>
@@ -581,6 +592,8 @@
               <tr><td>S1-AweWithBB</td><td class="ver-test">V3.6.2</td><td><span class="badge badge-yellow">測試中</span></td><td>BB %B ≥ 0.6 + 4H HTF RSI + lookahead_off 修正 + S1BB_LE 統一 label</td></tr>
               <tr><td>S1-AweWithBB</td><td class="ver-test">V3.6.3</td><td><span class="badge badge-yellow">測試中</span></td><td>Regime 過濾器：阻擋 BEAR_TREND（-0.28R）+ Low BBW&lt;30%（64% 假突破）</td></tr>
               <tr style="background:rgba(34,197,94,.06)"><td>S1-AweWithBB</td><td class="ver-test">V3.7 ★</td><td><span class="badge badge-yellow">測試中</span></td><td>精簡版：移除 GC1!/DXY/HTF 模組；Regime 拆 3 組獨立開關；1H MA(3) ON + BBW High 1H ≥70% ON；TP2 3.5R；時間止損 36 根 ｜ <strong>TV 回測 2024-01-02~2026-07-04：WR 55.12%（253/459）· PF 1.743 · +$7,577（+75.78%） · MDD $391（3.04%）</strong> ｜ <strong style="color:#38bdf8">已取得真實逐筆交易 CSV：歸因分析證實時間止損從未觸發、SL 率 46.8%→44.9%、TP2 佔比與均R同步提升</strong></td></tr>
+              <tr><td>S1-AweWithBB</td><td class="ver-test">V3.9</td><td><span class="badge badge-yellow">測試中</span></td><td>Filter 編號化 + <strong>BB Source close→ohlc4</strong>｜TV 全樣本 WR 56.2% / PF 1.869 / +84.7%（雙重驗證優於 V3.7，尚未完整 OOS 流程）</td></tr>
+              <tr><td>S1-AweWithBB</td><td class="ver-test">V4.1</td><td><span class="badge badge-yellow">測試中</span></td><td><strong>Footprint 訂單流過濾器</strong>（順勢確認：Delta同向/POC上移/買方堆疊，6模式下拉）+ Weekly VWAP + Volume Surge + DXY Alignment（Gemini建議）；全過濾器時框可調（Premium）</td></tr>
               <tr><td>S2-RSI</td><td class="ver-confirmed">V2.2</td><td><span class="badge badge-green">確認版</span></td><td>統一 S2A_LE + EMA group + 架構對齊</td></tr>
               <tr><td>S2-RSI</td><td class="ver-test">V2.3</td><td><span class="badge badge-yellow">測試中</span></td><td>時間止損修正（strategy.close()）+ 4H HTF RSI 過濾器</td></tr>
               <tr><td>S2-RSI</td><td class="ver-test">V2.4 ★</td><td><span class="badge badge-yellow">測試中</span></td><td>Regime 過濾器：阻擋 CONSOLIDATION（-0.98R）+ Z-Score 過濾器：阻擋 Z&lt;-2.5 陷阱（20% WR）</td></tr>
@@ -588,14 +601,21 @@
               <tr><td>S2-Hammer</td><td class="ver-test">V2.2</td><td><span class="badge badge-yellow">測試中</span></td><td>時間止損修正（strategy.close()）+ 4H HTF RSI 過濾器</td></tr>
               <tr style="background:rgba(34,197,94,.06)"><td>S2-Hammer</td><td class="ver-test">V2.4.1 ★</td><td><span class="badge badge-yellow">測試中</span></td><td><strong>S2-RSI 互斥過濾器</strong>（合流WR30.8%→單獨50.4%，20260711歸因）+ <strong>提早保本 +0.3%</strong>（攔截83% time_bleed且不傷慢贏）；Z-Score過濾器降級（被互斥涵蓋）</td></tr>
               <tr><td>S2-Hammer</td><td class="ver-test">V2.3</td><td><span class="badge badge-yellow">測試中</span></td><td>Regime 過濾器：阻擋 CONSOLIDATION（-0.98R）+ Z-Score 過濾器：阻擋 Z&lt;-2.5 陷阱（20% WR）</td></tr>
+              <tr><td>S2-Hammer</td><td class="ver-test">V3.2</td><td><span class="badge badge-yellow">測試中</span></td><td>Filter 編號化：HTF 1H RSI bearish 阻擋 + S2-RSI 互斥（RSI上穿20）預設 ON｜TV 全樣本 PF 2.047 / MDD 腰斬，但 OOS 勝率落差仍 19.9pp（改善未解決）；⚠️ 提早保本已證實無效（真實K棒逐bar掃描12門檻全淨損）</td></tr>
+              <tr style="background:rgba(34,197,94,.06)"><td>S2-Hammer</td><td class="ver-test">V4.1 ★</td><td><span class="badge badge-yellow">測試中</span></td><td><strong>Footprint D 模式預設 ON</strong>（POC上半部+低檔買方吸收堆疊，逆勢吸收邏輯）+ Volume Climax + DXY死亡區間阻擋｜逐筆雙重OOS：全樣本 PF 2.27、V1.9-OOS同區間 PF 0.90→1.23→<strong>1.64</strong>、D篩選精度79%，🟡接近通過（footprint資料僅2026/4起）</td></tr>
             </tbody>
           </table>
         </div>
         <div class="report-links">
-          <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.7.pine" style="background:linear-gradient(135deg,#14532d,#16a34a);border-color:#22c55e">S1 V3.7 ★🧪</a>
+          <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V4.1.pine" style="background:linear-gradient(135deg,#0c4a6e,#0284c7);border-color:#38bdf8;color:white">S1 V4.1（Footprint）🧪</a>
+          <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.9.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">S1 V3.9（ohlc4）🧪</a>
+          <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.7.pine" style="background:linear-gradient(135deg,#14532d,#16a34a);border-color:#22c55e">S1 V3.7 ★（現行確認版）</a>
+          <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V4.1.pine" style="background:linear-gradient(135deg,#0c4a6e,#0284c7);border-color:#38bdf8;color:white">S2-Hammer V4.1（Footprint D）★🧪</a>
+          <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V3.2.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">S2-Hammer V3.2 🧪</a>
+          <a class="report-link" href="xauusd/XAUUSD-S1S2-Export-V1.pine" style="border-color:#a78bfa;color:#a78bfa">S1S2 匯出指標（Python最佳化用）</a>
           <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.6.3.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">S1 V3.6.3 🧪</a>
           <a class="report-link" href="xauusd/XAUUSD-Long-S2-RSI/XAUUSD-Long-S2-RSI-V2.4.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">S2-RSI V2.4 ★🧪</a>
-          <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.4.1.pine" style="background:linear-gradient(135deg,#14532d,#16a34a);border-color:#22c55e">S2-Hammer V2.4.1 ★🧪</a>
+          <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.4.1.pine">S2-Hammer V2.4.1 🧪</a>
           <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.3.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">S2-Hammer V2.3 🧪</a>
           <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.6.2.pine">S1 V3.6.2 🧪</a>
           <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/XAUUSD-Long-S1-AweWithBB-V3.5.pine">S1 V3.5 ✅</a>
@@ -1065,18 +1085,22 @@
         <div class="insight bad"><strong>❌ time_bleed 最嚴重</strong>57% 虧損是超時持倉，三策略中最高<br>→ V3.2 已加入HTF/互斥過濾器，但未處理time_bleed</div>
         <div class="insight info"><strong>🔍 V3.2 fail-pattern 對照（20260711）</strong>過濾器只砍到 immediate_loss（16.8%→10.8%），time_bleed 佔比幾乎沒變（57.8%）——因為 V3.2 只開 HTF/互斥過濾器<br>→ <a href="xauusd/XAUUSD-Long-S2-Hammer/report_v3.2.html" style="color:var(--primary)">V3.2 完整報告</a></div>
         <div class="insight bad"><strong>❌ 提早保本已證實無效（20260711）</strong>真實K棒逐bar重建掃描12個門檻，V1.9/V3.2/OOS段全部淨損；慢贏單常見先小賺拉回進場價再反轉大漲，保本會腰斬這類單——time_bleed可能是結構性代價，推翻V2.4.1「不傷慢贏」假設<br>→ <a href="xauusd/XAUUSD-Long-S2-Hammer/report_early_be_sweep.html" style="color:var(--primary)">提早保本掃描報告</a></div>
+        <div class="insight good"><strong>🚀 V4.1 Footprint D：接近通過（20260712）</strong>三版階梯 PF 1.53→2.05→2.27；V1.9-OOS同區間 0.90→1.23→1.64；D篩選精度79%，改善全集中在最需要救的近期（footprint資料2026/4起）<br>→ <a href="xauusd/XAUUSD-Long-S2-Hammer/report_v41_oos.html" style="color:var(--primary)">V4.1 OOS 報告</a></div>
+        <div class="insight good"><strong>🧮 Python 最佳化榜首（20260712）</strong>DXY死亡區間阻擋（block RSI 30-50）出現在 n≥60 前10名全部組合；榜首 = V4.1 + DXYband + stack≥3：n=102 PF2.95/OOS2.85——在 V4.1 開 FILTER⑪ + stack_n=3 即可TV驗證<br>→ <a href="xauusd/report_s1s2_optimizer.html" style="color:var(--primary)">最佳化報告</a></div>
         <div class="insight warn"><strong>⚠ near_upper 有陷阱</strong>near_upper（%B 0.8–1.0）WR 只有 14.3%（n=7）<br>lower_mid（%B 0.2–0.4）WR 50.0%（n=10）最好</div>
         <div class="insight info"><strong>📊 時段差異</strong>亞盤勝率 39.5%（最差）；美盤 49.3%（最佳）<br>→ 考慮關閉亞盤進場</div>
         <div class="insight good"><strong>✅ DXY 超賣時最佳</strong>DXY RSI &lt; 30：66.7% WR</div>
       </div>
       <div class="report-links">
+        <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_v41_oos.html" style="background:linear-gradient(135deg,#0c4a6e,#0284c7);border-color:#38bdf8;color:white">🔬 V4.1 Footprint OOS 🚀</a>
+        <a class="report-link" href="xauusd/report_s1s2_optimizer.html" style="background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-color:#a78bfa;color:white">🧮 Python 全filter最佳化</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_early_be_sweep.html" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);border-color:#ef4444;color:white">🔬 提早保本掃描 ❌</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_v32_oos.html" style="background:linear-gradient(135deg,#78350f,#eab308);border-color:#eab308;color:white">🔬 V3.2 OOS 雙重驗證 🟡</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_s2_attribution.html" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);border-color:#ef4444;color:white">🔬 真實逐筆歸因 + OOS ⚠</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report.html">📄 完整報告（V1.9）</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_v3.2.html" style="border-color:#eab308;color:#eab308">📄 完整報告（V3.2測試版）</a>
-        <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.3.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">★ V2.3</a>
-        <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V2.2.pine">🧪 V2.2</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V4.1.pine" style="background:linear-gradient(135deg,#0c4a6e,#0284c7);border-color:#38bdf8;color:white">⬇ V4.1（Footprint D）★</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V3.2.pine" style="background:linear-gradient(135deg,#1e3a5f,#1d4ed8);border-color:#3b82f6">⬇ V3.2</a>
       </div>
     </div>
     <!-- 改善追蹤 Tab ─────────────────────────────────── -->

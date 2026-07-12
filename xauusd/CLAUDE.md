@@ -189,6 +189,8 @@ Regular Bullish, Regular Bullish Label, Regular Bearish, Regular Bearish Label
 > S2-Hammer V1.9 基準 20260711 重匯到最新日期（200→225筆）後，**OOS（樣本外）檢驗未通過**——過去邊際優勢在近2.5個月新資料中未延續。詳見 `report_s2_attribution.html`。
 > S2-Hammer V3.2（測試版，HTF RSI+S2-RSI互斥過濾器）逐筆OOS雙重驗證：**真實改善但未解決**——自己的OOS勝率仍衰退19.9pp未過門檻；在V1.9-OOS相同日曆區間WR30.8%/PF1.23，優於V1.9同期（27.9%/0.92）但仍脆弱，不建議急著升版。詳見 `report_v32_oos.html` 與 `ANALYSIS_SKILL.md`「V3.2 逐筆 OOS 驗證結論」。
 > ⚠️ **提早保本已證實無效**（20260711，真實K棒逐bar重建掃描12個門檻，推翻V2.4.1「不傷慢贏」假設）：V1.9/V3.2/OOS段全部淨損，慢贏單常見先小賺拉回進場價再反轉大漲，保本會腰斬這類單，time_bleed可能是「讓贏家跑」的結構性代價。不建議開啟，詳見 `report_early_be_sweep.html` 與 `ANALYSIS_SKILL.md`「提早保本參數掃描結論」。
+> S2-Hammer V4.1（測試版，V3.2+Footprint D 模式）逐筆雙重OOS（20260712）：全樣本三版階梯 PF 1.53→2.05→**2.27**；footprint 資料僅覆蓋2026年4月起，改善全部集中在最需要救的近期（D篩掉14筆中11筆是輸單）；V1.9-OOS同區間 PF 0.90→1.23→**1.64**。🟡接近通過，不急升版。詳見 `report_v41_oos.html`。
+> Python 全 filter 最佳化首跑（20260712，2.5年完整匯出）：S2 榜首=現行V4.1+DXYband+stack≥3（PF2.95/OOS2.85）；S1 兩條路線（量產線 HTF_MA 240m netR最大 vs 精兵線 +WVWAP+DXYweak PF/OOS最高）。詳見 `report_s1s2_optimizer.html` 與 `ANALYSIS_SKILL.md`「Python 全 filter 最佳化首跑」。
 
 > **單一事實來源（20260705 起）**：策略版本/參數/績效數字以 `xauusd/claude/ANALYSIS_SKILL.md` 為準（每次「請分析」都會讀取，更新最頻繁）。本檔（CLAUDE.md）與 `xauusd/index.html`、`xauusd/.claude/memory/project_context.md` 的對應數字都應該「從 ANALYSIS_SKILL.md 抄過來」，不要三處各自維護；發現三處數字不一致時，以 ANALYSIS_SKILL.md 為準並回頭修正其他兩處。
 
