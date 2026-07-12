@@ -54,11 +54,12 @@ fast_ma_len = input.int(3,    minval=2, title="Fast EMA Length", group=grp_ind)
 ao_slow_len = input.int(34,   minval=1, title="AO Slow Length",  group=grp_ind)
 ao_fast_len = input.int(5,    minval=1, title="AO Fast Length",  group=grp_ind)
 
-// --- FILTER ①: 1H MA 過濾器（預設 ON）---
-grp_f1 = "=== FILTER ①: 1H MA 過濾器（預設 ON）==="
-use_ma1h_filter = input.bool(true, "啟用 1H MA 過濾器", group=grp_f1,
- tooltip="公式：ma1h = SMA(close, ma1h_length)，計算於 60 分鐘時框\n條件：close > ma1h 才允許進場（否則阻擋）")
-ma1h_length     = input.int(3, minval=1, title="1H MA Length",   group=grp_f1)
+// --- FILTER ①: HTF MA 過濾器（預設 ON）---
+grp_f1 = "=== FILTER ①: HTF MA 過濾器（預設 ON）==="
+use_ma1h_filter = input.bool(true, "啟用 HTF MA 過濾器", group=grp_f1,
+ tooltip="公式：ma = SMA(close, MA Length)，計算於「MA 時框」\n條件：close > ma 才允許進場（否則阻擋）\nV3.7 確認版設定 = 60分鐘 + SMA(3)")
+ma1h_tf         = input.timeframe("60", "MA 時框", group=grp_f1)
+ma1h_length     = input.int(3, minval=1, title="MA Length",   group=grp_f1)
 
 // --- FILTER ②: Regime BBW 高檔過濾器（預設 ON）---
 grp_f2 = "=== FILTER ②: Regime BBW 高檔過濾器（預設 ON）==="
@@ -109,7 +110,8 @@ bb_pct_b_min   = input.float(60.0, "BB %B 最低門檻（%）", minval=0.0, maxv
 // --- FILTER ⑦: Weekly VWAP 過濾器（V4.1 新增，Gemini 建議）---
 grp_f7 = "=== FILTER ⑦: Weekly VWAP（V4.1）==="
 use_wvwap = input.bool(false, "啟用 Weekly VWAP 過濾器", group=grp_f7,
- tooltip="公式：close > 當週錨定 VWAP（每週一重置累計）才允許進場\n\n為何需要：週 VWAP 是機構本週平均成本線——在成本線上方的突破，追價者有共同的獲利部位撐腰（順風）；成本線下方的突破則面對整週的套牢賣壓（逆風）\n\n⚠️ FX_IDC 為 tick volume（報價筆數）非真實成交量，VWAP 加權意義打折，方向性仍可測試")
+ tooltip="公式：close > 錨定 VWAP（每個錨定週期開始時重置累計）才允許進場\n\n為何需要：週 VWAP 是機構本週平均成本線——在成本線上方的突破，追價者有共同的獲利部位撐腰（順風）；成本線下方的突破則面對整週的套牢賣壓（逆風）\n\n錨定週期可調：1W=週VWAP（預設）、D=日VWAP、1M=月VWAP\n⚠️ FX_IDC 為 tick volume（報價筆數）非真實成交量，VWAP 加權意義打折，方向性仍可測試")
+wvwap_anchor_tf = input.timeframe("1W", "VWAP 錨定週期", group=grp_f7)
 wvwap_src = input.source(hlc3, "VWAP Source", group=grp_f7)
 
 // --- FILTER ⑧: Volume Surge 過濾器（V4.1 新增，Gemini 建議）---
@@ -124,7 +126,8 @@ grp_f9 = "=== FILTER ⑨: DXY Alignment 美元弱勢（V4.1）==="
 use_dxy_align = input.bool(false, "啟用 DXY Alignment 過濾器", group=grp_f9,
  tooltip="公式：DXY 日線 close < DXY 日線 EMA(週期) 才允許進場（美元處於弱勢結構）\n\n為何需要：DXY 與黃金 30 日滾動相關 -0.46（反向）。歷史數據：S1 在 DXY RSI<30 時 WR 60.9%（vs 全體 55.1%）。用 EMA 結構判定而非 RSI 點值，訊號更穩定、較不敏感於參數")
 dxy_sym = input.symbol("TVC:DXY", "DXY 代碼", group=grp_f9)
-dxy_ema_len = input.int(20, "DXY 日線 EMA 週期", minval=5, group=grp_f9)
+dxy_align_tf = input.timeframe("D", "DXY 判定時框", group=grp_f9)
+dxy_ema_len = input.int(20, "DXY EMA 週期", minval=5, group=grp_f9)
 
 // --- 顯示設定 ---
 grp_display = "=== 顯示設定 ==="
@@ -152,8 +155,8 @@ xSMA2_hl2  = ta.sma(hl2, ao_slow_len)
 AO_Val     = xSMA1_hl2 - xSMA2_hl2
 AO_State   = AO_Val >= 0 ? (AO_Val > AO_Val[1] ? 1 : 2) : (AO_Val > AO_Val[1] ? -1 : -2)
 
-// FILTER ①: 1H MA
-ma1h = request.security(syminfo.tickerid, "60", ta.sma(close, ma1h_length), lookahead=barmerge.lookahead_off)
+// FILTER ①: HTF MA（時框可調，V3.7 確認版 = 60）
+ma1h = request.security(syminfo.tickerid, ma1h_tf, ta.sma(close, ma1h_length), lookahead=barmerge.lookahead_off)
 
 // FILTER ②: Regime BBW 高檔
 bbw_rank_high = request.security(syminfo.tickerid, bbw_high_tf,
@@ -228,15 +231,15 @@ bbw_rank_low = request.security(syminfo.tickerid, bbw_low_tf,
 is_bbw_low   = bbw_rank_low < regime_bbw_min
 
 // FILTER ⑦: Weekly VWAP（每週一重置的錨定 VWAP）
-wvwap_val = ta.vwap(wvwap_src, timeframe.change("1W"))
+wvwap_val = ta.vwap(wvwap_src, timeframe.change(wvwap_anchor_tf))
 
 // FILTER ⑧: Volume Surge
 vol_sma_val = ta.sma(volume, vol_surge_len)
 is_vol_surge = vol_sma_val > 0 and volume >= vol_sma_val * vol_surge_mult
 
-// FILTER ⑨: DXY Alignment（日線弱勢結構）
-dxy_d_close = request.security(dxy_sym, "D", close, lookahead=barmerge.lookahead_off)
-dxy_d_ema = request.security(dxy_sym, "D", ta.ema(close, dxy_ema_len), lookahead=barmerge.lookahead_off)
+// FILTER ⑨: DXY Alignment（弱勢結構，時框可調）
+dxy_d_close = request.security(dxy_sym, dxy_align_tf, close, lookahead=barmerge.lookahead_off)
+dxy_d_ema = request.security(dxy_sym, dxy_align_tf, ta.ema(close, dxy_ema_len), lookahead=barmerge.lookahead_off)
 dxy_is_weak = dxy_d_close < dxy_d_ema
 
 // 所有過濾條件（OFF = 恆為 true）

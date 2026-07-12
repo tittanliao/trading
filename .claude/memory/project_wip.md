@@ -15,12 +15,17 @@ metadata:
     FILTER⑩ Volume Climax、⑪ DXY死亡區間阻擋（數據驅動：阻擋 DXY RSI 30-50，非 Gemini 直覺的強勢區）
   - S1：FILTER⑦ Weekly VWAP、⑧ Volume Surge、⑨ DXY Alignment（Gemini 建議採納，全預設 OFF）
   - Gemini 的 Micro Bounce（1m array）未採納：security_lower_tf 歷史深度限制 + 資訊劣於 footprint
-- **🔴 下一步最優先**：請使用者匯出 V4.0/V4.1 D 模式的逐筆 List of Trades CSV
-  （命名建議 `S2-Hammer-V4.0-FPD_FX_IDC_XAUUSD_<日期>.csv`），用 `run_s2_hammer_v32_oos.py`
-  同款雙重方法驗證 PF 2.2 是否過 OOS——**先確認 footprint 資料覆蓋率**（狀態表格有顯示）：
-  若歷史K棒多為 na（na→pass），則 D 模式實際只作用在近期資料，PF 提升反而更可能是真實近期改善
-- 次要：TV 測 G/H 模式與 D 對照；D 參數粗掃（poc_min_pos 50/55/60、stack_n 2/3、imbalance 200/300/400，
-  警惕過擬合，只做粗網格）
+- **✅ V4.1 D 模式逐筆 OOS 已完成（20260712，詳見 `report_v41_oos.html`）**：
+  - 全樣本三版階梯 V1.9 PF1.53 → V3.2 2.05 → V4.1 2.27（WR 41.1→47.1→49.7%）
+  - **footprint 歷史資料只覆蓋 ~2026年4月起**：被D篩的14筆全在2026Q2/Q3，2024/2025兩版完全相同
+    ——改善天然集中在最需要救的近期，無「早期樣本撐數字」幻覺空間
+  - D 篩選精度 79%（14筆中11筆原本是輸單）；V1.9-OOS同區間三版階梯 PF 0.90→1.23→**1.64**
+  - 驗證A：V4.1 OOS PF1.87 過門檻，勝率落差11.1pp仍超8pp（vs V3.2 的19.9pp，大幅收斂）
+  - 判定 🟡 接近通過方向強烈正向；限制=footprint只作用近3個月/被篩僅14筆，統計基礎薄
+- **下一步**：①不急升版，每月重匯 V4.1 CSV 追蹤「footprint生效段」PF 是否守住 >1.4
+  ②TV 測模式 G（D+恐慌爆量）/H（trapped sellers）與 D 對照 ③D 參數只做粗掃防過擬合
+- S1 V4.1 尚未有實測回報（Footprint 順勢模式 + Weekly VWAP/Vol Surge/DXY Align 三個Gemini濾網）
+- 20260712 追加：S1 全過濾器時框已開放可調（①HTF MA原寫死60、⑦VWAP錨定原寫死1W、⑨DXY原寫死D）
 
 # 20260711 晚間狀態（保留備查）
 
