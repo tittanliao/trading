@@ -2,6 +2,17 @@
   {
     "date": "2026-07-12",
     "tag": "xauusd",
+    "title": "Lab10：10個候選策略Python最佳化 → Pine下拉選單（S1/S2優化燃料）",
+    "items": [
+      "<b>新資產</b>：run_lab10_optimizer.py（10策略×參數網格，用已驗證92%吻合率的引擎）+ XAUUSD-Long-Lab10-V1.pine（下拉選單10策略、最佳參數為預設、全參數可調、順勢/逆勢標注、出場自動檔位）",
+      "<b>過門檻5個</b>（n≥40且min(IS,OOS)PF≥1.2）：T4 BBW擴張突破（WR51.4%/PF1.77/OOS1.43，順勢最佳——同一個BBW指標，S1當阻擋、這裡當點火觸發）；R2 恐慌爆量長下影（PF1.86/OOS1.60，逆勢最佳，呼應VolClimax發現）；T2 突破96根高點（PF1.46，Delta確認沒加分）；T3 RSI55上穿+4H MA（n=516高頻PF1.43）；R5 DXY弱勢逢低接（PF1.42）",
+      "<b>被刷掉5個的教訓同樣值錢</b>：①footprint當「核心觸發」全軍覆沒（T5 PF0.83/R4 PF0.70），但當filter有效（V4.1 D模式）——footprint適合過濾既有訊號不適合當訊號源 ②無吸收證據的深跌接刀（R3 OOS0.78）與純RSI超賣（R1 OOS0.96）都不行——與Z-Score陷阱區、S2互斥發現一致",
+      "用途：優化燃料——T4的BBW點火、R2的爆量下影之後可拆進S1/S2當filter或觸發器。詳見 report_lab10.html"
+    ]
+  },
+  {
+    "date": "2026-07-12",
+    "tag": "xauusd",
     "title": "Python全filter最佳化首跑（2.5年完整資料）：S2 DXYband全面勝出、S1 VWAP+DXY精兵線",
     "items": [
       "<b>資料</b>：使用者匯出 29,809 根 30m（2024-01-02~2026-07-11，完整覆蓋TV回測窗口）含 FP_*/TickVol/CHK_* 欄位；校驗 6/8 完美（corr≈1.0000）、Slope240/Z240 🟡0.994（4H切齊差異）；引擎驗證 S1 吻合92%/S2 87%",
