@@ -2,6 +2,18 @@
   {
     "date": "2026-07-12",
     "tag": "xauusd",
+    "title": "建立TV匯出→Python最佳化工作流：S1S2匯出指標 + filter網格最佳化引擎",
+    "items": [
+      "<b>新工作流確立</b>：TV 30m圖掛 XAUUSD-S1S2-Export-V1.pine 指標 → Export chart data → Python 網格掃描所有filter參數組合（一次掃描抵數百次手動deep backtest）",
+      "<b>架構決策</b>：只匯出「Python算不出來的值」（FP_* footprint系列+TickVol），其餘指標（HTF MA/RSI/BBW/Z/VWAP/DXY）Python從30m OHLC重採樣自算→參數完全自由；另設CHK_*校驗欄位對答案，確保Python重算與TV一致",
+      "<b>run_s1s2_filter_optimizer.py</b>：①校驗 ②引擎重播驗證（vs真實TV逐筆CSV）③網格最佳化（S1 192組合/S2 72+footprint組合，score=min(IS,OOS) PF抗過擬合）",
+      "<b>冒煙測試通過</b>：用既有OHLC-only CSV跑，S1引擎重播 vs TV真實逐筆：進場吻合率98%（161/165）、PF 1.87 vs 1.92——Profit Flyer出場結構複製忠實；S2落差符合預期（測試檔無FP欄位，D過濾全放行）",
+      "待使用者匯出含FP欄位的正式CSV後跑完整最佳化。注意：匯出深度受Premium ~20k bars限制、imbalance門檻/ticks_per_row在匯出時固定"
+    ]
+  },
+  {
+    "date": "2026-07-12",
+    "tag": "xauusd",
     "title": "V4.1 Footprint D模式逐筆OOS：接近通過、方向強烈正向 + S1時框全開放",
     "items": [
       "<b>全樣本三版階梯</b>：V1.9 WR41.1%/PF1.53 → V3.2 WR47.1%/PF2.05 → V4.1 WR49.7%/PF2.27（143筆）",

@@ -27,6 +27,18 @@ metadata:
 - S1 V4.1 尚未有實測回報（Footprint 順勢模式 + Weekly VWAP/Vol Surge/DXY Align 三個Gemini濾網）
 - 20260712 追加：S1 全過濾器時框已開放可調（①HTF MA原寫死60、⑦VWAP錨定原寫死1W、⑨DXY原寫死D）
 
+## 🔬 TV匯出→Python最佳化工作流（20260712 建立，等待使用者匯出正式CSV）
+- `xauusd/XAUUSD-S1S2-Export-V1.pine`：匯出指標（掛30m圖→Export chart data），
+  匯出 FP_*（footprint，Python算不出）+ TickVol + CHK_*（校驗欄位）
+- `xauusd/scripts/run_s1s2_filter_optimizer.py`：①CHK校驗 ②引擎重播驗證（vs真實TV逐筆）
+  ③網格最佳化（score=min(IS,OOS) PF）。用法：
+  `python3.12 xauusd/scripts/run_s1s2_filter_optimizer.py --export <匯出csv> --strategy both --mode all`
+- **冒煙測試已通過**：S1 引擎 vs TV 逐筆吻合率 98%、PF 1.87 vs 1.92（用OHLC-only舊CSV測）；
+  S2 需等含FP欄位的正式匯出才會收斂（測試檔無FP→D全放行→筆數偏多屬預期）
+- ⚠️ 限制：匯出深度~20k bars（約14個月）；imbalance門檻/ticks_per_row 匯出時固定；
+  footprint 資料僅 2026年4月起
+- 使用者匯出正式CSV後：跑 --mode all，先看①校驗全綠、②S2吻合率≥85%，再看③排名
+
 # 20260711 晚間狀態（保留備查）
 
 ## 🟡 S2-Hammer OOS 問題現況：V3.2 有改善但未解決，非阻塞性持續觀察
