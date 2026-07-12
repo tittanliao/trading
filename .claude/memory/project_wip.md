@@ -37,7 +37,16 @@ metadata:
   S2 需等含FP欄位的正式匯出才會收斂（測試檔無FP→D全放行→筆數偏多屬預期）
 - ⚠️ 限制：匯出深度~20k bars（約14個月）；imbalance門檻/ticks_per_row 匯出時固定；
   footprint 資料僅 2026年4月起
-- 使用者匯出正式CSV後：跑 --mode all，先看①校驗全綠、②S2吻合率≥85%，再看③排名
+- ✅ **正式首跑完成（20260712 晚）**：使用者匯出 29,809 根 30m（2024-01~2026-07完整窗口，
+  `csv/XAUUSD-S1S2-Export/FX_IDC_XAUUSD, 30 (7).csv`）。校驗 6/8 完美、Slope240/Z240 🟡0.994；
+  引擎 S1 92%/S2 87% 吻合。結果：
+  - **S2 最強發現：DXYband(block30-50) 霸榜**（n≥60 前10名全部含它）；n≥60 榜首 =
+    HTFRSIbear(60m)+Mutex20+DXYband+FP_D(stack≥3)：n=102 PF2.95 OOS2.85（現行V4.1約2.2）
+    → 在 V4.1 pine 直接開 FILTER⑪ + fp_stack_n=3 即可TV驗證，不用改code
+  - S2 小樣本警示：VolClimax單獨 n=23/PF5.9 是幻覺榜首（OOS僅4-5筆），但可當稀有sniper alert
+  - **S1 兩條路線**：量產線 HTF_MA(240m)+BBWHigh（n=413 PF2.07 netR最大182）vs
+    精兵線 +WVWAP+DXYweak+FP_S1A(Δ≥20%)（n=153 PF2.34 OOS2.86）——Gemini VWAP/DXY 建議過OOS
+  - 下一步：使用者在TV用建議設定跑V4.1（S2）/S1 V4.1驗證，匯出逐筆CSV回來對照
 
 # 20260711 晚間狀態（保留備查）
 

@@ -2,6 +2,18 @@
   {
     "date": "2026-07-12",
     "tag": "xauusd",
+    "title": "Python全filter最佳化首跑（2.5年完整資料）：S2 DXYband全面勝出、S1 VWAP+DXY精兵線",
+    "items": [
+      "<b>資料</b>：使用者匯出 29,809 根 30m（2024-01-02~2026-07-11，完整覆蓋TV回測窗口）含 FP_*/TickVol/CHK_* 欄位；校驗 6/8 完美（corr≈1.0000）、Slope240/Z240 🟡0.994（4H切齊差異）；引擎驗證 S1 吻合92%/S2 87%",
+      "<b>S2 最強新發現：DXYband(block 30-50) 出現在 n≥60 前10名全部組合</b>——數據驅動版DXY濾網被全面驗證；n≥60榜首 = HTFRSIbear(60m)+Mutex20+DXYband+FP_D(stack≥3)：n=102 WR47.1% PF2.95 OOS PF2.85（vs 現行V4.1 PF~2.2）；改動只需在V4.1 pine開FILTER⑪+stack_n改3，不用改code",
+      "<b>S2 小樣本警示</b>：VolClimax(2×)單獨 n=23/PF5.9 高居score榜首但OOS僅4-5筆——不可作主配置，但揭示「恐慌爆量錘頭」是稀有高品質sniper setup（可設獨立alert）",
+      "<b>S1 兩條路線</b>：量產線 HTF_MA(240m)+BBWHigh（n=413 PF2.07 netR182 總利潤最大，比現行只是60m→240m）；精兵線 +WeeklyVWAP+DXYweak(+FP_S1A Δ≥20%)（n=153-163 PF2.29-2.34 OOS2.47-2.86 質量最高）——Gemini的VWAP與DXY建議雙雙過OOS驗證",
+      "注意：多重比較下前幾名差異可能是雜訊，關注反覆出現的filter（S2=DXYband/FP_D、S1=WVWAP+DXYweak）；最終仍需回TV全歷史驗證。詳見 report_s1s2_optimizer.html"
+    ]
+  },
+  {
+    "date": "2026-07-12",
+    "tag": "xauusd",
     "title": "建立TV匯出→Python最佳化工作流：S1S2匯出指標 + filter網格最佳化引擎",
     "items": [
       "<b>新工作流確立</b>：TV 30m圖掛 XAUUSD-S1S2-Export-V1.pine 指標 → Export chart data → Python 網格掃描所有filter參數組合（一次掃描抵數百次手動deep backtest）",
