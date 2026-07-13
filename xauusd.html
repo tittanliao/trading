@@ -453,6 +453,7 @@
       <button class="sub-tab" onclick="showTab('xauusd-opt','s2a',this)">S2-RSI</button>
       <button class="sub-tab" onclick="showTab('xauusd-opt','s2b',this)">S2-Hammer</button>
       <button class="sub-tab" onclick="showTab('xauusd-opt','improve',this)">🔬 改善追蹤</button>
+      <button class="sub-tab" onclick="showTab('xauusd-opt','lab10',this)">🧪 Lab10</button>
     </div>
 
     <!-- Overview -->
@@ -1038,6 +1039,8 @@
 
       <div class="report-links">
         <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7_real.html" style="background:linear-gradient(135deg,#0c4a6e,#0284c7);border-color:#38bdf8;color:white">🔬 V3.4 vs V3.7 真實逐筆歸因 ★</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7_oos.html" style="border-color:#38bdf8;color:#38bdf8">🔬 V3.7 Out-of-Sample 測試</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.8_regime_sweep.html" style="border-color:#38bdf8;color:#38bdf8">🔬 V3.8.1 Regime 回看根數掃描</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v3.7.html" style="background:linear-gradient(135deg,#14532d,#16a34a);border-color:#22c55e;color:white">📄 V3.7 完整報告</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report.html">📄 V3.4 完整報告</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S1-AweWithBB/report_v2.html" style="border-color:#38bdf8;color:#38bdf8">📊 深度分析 V2</a>
@@ -1097,6 +1100,7 @@
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_early_be_sweep.html" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);border-color:#ef4444;color:white">🔬 提早保本掃描 ❌</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_v32_oos.html" style="background:linear-gradient(135deg,#78350f,#eab308);border-color:#eab308;color:white">🔬 V3.2 OOS 雙重驗證 🟡</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_s2_attribution.html" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);border-color:#ef4444;color:white">🔬 真實逐筆歸因 + OOS ⚠</a>
+        <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_s2_confluence.html" style="border-color:#94a3b8;color:#94a3b8">🔬 S2-RSI×S2-Hammer 合流分析</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report.html">📄 完整報告（V1.9）</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/report_v3.2.html" style="border-color:#eab308;color:#eab308">📄 完整報告（V3.2測試版）</a>
         <a class="report-link" href="xauusd/XAUUSD-Long-S2-Hammer/XAUUSD-Long-S2-Hammer-V4.1.pine" style="background:linear-gradient(135deg,#0c4a6e,#0284c7);border-color:#38bdf8;color:white">⬇ V4.1（Footprint D）★</a>
@@ -1208,6 +1212,65 @@
       </div>
 
     </div><!-- /xauusd-opt-improve -->
+
+    <!-- Lab10 Tab -->
+    <div id="xauusd-opt-lab10" class="tab-panel">
+      <div class="part-label"><span class="part-badge">實驗室</span>Lab10 — S1/S2 優化燃料 × Python 全策略設計</div>
+      <p style="font-size:.84em;color:var(--muted);margin-bottom:16px">
+        用 2.5 年完整匯出資料（含 footprint）從零設計候選策略、Python 網格最佳化，
+        再把過門檻的邏輯拆回 S1/S2 當 filter 或觸發器。不是要直接上線這些策略。
+      </p>
+
+      <div class="grid-2" style="gap:14px">
+        <div class="card">
+          <div class="card-title">📈 Lab10 多單（順勢×5 + 逆勢×5）</div>
+          <p style="font-size:.85em;color:var(--muted);margin:8px 0">
+            5 過門檻（n≥40 且 min(IS,OOS)PF≥1.2）：<strong style="color:#86efac">T4 BBW擴張突破</strong>（WR51.4%/PF1.77/OOS1.43，順勢最佳）、
+            <strong style="color:#86efac">R2 恐慌爆量長下影</strong>（PF1.86/OOS1.60，逆勢最佳）等。
+            footprint 當「核心觸發」全軍覆沒（T5/R4），但當 filter 有效（呼應 S2-Hammer V4.1）。
+          </p>
+          <div class="report-links">
+            <a class="report-link" href="xauusd/XAUUSD-Long-Lab/report_lab10.html" style="background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-color:#a78bfa;color:white">🧮 Lab10 報告</a>
+            <a class="report-link" href="xauusd/XAUUSD-Long-Lab/XAUUSD-Long-Lab10-V1.pine" style="border-color:#a78bfa;color:#a78bfa">⬇ Lab10-V1 Pine</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📉 Lab10-Short（順勢空×5 + 逆勢空×5）</div>
+          <p style="font-size:.85em;color:var(--muted);margin:8px 0">
+            誠實結果：全樣本 <strong style="color:#fca5a5">0/10 過門檻</strong>（2024-2026黃金大多頭，空單逆風）；
+            逆勢空（追高摸頂）全滅 PF 0.54-0.70。OOS 段亮點：
+            <strong style="color:#fde047">RS4 頂部出貨(FP)</strong> 46筆 WR47.8%/PF2.32。
+          </p>
+          <div class="report-links">
+            <a class="report-link" href="xauusd/XAUUSD-Short-Lab/report_lab10_short.html" style="background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-color:#a78bfa;color:white">🧮 Lab10-Short 報告</a>
+            <a class="report-link" href="xauusd/XAUUSD-Short-Lab/XAUUSD-Short-Lab10-V1.pine" style="border-color:#a78bfa;color:#a78bfa">⬇ Short-Lab10-V1 Pine</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-title">🎯 多頭下的空單：出場×Gate掃描（750組合）</div>
+        <p style="font-size:.85em;color:var(--muted);margin:8px 0">
+          假設「空單輸在出場照抄多單」被部分推翻——短打出場對普通進場只有邊際貢獻
+          （mean PF 1.14 vs 長抱1.09）。真正的答案：<strong style="color:#86efac">進場的出貨證據 > 一切</strong>，
+          RS4 頂部出貨霸榜前12名。榜首 = RS4 + gate(4H MA下方+DXY RSI≥55) + 短打16bars：
+          n=30 WR50% <strong style="color:#86efac">PF2.38</strong>。
+        </p>
+        <div class="report-links">
+          <a class="report-link" href="xauusd/XAUUSD-Short-Lab/report_bull_short.html" style="background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-color:#a78bfa;color:white">🧮 多頭空單掃描報告</a>
+          <a class="report-link" href="xauusd/XAUUSD-Short-Lab/XAUUSD-Short-Lab10-V2.pine" style="background:linear-gradient(135deg,#0c4a6e,#0284c7);border-color:#38bdf8;color:white">⬇ Short-Lab10-V2 Pine ★</a>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="card-title">🛠 共用工具</div>
+        <div class="report-links">
+          <a class="report-link" href="xauusd/report_s1s2_optimizer.html" style="background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-color:#a78bfa;color:white">🧮 S1/S2 全filter最佳化</a>
+          <a class="report-link" href="xauusd/XAUUSD-S1S2-Export-V1.pine" style="border-color:#a78bfa;color:#a78bfa">⬇ 資料匯出指標（TV Premium）</a>
+        </div>
+      </div>
+    </div><!-- /xauusd-opt-lab10 -->
 
   </div>
 
