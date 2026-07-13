@@ -19,11 +19,6 @@ TX 額外包含：
 ```
 trading/
 ├── CLAUDE.md                    # 本檔（統一說明文件）
-├── .claude/memory/              # Claude 記憶（git 追蹤，跨電腦同步）
-│   ├── MEMORY.md
-│   ├── user_profile.md
-│   ├── project_context.md
-│   └── feedback.md
 ├── DEVELOPMENT.md               # ★ 開發規範（改任何網站內容前必讀）
 ├── generate_site.py             # ★ 網站生成器（6 頁；舊 generate_index.py 已於 20260711 刪除）
 ├── assets/                      # 共用 site.css + site.js
@@ -143,41 +138,6 @@ Regular Bullish, Regular Bullish Label, Regular Bearish, Regular Bearish Label
 - `time`：帶時區 ISO 字串（`+08:00`），loader 自動轉 Asia/Taipei
 - `RSI`：RSI(14)；`RSI-based MA`：RSI 移動平均線
 - `Regular Bullish/Bearish`：RSI 背離信號
-
----
-
-## 換電腦後的記憶設定
-
-Claude 的專案記憶存在 `.claude/memory/`（**git 追蹤**）。
-新電腦 `git clone` 後執行一次下列指令，把系統記憶路徑指向專案資料夾。
-
-### Mac / Linux（在 trading/ 目錄執行）
-
-```bash
-PROJ=$(pwd)
-SYSTEM_KEY=$(echo "$PROJ" | sed 's|/|-|g')
-rm -rf ~/.claude/projects/${SYSTEM_KEY}/memory
-ln -s "${PROJ}/.claude/memory" ~/.claude/projects/${SYSTEM_KEY}/memory
-```
-
-> **注意**：`SYSTEM_KEY` 必須保留路徑開頭那個 `/` 轉成的前導 `-`（例如 `/Users/x/trading` → `-Users-x-trading`），
-> 這是 Claude Code 實際使用的專案 key 格式。舊版指令用 `sed 's|^/||'` 先去掉開頭斜線，
-> 少了前導 `-`，會建到錯誤的資料夾，導致 symlink 沒接上、記憶各自為政（2026-07-05 發現並修正此問題）。
-> 換路徑後可用這個指令確認 key 是否正確：`echo "$PROJ" | sed 's|/|-|g'`，
-> 應該要跟 `ls ~/.claude/projects/` 底下對應的資料夾名稱一致。
-
-### Windows（PowerShell，在 trading/ 目錄執行）
-
-```powershell
-$proj = (Get-Location).Path
-$key  = $proj -replace '\\', '-' -replace ':', ''
-$src  = "$proj\.claude\memory"
-$dst  = "$env:USERPROFILE\.claude\projects\-$key\memory"
-if (Test-Path $dst) { Remove-Item $dst -Recurse -Force }
-New-Item -ItemType Junction -Path $dst -Target $src
-```
-
-> Windows 使用 Junction（不需管理員權限），Mac/Linux 使用 symlink。
 
 ---
 

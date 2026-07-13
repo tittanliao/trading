@@ -202,24 +202,6 @@ def generate():
     {_session_log_html()}
   </div>
 
-  <div class="info-card">
-    <h2>換電腦後的記憶設定</h2>
-    <pre style="background:#f5f5f5;padding:12px;border-radius:6px;font-size:.85em;overflow-x:auto">
-# Mac / Linux（在 tx/ 目錄執行）
-PROJ=$(pwd)
-SYSTEM_KEY=$(echo "$PROJ" | sed 's|^/||' | sed 's|/|-|g')
-rm -rf ~/.claude/projects/${{SYSTEM_KEY}}/memory
-ln -s "${{PROJ}}/.claude/memory" ~/.claude/projects/${{SYSTEM_KEY}}/memory
-
-# Windows PowerShell
-$proj = (Get-Location).Path
-$key  = $proj -replace '\\\\', '-' -replace ':', ''
-$src  = "$proj\\.claude\\memory"
-$dst  = "$env:USERPROFILE\\.claude\\projects\\-$key\\memory"
-if (Test-Path $dst) {{ Remove-Item $dst -Recurse -Force }}
-New-Item -ItemType Junction -Path $dst -Target $src</pre>
-  </div>
-
 </div>
 </body>
 </html>

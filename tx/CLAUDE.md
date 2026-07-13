@@ -222,34 +222,6 @@ NQ RSI bucket 解讀（與 DXY 相反）：
 
 ---
 
-## 換新電腦後的記憶設定
-
-Claude 的專案記憶存在 `.claude/memory/`（git 追蹤）。新電腦 `git clone` 後需執行一次下列指令，把系統記憶路徑指向專案資料夾。
-
-### Mac / Linux（在專案根目錄執行）
-
-```bash
-PROJ=$(pwd)
-SYSTEM_KEY=$(echo "$PROJ" | sed 's|/|-|g')
-rm -rf ~/.claude/projects/${SYSTEM_KEY}/memory
-ln -s "${PROJ}/.claude/memory" ~/.claude/projects/${SYSTEM_KEY}/memory
-```
-
-> 注意：`SYSTEM_KEY` 需保留前導 `-`（見根目錄 CLAUDE.md 的說明），舊指令會去掉它導致 symlink 建錯位置。
-
-### Windows（PowerShell，在專案根目錄執行）
-
-```powershell
-$proj = (Get-Location).Path
-$key  = $proj -replace '\\', '-' -replace ':', ''
-$src  = "$proj\.claude\memory"
-$dst  = "$env:USERPROFILE\.claude\projects\-$key\memory"
-if (Test-Path $dst) { Remove-Item $dst -Recurse -Force }
-New-Item -ItemType Junction -Path $dst -Target $src
-```
-
----
-
 ## 技術環境
 
 - Python 3.11（Windows 使用 `py -3.11`，Mac 使用 `python3`）

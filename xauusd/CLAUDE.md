@@ -68,7 +68,7 @@ xauusd/
 ├── main.py                 # Fail-pattern 分析入口
 ├── run_experiments.py      # 多單 20 策略實驗入口
 ├── run_short_experiments.py # 空單 20 策略實驗入口
-├── signal_scanner.py       # 訊號掃描（DISPATCH.md「signal scanner」指令會執行這支，需留在此路徑）
+├── signal_scanner.py       # 訊號掃描工具
 ├── index.html              # 整合報告（多空 + DXY + MTF + Next Action）
 │
 ├── scripts/                 # 一次性/半一次性分析腳本（20260705 從 xauusd/ 根目錄整理進來）
@@ -184,15 +184,15 @@ Regular Bullish, Regular Bullish Label, Regular Bearish, Regular Bearish Label
 | S2-RSI | RSI Reversion | V2.0（基準，V2.4測試中） | 161 | 42.2% | 1.679 | +$6,212 | -$1,177 | time_bleed 52% |
 | S2-Hammer | Hammer Pullback | V1.9（基準，V3.2測試中） | 225 | 41.1% | 1.53 | +$7,216 | -$2,414 | ⚠️ time_bleed 57%，**OOS未過**（後30%WR27.9%/PF0.92） |
 
-> S1 V3.4→V3.7 真實逐筆歸因結論：淨利改善主因是出場結構（SL觸發率↓、TP2佔比↑），時間止損縮短(48→36 bars)從未觸發、非貢獻來源；進場過濾器確實降低immediate_loss。詳見 `XAUUSD-Long-S1-AweWithBB/report_v3.7_real.html` 與 `xauusd/claude/ANALYSIS_SKILL.md`「V3.7 真實逐筆歸因結論」。
+> S1 V3.4→V3.7 真實逐筆歸因結論：淨利改善主因是出場結構（SL觸發率↓、TP2佔比↑），時間止損縮短(48→36 bars)從未觸發、非貢獻來源；進場過濾器確實降低immediate_loss。詳見 `XAUUSD-Long-S1-AweWithBB/report_v3.7_real.html`。
 > S1 V3.9（測試版，BB Source close→ohlc4）真實回測共同期間對照優於 V3.7（WR+1.3pp/PF+0.145/淨利+$926，MDD微升），尚未完整驗證，維持V3.7為現行版。詳見 `report_v3.9_real.html`。
 > S2-Hammer V1.9 基準 20260711 重匯到最新日期（200→225筆）後，**OOS（樣本外）檢驗未通過**——過去邊際優勢在近2.5個月新資料中未延續。詳見 `report_s2_attribution.html`。
-> S2-Hammer V3.2（測試版，HTF RSI+S2-RSI互斥過濾器）逐筆OOS雙重驗證：**真實改善但未解決**——自己的OOS勝率仍衰退19.9pp未過門檻；在V1.9-OOS相同日曆區間WR30.8%/PF1.23，優於V1.9同期（27.9%/0.92）但仍脆弱，不建議急著升版。詳見 `report_v32_oos.html` 與 `ANALYSIS_SKILL.md`「V3.2 逐筆 OOS 驗證結論」。
-> ⚠️ **提早保本已證實無效**（20260711，真實K棒逐bar重建掃描12個門檻，推翻V2.4.1「不傷慢贏」假設）：V1.9/V3.2/OOS段全部淨損，慢贏單常見先小賺拉回進場價再反轉大漲，保本會腰斬這類單，time_bleed可能是「讓贏家跑」的結構性代價。不建議開啟，詳見 `report_early_be_sweep.html` 與 `ANALYSIS_SKILL.md`「提早保本參數掃描結論」。
+> S2-Hammer V3.2（測試版，HTF RSI+S2-RSI互斥過濾器）逐筆OOS雙重驗證：**真實改善但未解決**——自己的OOS勝率仍衰退19.9pp未過門檻；在V1.9-OOS相同日曆區間WR30.8%/PF1.23，優於V1.9同期（27.9%/0.92）但仍脆弱，不建議急著升版。詳見 `report_v32_oos.html`。
+> ⚠️ **提早保本已證實無效**（20260711，真實K棒逐bar重建掃描12個門檻，推翻V2.4.1「不傷慢贏」假設）：V1.9/V3.2/OOS段全部淨損，慢贏單常見先小賺拉回進場價再反轉大漲，保本會腰斬這類單，time_bleed可能是「讓贏家跑」的結構性代價。不建議開啟，詳見 `report_early_be_sweep.html`。
 > S2-Hammer V4.1（測試版，V3.2+Footprint D 模式）逐筆雙重OOS（20260712）：全樣本三版階梯 PF 1.53→2.05→**2.27**；footprint 資料僅覆蓋2026年4月起，改善全部集中在最需要救的近期（D篩掉14筆中11筆是輸單）；V1.9-OOS同區間 PF 0.90→1.23→**1.64**。🟡接近通過，不急升版。詳見 `report_v41_oos.html`。
-> Python 全 filter 最佳化首跑（20260712，2.5年完整匯出）：S2 榜首=現行V4.1+DXYband+stack≥3（PF2.95/OOS2.85）；S1 兩條路線（量產線 HTF_MA 240m netR最大 vs 精兵線 +WVWAP+DXYweak PF/OOS最高）。詳見 `report_s1s2_optimizer.html` 與 `ANALYSIS_SKILL.md`「Python 全 filter 最佳化首跑」。
+> Python 全 filter 最佳化首跑（20260712，2.5年完整匯出）：S2 榜首=現行V4.1+DXYband+stack≥3（PF2.95/OOS2.85）；S1 兩條路線（量產線 HTF_MA 240m netR最大 vs 精兵線 +WVWAP+DXYweak PF/OOS最高）。詳見 `report_s1s2_optimizer.html`。
 
-> **單一事實來源（20260705 起）**：策略版本/參數/績效數字以 `xauusd/claude/ANALYSIS_SKILL.md` 為準（每次「請分析」都會讀取，更新最頻繁）。本檔（CLAUDE.md）與 `xauusd/index.html`、`xauusd/.claude/memory/project_context.md` 的對應數字都應該「從 ANALYSIS_SKILL.md 抄過來」，不要三處各自維護；發現三處數字不一致時，以 ANALYSIS_SKILL.md 為準並回頭修正其他兩處。
+> **Public 文件定位**：本檔只記錄 Public repository 內可由程式、報告與版本歷史回溯的發布快照，不以 Claude 專用記憶作為跨模型 Source of Truth。發現版本、參數或績效不一致時，應標記差異並回溯產生檔、Git 版本與證據，不自動從私人記憶覆寫 Public 文件。
 
 ---
 
@@ -343,36 +343,6 @@ BB %B = (close - lower) / (upper - lower)；7 個分區（below_lower → above_
 - **`XAUUSD-Short-Experiments/pine/*.pine`** — 20 個空單 Pine Script v6
 - **`XAUUSD-Short-Experiments/pine/ALL_Short_Strategies.pine`** — S01–S20 合併下拉選單版
 - **`index.html`** — 根目錄整合報告（多空 + DXY + MTF + Next Action，含各子報告連結）
-
----
-
-## 換新電腦後的記憶設定
-
-Claude 的專案記憶存在 `.claude/memory/`（git 追蹤）。新電腦 `git clone` 後需執行一次下列指令，把系統記憶路徑指向專案資料夾。
-
-### Mac / Linux（在專案根目錄執行）
-
-```bash
-PROJ=$(pwd)
-SYSTEM_KEY=$(echo "$PROJ" | sed 's|/|-|g')
-rm -rf ~/.claude/projects/${SYSTEM_KEY}/memory
-ln -s "${PROJ}/.claude/memory" ~/.claude/projects/${SYSTEM_KEY}/memory
-```
-
-> 注意：`SYSTEM_KEY` 需保留前導 `-`（見根目錄 CLAUDE.md 的說明），舊指令會去掉它導致 symlink 建錯位置。
-
-### Windows（PowerShell，在專案根目錄執行）
-
-```powershell
-$proj = (Get-Location).Path
-$key  = $proj -replace '\\', '-' -replace ':', ''   # e.g. C-Users-tittan-...
-$src  = "$proj\.claude\memory"
-$dst  = "$env:USERPROFILE\.claude\projects\-$key\memory"
-if (Test-Path $dst) { Remove-Item $dst -Recurse -Force }
-New-Item -ItemType Junction -Path $dst -Target $src
-```
-
-> Windows 使用 Junction（不需要管理員權限），Mac/Linux 使用 symlink。
 
 ---
 
