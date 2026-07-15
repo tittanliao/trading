@@ -116,6 +116,24 @@
 <div class='log-entry'><div class='log-date'>2026-05-13</div><div class='log-title'>第一版回測引擎完成 + Pine Script 生成</div><ul class='log-items'><li>完成 experiments/ 模組：loader、indicators、engine、runner、report</li><li>20 多單策略 E01–E20（Oscillator / Trend / Breakout / Pattern / Session 五大類）</li><li>20 空單策略 S01–S20（對應多單鏡像邏輯）</li><li>真實資料回測（TAIFEX_DLY_MXF1!, 30.csv，2025-06 起 8585 bars）</li><li>多單 E12 BB Squeeze Break 唯一獲利（PF=1.132, WR=36.1%）</li><li>空單全部虧損 — 資料期間為大多頭，做空困難，為預期結果</li><li>Pine Script v6 多空各一檔：下拉選單選策略、Enable 開關、R:R 可設定</li><li>下一步：加入 NQ 相關性過濾 + MTF 過濾提升勝率</li></ul></div>
   </div>
 
+  <div class="info-card">
+    <h2>換電腦後的記憶設定</h2>
+    <pre style="background:#f5f5f5;padding:12px;border-radius:6px;font-size:.85em;overflow-x:auto">
+# Mac / Linux（在 tx/ 目錄執行）
+PROJ=$(pwd)
+SYSTEM_KEY=$(echo "$PROJ" | sed 's|^/||' | sed 's|/|-|g')
+rm -rf ~/.claude/projects/${SYSTEM_KEY}/memory
+ln -s "${PROJ}/.claude/memory" ~/.claude/projects/${SYSTEM_KEY}/memory
+
+# Windows PowerShell
+$proj = (Get-Location).Path
+$key  = $proj -replace '\\', '-' -replace ':', ''
+$src  = "$proj\.claude\memory"
+$dst  = "$env:USERPROFILE\.claude\projects\-$key\memory"
+if (Test-Path $dst) { Remove-Item $dst -Recurse -Force }
+New-Item -ItemType Junction -Path $dst -Target $src</pre>
+  </div>
+
 </div>
 </body>
 </html>

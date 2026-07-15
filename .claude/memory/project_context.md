@@ -1,0 +1,131 @@
+---
+name: project-context
+description: trading hub 多商品策略分析工具箱的目標、架構、各商品現況
+metadata:
+  type: project
+---
+
+## 專案目標
+統一管理多個商品的量化策略分析：XAUUSD 黃金 + TX 台指期，後續可擴展至更多商品。
+前身是兩個獨立的 git 專案（xauusd / tx），於 2026-05-13 整併為 trading。
+
+**Why:** 兩個專案架構相似，統一管理可共享記憶、方便跨商品比較、新增商品只需加一個子目錄。
+**How to apply:** 商品代碼分別在 `xauusd/` 和 `tx/` 子目錄；master index.html 在根目錄。
+
+## 目錄規則
+- `trading/` — 根目錄，含 generate_site.py + 6 個生成頁 + CLAUDE.md + DEVELOPMENT.md
+- `trading/xauusd/` — XAUUSD 所有程式碼和資料
+- `trading/tx/` — TX 所有程式碼和資料
+- `trading/.claude/memory/` — **git 追蹤的記憶**，新電腦 clone 後需執行 symlink（見 CLAUDE.md）
+
+## 記憶架構（三套獨立 .claude/memory，20260705 釐清）
+這個 repo 有三套各自獨立的 Claude 記憶，各自 symlink 到不同的系統路徑（見各自 CLAUDE.md 的換電腦說明）：
+- `trading/.claude/memory/`（本檔所在）— 跨商品協作偏好、repo 整體架構、新增商品流程。在 `trading/` 根目錄開 Claude Code 時載入。
+- `trading/xauusd/.claude/memory/` — XAUUSD 專屬記憶（策略績效快照、xauusd 使用者偏好）。在 `trading/xauusd/` 子目錄開 Claude Code 時載入。
+- `trading/tx/.claude/memory/` — TX 專屬記憶，同上但對象是 tx/。
+
+**邊界原則**：跨商品的協作習慣、repo 整體結構寫在根目錄這套；單一商品的策略細節/績效數字寫在該商品自己那套，且都只是**快照**，實際數字以該商品的 `claude/ANALYSIS_SKILL.md`（或 tx 對應文件）為單一事實來源，記憶過時時以該文件為準，不要三處各自維護。
+
+## XAUUSD 現況
+策略版本/績效持續迭代中，這裡不重複列數字（避免和其他三處打架）。
+最新狀態請看 `xauusd/claude/ANALYSIS_SKILL.md`（單一事實來源，每次「請分析」都會讀取更新）
+或 `xauusd/CLAUDE.md`「現有策略最新績效」表。截至 2026-07-11：S1-AweWithBB 現行確認版仍是 V3.7；
+V3.9（測試版，BB Source close→ohlc4）初步真實回測共同期間對照優於 V3.7（WR/PF/淨利皆升，MDD 微升），
+但未經完整驗證流程，不算升版。**S2-Hammer V1.9 基準 CSV 重匯到 2026-07-11（200→225筆）後，
+OOS（樣本外）檢驗未通過**（後30%勝率僅27.9%/PF 0.92，低於損益兩平）——過去邊際優勢在近 2.5 個月
+新資料中未延續，是目前最高優先待處理項目；詳見 `report_s2_attribution.html`。
+S2-RSI 仍在測試 Regime+Z-Score 過濾器版本（V2.4，尚未重匯 CSV 做同等驗證）。
+
+## FVG 策略（2026-06-14 完成）
+- **FVG V1.0**：單 FVG 追蹤，Pine Script v6，Long/Short 可設定，Profit Flyer 出場
+- **FVG V2.0**：陣列多 FVG 追蹤（最多 5 個），box 視覺化（extend.right），最新 FVG 優先進場
+- **run_fvg_experiments.py**：7,560 參數組合 Python 優化，8.9 秒完成
+- **多單最佳結果**：fvg_min=0.20%、fvg_max=20bars、SL=1.5% Fixed、TP1=0.5R、TP2=2.0R、TB=72
+  - 42 筆交易、WR 66.7%、PF 1.660、淨損益 +11.93%
+- **空單最佳結果**：fvg_min=0.20%、fvg_max=50bars、SL=0.8% Fixed、TP1=0.5R、TP2=3.0R、TB=48
+  - 42 筆交易、WR 66.7%、PF 2.741、淨損益 +18.24%
+- V2.0 Pine Script 預設值已更新為多單最佳參數
+- Hub index.html 新增「🔍 FVG 策略」Tab，連結到 report_fvg_long.html
+- FVG 定位：SMC 補充工具，與 S2-Hammer 錘頭共用流動性缺口邏輯
+
+**Pine v6 重要注意事項（踩坑紀錄）：**
+- `and`/`or` 不能作為行尾接續 → 拆成多個變數
+- `? :` 三元不能跨行 → 改用 if/else
+- for loop `by -1` 會報錯 → 改成 `for i = n-1 to 0`（省略 by，自動負向）
+
+## SMC 回測實驗（2026-06-14 新增）
+- 新增 SMC 回測引擎：`smc_indicators.py` / `strategies_smc.py` / `run_smc_experiments.py`
+- 資料期：2026-01-21 → 04-27（3058 × 30m bars）
+- **核心結論：SMC 不替換 S1/S2，只作為週報輔助參考與 S2 進場分級依據**
+
+### SMC 回測關鍵結果
+- 最強空單：M12 Bearish FVG + RSI 35-70（WR 43.0%、PF 1.470、158 筆）★ 統計最可信
+- 最高品質空單：M17 BSL sweep + FVG（WR 50.0%、PF 2.000，但僅 20 筆）
+- 最強多單：M09 FVG + OB（WR 34.0%、PF 1.045、100 筆）— 勉強轉正
+- 多單偏弱原因：SL 0.5% 太緊，FVG 自然 SL 應為 0.8-1.0%
+
+### SMC 整合到週報的方式
+- ANALYSIS_SKILL.md 新增 Module B+（SMC Context）和週報第 6 項輸出格式
+- 週報 Python 模板加入自包含 SMC 掃描程式碼（scan_fvg / scan_liquidity / check_ssl_sweep）
+- S2 進場品質分級更新：A+（錘頭+SSL sweep+OB）/ A（錘頭+任一SMC）/ B（純錘頭）
+- 對應倉位：A+ 0.05手 / A 0.03手 / B 0.02手
+
+### 週報分析體系（2026-06-14 確立）
+- **三個來源**：Gemini 週報（基本面）/ Dispatch txt（技術面）/ Claude 週報（技術面）
+- **分工原則**：Gemini 主攻宏觀/基本面；Claude/Dispatch 主攻技術分析
+- **合併週報**：三份差距 < 7 天才合併，輸出 Style A/B/C 三份 .docx
+- 用戶已使用 Gemini 寫週報 6 個月，後續可與 Claude 週報做回測比較
+
+## TX 現況（2026-05-13）
+- SL 敏感度分析完成，**確認 SL=120pts 為新基準（原 30pts 過緊）**
+- SL=120, TP=240（R:R 2:1）：E09/E07/E12 均 WR>50%、PF>2.0
+  - E07 RSI 50 Crossover: WR=52.1%, PF=2.041
+  - E09 EMA55 Pullback:   WR=50.8%, PF=1.801
+  - E12 BB Squeeze Break: WR=51.8%, PF=2.002
+- 空單全虧（此期間大多頭，屬預期結果）
+- 宏觀分析：月勝率 63.9%，九月唯一偏空月，四月期望值最大（+518pts avg）
+- 下一步：NQ 相關性過濾 + MTF 4H 過濾；在 TradingView 驗證 E07/E09/E12
+
+## 對話記錄架構（2026-07-11 更新：拆頁後）
+- **統一對話記錄**：獨立頁面 `history.html`，Hub 首頁顯示最新 5 筆摘要
+- Log 唯一來源：`data/logs.json`（每筆：date / tag / title / items）
+- 每筆 entry 有商品 tag（🟡 xauusd / 🔵 tx / 📊 cross），按日期降序顯示，「共 N 筆」自動計算
+- 新增對話記錄：append `data/logs.json` 一筆，重跑 `python3.12 generate_site.py` 生效
+- （舊制 generate_index.py 的 XAUUSD_LOG/TX_LOG/CROSS_LOG 已於 20260711 廢除）
+
+## 跨商品共同分析（2026-05-15）
+- 新增 `shared/run_shared_analysis.py`，對 XAUUSD + TX 共同執行：
+  1. **整點熱力圖**：每整點進場 → 下一整點出場，計算星期×小時的勝率和損益
+  2. **30m RSI 濾鏡**：在整點進場時，30m RSI 金叉/死叉/位置對勝率的影響
+- TX 關鍵發現：
+  - 最佳時段：週二 23:00 WR=73.7%, avg +40.9pts（夜盤）
+  - 最差時段：週四 08:00 WR=33.3%, avg -89.5pts（日盤開盤前）
+  - RSI<MA 時略優（WR 53.7%, avg+8.0pts）vs RSI>MA（WR 53.1%, avg+1.8pts）
+- XAUUSD 關鍵發現：
+  - 最佳時段：週三 06:00 WR=88.9%（n=9，小樣本）
+  - 最差時段：週一 06:00 WR=10.0%（n=10）
+- 背離訊號（Regular Bullish/Bearish）CSV 欄位目前無資料，需重新從 TV 匯出
+- 結果存於 `shared/shared_results.json`（含 base64 heatmap 圖）
+- index.html 新增「📊 跨商品分析」Nav Tab（整點熱力圖 + RSI 濾鏡）
+
+## 筆記驗證結果（2026-05-13，validate_notes.py）
+結果存於 `doc/validation_results.json`；index.html 各商品均有「筆記驗證」頁。
+
+### XAUUSD（黃金秘笈 vs 日線 2014–2026）
+- 符合：一月✅強、七月✅強、九月✅弱、十月✅強、十一月✅弱、十二月✅強（6/12）
+- **不符重要差異**：四月(筆記弱/資料WR=77%強)、五月(筆記弱/資料WR=58%強)、六月(筆記強/資料WR=42%弱)
+- 時段：早上9-10趨勢K=60%（筆記說90%震盪 → 資料偏離），下午14-15趨勢K=46%（較一致）
+- 結論：約半數月份筆記方向正確；六月/四月/五月需重新評估
+
+### TX（指數密技 vs 日線 2012–2026）
+- 符合：一月✅強、四月✅強、十一月✅強、十二月✅強（4/12）
+- **主要問題**：五月筆記說弱但資料WR=71%強；整體台指期資料顯示多數月份都偏強（牛市期）
+- Q4 avg_ret=1.7%，WR=64%，支持「Q4必有多單機會」結論
+- 選舉年效應存在，選舉年Q1勝率高於非選舉年
+- 結論：TX多個月份資料都WR>65%，可能受2012-2026大多頭期偏差影響；五月弱的結論需更長週期驗證
+
+## 新增商品流程（20260711 拆頁後）
+1. 建立 `trading/<商品>/` 子目錄
+2. 在 `generate_site.py` 的 `COMMODITIES` 新增一筆 + `build_<商品>()` 函式 + `PAGES`/`NAV_LINKS` 登記
+3. 手寫區塊放 `content/<商品>/`；`content/sitemap.html` 登記
+4. 執行 `python3.12 generate_site.py`（詳見 DEVELOPMENT.md §4-C）

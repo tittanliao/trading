@@ -1,0 +1,116 @@
+[
+  {
+    "timestamp": "2026-07-01T10:59:00+08:00",
+    "session": "亞盤",
+    "price": 3981.23,
+    "ohlc": {
+      "o": 3979.202,
+      "h": 3981.28,
+      "l": 3978.12,
+      "c": 3981.23
+    },
+    "bb_30m": {
+      "upper": 4042.905,
+      "basis": 4007.141,
+      "lower": 3971.4
+    },
+    "rsi": {
+      "main": 37.45,
+      "ma": 29.5,
+      "signal": "Bull"
+    },
+    "macro": {
+      "dxy": 101.32,
+      "gvz": 27.2,
+      "xau_now": -30.687,
+      "xau_1h": -38.62,
+      "real_rate": 2.225,
+      "us_10y": 4.465,
+      "vix": 16.46
+    },
+    "bias": "偏空觀望（亞盤禁止交易）",
+    "action": "空手。跌破3,988.225（兩個放棄條件成立：price<3988+XAU(1h)<-20）。RSI仍Bull(37.45>29.50)但低位。BB Lower~3,971接近4h POC VAL~3,975叢集。S2 A+ 3,959/3,945區逼近。亞盤禁止交易，等15:00歐盤確認。",
+    "weekly_report": "W27",
+    "key_levels": {
+      "s1_trigger": 4132.75,
+      "s2_a_plus_core": 4002,
+      "s2_a_plus_entry": [
+        3959,
+        3945
+      ],
+      "bb_lower_cluster": 3971,
+      "key_resistance": 3988.225,
+      "extreme_support": 3945
+    },
+    "note": "第一筆7/1分析。PCE鷹派後再跌34pts(4015→3981)。BB%B≈0.14(近下軌)。XAU(1h)-38.62深度負值。DXY101.32↗↗強。GVZ27.2🔥Extreme→S2縮倉50%(0.025手)。NFP7/3不跨週，S2進場需7/2前手動平倉。"
+  },
+  {
+    "timestamp": "2026-07-01T20:20:00+08:00",
+    "session": "美盤前",
+    "price": 4026.057,
+    "ohlc": {
+      "o": 4030.405,
+      "h": 4034.04,
+      "l": 4019.32,
+      "c": 4026.057
+    },
+    "bb_30m": {
+      "upper": 4025.049,
+      "basis": 4003.0,
+      "lower": 3981.0,
+      "note": "估算值，%B≈1.0+突破上軌"
+    },
+    "rsi": {
+      "main": 68.19,
+      "ma": 46.1,
+      "signal": "Bull強"
+    },
+    "macro": {
+      "dxy": 101.422,
+      "gvz": 27.2,
+      "xau_now": 40.661,
+      "xau_1h": 27.247,
+      "real_rate": 2.245,
+      "us_10y": 4.485,
+      "vix": 16.73
+    },
+    "position": {
+      "s2_lot2": {
+        "entry": 3977,
+        "size": 0.1,
+        "sl": 3985,
+        "float_pnl": "+49pts"
+      },
+      "s1_lot2": {
+        "entry": 3989,
+        "size": 0.15,
+        "sl": "3989(建議4005)",
+        "float_pnl": "+37pts"
+      },
+      "lot1_exits": {
+        "s2_lot1": {
+          "exit": 4013,
+          "pnl": "+36pts(1R✅)"
+        },
+        "s1_lot1": {
+          "exit": 4030,
+          "pnl": "+41pts(1R✅)"
+        }
+      },
+      "today_locked_est": "$975"
+    },
+    "bias": "🟢持多，RSI Bull強，S1 BUY訊號持續，XAU超買偏離注意",
+    "action": "持有S2 Lot2@3977(SL移3985)和S1 Lot2@3989(SL移保本3989或4005)。無S1 Sell新訊號。目標4040→4073.88。7/2晚22:00強制全平（NFP 7/3）。",
+    "key_levels": {
+      "s1_trigger": 4132.75,
+      "next_target_main": 4040.23,
+      "next_target_alt": 4073.88,
+      "bb_upper": 4025.049,
+      "resistance": 4073.88,
+      "s2_lot2_sl": 3985.0,
+      "s1_lot2_sl": 3989.0
+    },
+    "weekly_report": "W27",
+    "note": "今日S2+S1 Lot1均已出場鎖利。Lot2持多中。RSI 68.19強Bull。XAU(Now)+40.6⚠️超買。無Session Disconnected。NFP 7/3，7/2晚22:00前強制全平。"
+  }
+]

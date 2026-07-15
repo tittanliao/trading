@@ -1,0 +1,122 @@
+[
+  {
+    "ts": "2026-06-15T08:07",
+    "session": "Asia",
+    "price": 4295.4,
+    "rsi_30m": 74.72,
+    "rsi_ma_30m": 61.30,
+    "awe": "Bear 標籤（動能收斂）",
+    "ao": "Bull 轉弱",
+    "ema": "價格在快慢線之上，結構偏多",
+    "s1_status": "⏳ 亞盤不做，歐盤觀察 4325 突破（SL 4280 / TP1 4370 / TP2 4462）",
+    "s2_status": "❌ 不適用",
+    "key_levels": {
+      "resistance": 4325,
+      "support_fvg": 4231,
+      "support_next": 4161
+    },
+    "bias": "偏多但高位觀望",
+    "invalidation": "跌破 4231",
+    "claude_view": "RSI 74.72 > MA 61.30 ✅ 但超買。AWE Bear 標籤顯示動能收斂，AO Bull 轉弱，EMA 結構仍偏多。高位超買不追，亞盤不進場。",
+    "action": "亞盤不進場，等歐盤 15:00（台灣）再評估 4325 突破條件"
+  },
+  {
+    "ts": "2026-06-15T09:06",
+    "session": "Asia",
+    "price": 4289.4,
+    "price_source": "Spot XAUUSD, TradingView ICE",
+    "rsi_30m": 69.57,
+    "rsi_ma_30m": 64.20,
+    "awe": "Bear（動能持續收斂）",
+    "ao": "Bull 但減弱",
+    "ema": "價格仍在快慢線之上",
+    "s1_status": "⏳ 亞盤不做，4325 壓力有效未突破",
+    "s2_status": "❌ 不適用（S2-Pullback 自動策略於 08:50 觸發警報，供參考）",
+    "key_levels": {
+      "resistance": 4325,
+      "support_fvg": 4242
+    },
+    "bias": "偏多但短線小心回調",
+    "invalidation": "跌破 4242",
+    "claude_view": "RSI 69.57 > MA 64.20 ✅ 從超買回落中。AWE Bear 動能持續收斂，AO Bull 但減弱，EMA 結構偏多。4325 壓力有效未突破，亞盤不進場。",
+    "action": "不進場，亞盤規則，等歐盤 15:00"
+  },
+  {
+    "ts": "2026-06-15T09:43",
+    "session": "Asia",
+    "price": 4318,
+    "price_source": "Spot XAUUSD, Chrome tab title",
+    "weekly_source": "Gemini gdoc W24",
+    "rsi_30m": "73+（推估，09:06 時 69.57，價格續漲）",
+    "awe": "待確認（上次 Bear，突破後可能翻 Bull）",
+    "ema": "價格在快慢線之上",
+    "s1_status": "⚠️ 已突破 4325（4h POC VAL）⚠️ 關鍵突破，等歐盤確認站穩",
+    "s2_status": "❌ 不適用",
+    "key_levels": {
+      "entry_zone_low": 4318,
+      "entry_zone_high": 4330,
+      "sl": 4280,
+      "tp1": 4370,
+      "tp2": 4462,
+      "resistance_major": 4462,
+      "support_strong": 4265,
+      "support_sl": 4280
+    },
+    "bias": "偏多，S1 突破啟動中",
+    "invalidation": "跌回 4265 以下視為假突破",
+    "claude_view": "亞盤 09:43。價格從 4289 續漲至 4318，突破 4325 關鍵 4h POC VAL。RSI 推估 73+（超買）。AWE 待確認是否翻 Bull。亞盤不進場，等歐盤 15:00 後確認 4325 站穩。",
+    "action": "亞盤不進場，歐盤 15:00 後若 4325 站穩 + EMA3>BB + AWE Bull → S1 A+ 進場（進場 4318-4330，SL 4280，TP1 4370，TP2 4462）"
+  },
+  {
+    "timestamp": "2026-06-15T16:18",
+    "timezone": "Asia/Taipei",
+    "session": "歐盤",
+    "price": 4330.24,
+    "rsi": null,
+    "awe": null,
+    "note": "Tab title price. TradingView 無法截圖（Chrome 前景被 Google Doc 佔用）。價格突破 4325 (4H POC VAL)，S1 方向動能延續。歐盤開盤持續推進。等待 4H 收線站穩 + EMA3>BB20 + AO正 確認後找 pullback 4325 入場。TP: 4462。帳戶 recovery mode 0.03-0.05 手。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "觀望等確認",
+    "strategy": "S1潛在",
+    "account_mode": "recovery"
+  },
+  {
+    "timestamp": "2026-06-15T16:28",
+    "timezone": "Asia/Taipei",
+    "session": "歐盤",
+    "price": 4331.73,
+    "rsi": 70.36,
+    "rsi_signal": 67.90,
+    "awe": "Bull（6/11起，6/13出現Bear標，目前繼續上推）",
+    "note": "4h POC VAL 4343.74頭頂壓力。RSI 70+超買邊緣。S2-Pullback策略12:30觸發buy alert。FVG支撐4282/4313。4325舊阻翻支撐。不追多，等方案A(4343突破回測)或方案B(回調4325)入場。W24主情境60%區間震盪，S1TP1=4462。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "觀望等確認",
+    "strategy": "S1延伸或S2pullback",
+    "key_levels": {
+      "resistance": [4343.74, 4380, 4462],
+      "support": [4325, 4313, 4282]
+    },
+    "account_mode": "recovery",
+    "alerts": "S2-Pullback-V1.9 triggered 12:30 buy"
+  },
+  {
+    "timestamp": "2026-06-15T21:05",
+    "timezone": "Asia/Taipei",
+    "session": "美盤",
+    "price": 4343.06,
+    "price_high": 4349.05,
+    "rsi": 68.08,
+    "rsi_signal": 66.86,
+    "awe": "Bear標出現（轉空）",
+    "rsi_divergence": "看跌背離：價格4331→4343(+12)，RSI 70.36→68.08(↓)",
+    "note": "4h POC VAL 4343.63正在測試，歐盤衝高4349後拉回。RSI看跌背離+AWE Bear = 三信號齊現偏空警戒。等30m收線確認。方案A：4343下方空，SL4353，TP1:4325，TP2:4306。方案B：4353突破多，回測4343入場，SL4329，TP1:4380，TP2:4462。",
+    "weekly_report_source": "Gemini gdoc W24",
+    "decision": "觀望等30m收線確認",
+    "strategy": "空頭拒絕優先(方案A)/突破多次選(方案B)",
+    "key_levels": {
+      "resistance": [4343.63, 4353.28, 4380, 4462],
+      "support": [4329.68, 4306.08, 4282]
+    },
+    "account_mode": "recovery"
+  }
+]

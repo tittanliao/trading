@@ -51,16 +51,16 @@ python3.12 generate_site.py --page xauusd  # 只生成單頁（降低風險）
 
 **鐵律：6 個生成頁一律不手改。** 每頁開頭有 DO NOT EDIT banner；手改的內容會在下次生成時被覆蓋消失。想改頁面上的任何字，先問「它的來源是 fragment、data 檔、還是 generate_site.py 裡的函式？」，改來源。
 
-## 3. Public evidence chain
+## 3. 單一事實來源表（策略數字）
 
-| 資料 | Public evidence | Published copy |
-|------|-----------------|----------------|
-| 策略版本 / 參數 / 績效 | 可重跑程式、輸入資料版本／雜湊、產生報告與 Git commit | `xauusd/CLAUDE.md` 績效表、`content/xauusd/opt.html` |
-| 私人倉位 / 風控規則 | 不在 Public repository 指定 Source of Truth | 無 |
-| 對話記錄 | `data/logs.json` | 無，全部由生成器渲染 |
-| 網站頁面結構 | `generate_site.py` | 無 |
+| 資料 | 法定來源（改這裡）| 抄本（只能從來源複製過去）|
+|------|----------------|------------------------|
+| 策略版本 / 參數 / 績效 | `xauusd/claude/ANALYSIS_SKILL.md` | `xauusd/CLAUDE.md` 績效表、`content/xauusd/opt.html`、各 `.claude/memory/project_context.md` |
+| 倉位 / 風控規則（H2）| `xauusd/claude/ANALYSIS_SKILL.md` | `xauusd/claude/TRADING_PROFILE.md` |
+| 對話記錄 | `data/logs.json` | （無，全部由生成器渲染）|
+| 網站頁面結構 | `generate_site.py` | （無）|
 
-規則：發現數字不一致時，先標記差異，再回溯產生程式、輸入版本、報告與 Git commit；不得從 Claude 或其他模型的私人記憶直接覆寫 Public 文件。
+規則：發現任兩處數字不一致 → 以法定來源為準，回頭修抄本；**永遠不要在抄本上直接發明新數字**。
 
 ## 4. 常見任務 Checklist
 
@@ -73,8 +73,8 @@ python3.12 generate_site.py --page xauusd  # 只生成單頁（降低風險）
 
 ### B. 策略升版（如 V3.7 → V3.8）
 - [ ] Pine 檔進策略資料夾，命名依 `VX.Y`（確認）/`VX.Y+1.1`（測試）規則
-- [ ] 記錄可重跑程式、輸入資料版本／雜湊、產生報告與 Git commit
-- [ ] 依同一 evidence chain 同步 `xauusd/CLAUDE.md` 績效表與 `content/xauusd/opt.html` 版本表格
+- [ ] `xauusd/claude/ANALYSIS_SKILL.md` 更新版本與績效（法定來源，先改這裡）
+- [ ] 從 ANALYSIS_SKILL.md 抄到：`xauusd/CLAUDE.md` 績效表、`content/xauusd/opt.html` 版本表格
 - [ ] `data/logs.json` append 記錄
 - [ ] 重跑 `generate_site.py`
 - [ ] commit
@@ -88,7 +88,7 @@ python3.12 generate_site.py --page xauusd  # 只生成單頁（降低風險）
 - [ ] 本檔（DEVELOPMENT.md）第 1 節目錄圖若受影響，一併更新
 
 ### D. 日常「請分析」/ 交易紀錄（不動網站）
-- 私人日常分析與交易紀錄不在 Public repository 維護，依 Private governance 執行
+- 照 `xauusd/claude/ANALYSIS_SKILL.md` 既有流程，與本檔無關
 
 ## 5. Commit 前強制檢查
 
